@@ -1,0 +1,25 @@
+﻿@page "/LightCurves"
+@inject ILightCurveService LightCurveService
+<h3>LightCurves</h3>
+
+@if (_lightCurves is null)
+{
+    <h3>Loading light curves..</h3>
+}
+else
+{
+    foreach (var curve in _lightCurves)
+    {
+        <a href="@Endpoints.ClientLightCurveGetSingle/@curve.Id">@curve.Id - @curve.Value</a>
+    }
+}
+
+@code {
+    private List<LightCurveDTO>? _lightCurves = null;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _lightCurves = await LightCurveService.GetLightCurves();
+    }
+
+}

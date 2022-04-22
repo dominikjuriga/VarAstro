@@ -1,0 +1,27 @@
+﻿@page "/LightCurves/{LcId:int}"
+@inject ILightCurveService LightCurveService
+<h3>LightCurve</h3>
+
+@if (_curve is null)
+{
+    <h3>Loading curve..</h3>
+}
+else
+{
+    <h3>Curve @_curve.Id</h3>
+    <span>Value: @_curve.Value</span>
+    <h4>Author <a href="#">@_curve.User.Name</a></h4>
+}
+
+@code {
+    [Parameter]
+    public int LcId { get; set; }
+
+    private LightCurveDTO? _curve = null;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _curve = await LightCurveService.GetLightCurve(LcId);
+    }
+
+}

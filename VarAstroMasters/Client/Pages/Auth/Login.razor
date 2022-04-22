@@ -1,0 +1,65 @@
+﻿@page "/login"
+@using Microsoft.AspNetCore.WebUtilities
+@inject IAuthService AuthService
+@inject ILocalStorageService LocalStorageService
+@inject NavigationManager NavigationManager
+@inject HttpClient HttpClient
+@inject AppAuthStateProvider AuthStateProvider 
+
+<h3>Login</h3>
+
+<EditForm Model="_userLogin" OnValidSubmit="HandleLogin">
+        <DataAnnotationsValidator />
+
+        <div class="form-group my-3">
+            <label for="email">Email Address</label>
+            <InputText @bind-Value="_userLogin.EmailAddress" id="email" class="form-control" />
+            <ValidationMessage For="@(()=>_userLogin.EmailAddress)" />
+        </div>
+
+        <div class="form-group my-3">
+            <label for="password">Password</label>
+            <InputText @bind-Value="_userLogin.Password" id="password" type="password" class="form-control" />
+            <ValidationMessage For="@(()=>_userLogin.Password)" />
+        </div>
+
+        <ValidationSummary />
+
+        <button type="submit" class="btn btn-primary btn-lg">Sign In</button>
+</EditForm>
+
+@code {
+    private UserLogin _userLogin = new();
+    private string _message = String.Empty;
+    private string _messageCssClass = String.Empty;
+    private string _returnUrl = String.Empty;
+
+    protected override void OnInitialized()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("returnUrl", out var url))
+        {
+            _returnUrl = url;
+        }
+    }
+
+    private async Task HandleLogin()
+    {
+        var response = await AuthService.LogIn(_userLogin);
+        if (response is {Success: true })
+        {
+            _message = String.Empty;
+            await LocalStorageService.SetItemAsync(Keywords.JWT_Bearer_Token, response.Data);
+            await AuthStateProvider.LogIn();
+            HttpClient.DefaultRequestHeaders.Authorization = 
+                new System.Net.Http.Headers
+                    .AuthenticationHeaderValue(Keywords.Client_HTTP_Bearer_Header,
+                        response.Data);
+        }
+        else
+        {
+            _message = response.Message;
+        }
+    }
+
+}

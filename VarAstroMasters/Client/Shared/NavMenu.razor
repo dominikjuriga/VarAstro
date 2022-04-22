@@ -1,0 +1,81 @@
+﻿@inject IAuthService AuthService
+@inject ILocalStorageService LocalStorageService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">VarAstroMasters</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="@Endpoints.ClientLightCurveGetAll">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Light Curves
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="@Endpoints.ClientStarGetAll">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Stars
+            </NavLink>
+        </div>
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <button class="nav-link" @onclick="HandleLogOut">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Log Out
+                    </button>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="@Endpoints.ClientAuthLogIn">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Login
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="@Endpoints.ClientAuthRegister">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Register
+                    </NavLink>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    private async Task HandleLogOut()
+    {
+        if (await LocalStorageService.ContainKeyAsync(Keywords.JWT_Bearer_Token))
+        {
+            await LocalStorageService.RemoveItemAsync(Keywords.JWT_Bearer_Token);
+            ((AppAuthStateProvider)AuthenticationStateProvider).LogOut();
+        }
+
+        StateHasChanged();
+        NavigationManager.NavigateTo("/");
+    }
+
+}

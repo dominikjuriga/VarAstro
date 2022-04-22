@@ -1,0 +1,59 @@
+﻿@page "/stars"
+
+@attribute [Authorize(Roles = "User")]
+@inject IStarService StarService
+@inject HttpClient HttpClient
+<h3>Stars</h3>
+
+@if (_stars.Count == 0)
+{
+    <h5>Loading items..</h5>
+}
+else
+{
+    <ul>
+        @foreach (var star in _stars)
+        {
+            <li><a href="@Endpoints.ClientStarGetSingle/@star.Id">@star.Name</a></li>
+        }
+    </ul>
+}
+
+<EditForm Model="_starCreate">
+    <InputFile OnChange="HandleFileOnChange"></InputFile>
+</EditForm>
+
+@code {
+    private List<StarDTO> _stars = new List<StarDTO>();
+    private StarCreate _starCreate = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _stars = await StarService.GetStarsAsync();
+    }
+
+    private async Task HandleFileOnChange(InputFileChangeEventArgs e)
+    {
+        
+        long maxFileSize = 1024 * 1024 * 15;
+
+        using var content = new MultipartFormDataContent();
+        var file = e.GetMultipleFiles(1)[0];
+        try
+        {
+            var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+            content.Add(content: fileContent, name: "\"files\"", fileName: file.Name);
+
+            var response = await HttpClient.PostAsync(Endpoints.ApiUploadFile, content);
+            Console.WriteLine(response);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+        
+    }
+
+}
