@@ -20,14 +20,20 @@ public class LightCurveService : ILightCurveService
         return new List<LightCurveDTO>();
     }
 
-    public async Task<LightCurveDTO> GetLightCurve(int LcId)
+    public async Task<LightCurveDTO> GetLightCurve(int lightCurveId)
     {
-        var response = await _http.GetFromJsonAsync<ServiceResponse<LightCurveDTO>>($"{Endpoints.ApiLightCurveGetSingle}/{LcId}");
+        var response = await _http.GetFromJsonAsync<ServiceResponse<LightCurveDTO>>($"{Endpoints.ApiLightCurveGetSingle}/{lightCurveId}");
         if (response is {Data: not null})
         {
             return response.Data;
         }
 
         return new LightCurveDTO();
+    }
+
+    public async Task<bool> AddLightCurve(LightCurveAdd lightCurveAdd)
+    {
+        var response = await _http.PostAsJsonAsync(Endpoints.ApiLightCurveAdd, lightCurveAdd);
+        return response != null;
     }
 }

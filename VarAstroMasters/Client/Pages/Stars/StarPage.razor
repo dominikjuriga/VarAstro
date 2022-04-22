@@ -1,24 +1,22 @@
 ﻿@page "/stars/{StarId:int}"
-@using System.Security.Cryptography
 
 @inject IStarService StarService
 
-<h3>Star @StarId</h3>
-
-@if (_star == null)
+@if (Star == null)
 {
     <h3>Loading details..</h3>
 }
 else
 {
-    <h3>@_star.Name</h3>
+    <h3>Star <strong>@Star.Name</strong></h3>
                    
-    @if (_star.LightCurves.Count > 0)
+    @if (Star.LightCurves.Count > 0)
     {
+        <h4>Latest Light Curves</h4>
         <ul>
-            @foreach (var curve in _star.LightCurves)
+            @foreach (var curve in Star.LightCurves)
             {
-                <li>@curve.Value</li>
+                <li><a href="@Endpoints.ClientLightCurveGetSingle/@curve.Id">@curve.Value</a></li>
             }
         </ul>
     }
@@ -29,11 +27,11 @@ else
     [Parameter]
     public int StarId { get; set; }
 
-    private StarDTO? _star { get; set; } = null;
+    private StarDTO? Star { get; set; }
     
     protected override async Task OnInitializedAsync()
     {
-        _star = await StarService.GetStarAsync(StarId);
+        Star = await StarService.GetStarAsync(StarId);
     }
 
 }

@@ -1,6 +1,6 @@
 ﻿@page "/stars"
 
-@attribute [Authorize(Roles = "User")]
+@attribute [Authorize(Roles = "User,Administrator")]
 @inject IStarService StarService
 @inject HttpClient HttpClient
 <h3>Stars</h3>

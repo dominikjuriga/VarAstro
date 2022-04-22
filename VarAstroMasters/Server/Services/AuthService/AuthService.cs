@@ -14,14 +14,16 @@ public class AuthService : IAuthService
     private readonly UserManager<User> _userManager;
     private readonly IConfiguration _configuration;
     private readonly DataContext _context;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public AuthService(SignInManager<User> signInManager, UserManager<User> userManager,
-        IConfiguration configuration, DataContext context)
+        IConfiguration configuration, DataContext context, IHttpContextAccessor httpContextAccessor)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _configuration = configuration;
         _context = context;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<ServiceResponse<string>> Register([FromBody] UserRegister userRegister)
@@ -51,7 +53,7 @@ public class AuthService : IAuthService
         {
             var response = new ServiceResponse<string>
             {
-                Data = identityUser.Id.ToString(),
+                Data = identityUser.Id,
                 Success = true,
                 Message = "Registration Successful."
             };
@@ -96,7 +98,7 @@ public class AuthService : IAuthService
 
         List<Claim> claims = new()
         {
-            new Claim(JwtRegisteredClaimNames.Sub, identityUser.Email),
+            new Claim(JwtRegisteredClaimNames.Sub, identityUser.Id),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(ClaimTypes.NameIdentifier, identityUser.Id)
         };
@@ -115,4 +117,6 @@ public class AuthService : IAuthService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+    
+    public string GetUserId() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 }

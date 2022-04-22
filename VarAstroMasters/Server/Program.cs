@@ -5,13 +5,15 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Identity;
 global using VarAstroMasters.Server.Services.AuthService;
 global using VarAstroMasters.Server.Services.StarService;
+global using VarAstroMasters.Server.Services.UserService;
+global using VarAstroMasters.Server.Services.LightCurveService;
 global using VarAstroMasters.Shared.DTO;
+global using VarAstroMasters.Server.Data;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using VarAstroMasters.Server.Data;
 using static VarAstroMasters.Server.Data.SeedRolesAndAdmin;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +35,12 @@ builder.Services.AddDbContext<DataContext>(options =>
     options
         .UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), dbVersion);
 });
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IStarService, StarService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ILightCurveService, LightCurveService>();
+
 builder.Services.AddDefaultIdentity<User>(options =>
     {
         options.Password.RequireDigit = false;
@@ -59,8 +67,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IStarService, StarService>();
+builder.Services.AddHttpContextAccessor();
 
 // Add services to the container.
 

@@ -1,4 +1,4 @@
-﻿@page "/LightCurves/{LcId:int}"
+﻿@page "/LightCurves/{LightCurveId:int}"
 @inject ILightCurveService LightCurveService
 <h3>LightCurve</h3>
 
@@ -10,18 +10,18 @@ else
 {
     <h3>Curve @_curve.Id</h3>
     <span>Value: @_curve.Value</span>
-    <h4>Author <a href="#">@_curve.User.Name</a></h4>
+    <h4>Author <a href="@Endpoints.ClientUserGetSingle/@_curve.User.Id">@_curve.User.Name</a></h4>
 }
 
 @code {
     [Parameter]
-    public int LcId { get; set; }
+    public int LightCurveId { get; set; }
 
     private LightCurveDTO? _curve = null;
 
     protected async override Task OnInitializedAsync()
     {
-        _curve = await LightCurveService.GetLightCurve(LcId);
+        _curve = await LightCurveService.GetLightCurve(LightCurveId);
     }
 
 }

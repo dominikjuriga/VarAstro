@@ -4,6 +4,7 @@ global using VarAstroMasters.Shared.Responses;
 global using VarAstroMasters.Client.Services.AuthService;
 global using VarAstroMasters.Client.Services.StarService;
 global using VarAstroMasters.Client.Services.LightCurveService;
+global using VarAstroMasters.Client.Services.UserService;
 global using Blazored.LocalStorage;
 global using VarAstroMasters.Client.Providers;
 global using VarAstroMasters.Shared.DTO;
@@ -23,6 +24,7 @@ builder.Services.AddAuthorizationCore();
 // Add Custom services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IStarService, StarService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ILightCurveService, LightCurveService>();
 
 builder.Services.AddScoped<AppAuthStateProvider>();

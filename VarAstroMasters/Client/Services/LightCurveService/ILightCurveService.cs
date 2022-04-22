@@ -3,5 +3,6 @@
 public interface ILightCurveService
 {
     Task<List<LightCurveDTO>> GetLightCurves();
-    Task<LightCurveDTO> GetLightCurve(int LcId);
+    Task<LightCurveDTO> GetLightCurve(int lightCurveId);
+    Task<bool> AddLightCurve(LightCurveAdd lightCurveAdd);
 }
