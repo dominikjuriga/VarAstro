@@ -80,6 +80,8 @@
         <InputTextArea @bind-Value="_lightCurveAdd.Comment" class="form-control"></InputTextArea>
     </div>
 
+    <ValidationSummary></ValidationSummary>
+
     <button type="submit" class="btn btn-primary btn-lg">Pridať pozorovanie</button>
 
 </EditForm>
@@ -121,12 +123,33 @@
         var file = e.GetMultipleFiles(1)[0];
         try
         {
-            var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
-            ParseDataFile(await fileContent.ReadAsStringAsync());
+            var fileStream = new StreamContent(file.OpenReadStream(maxFileSize));
+            var fileContent = await fileStream.ReadAsStringAsync();
+            ParseDataFile(fileContent);
+            _lightCurveAdd.DataFileContent = fileContent;
+
+            List<string> metaLines = new();
+            List<string> dataLines = new();
+            char[] delimiters = { '\r', '\n' };
+            var lines = fileContent.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var line in lines)
+            {
+                if (line.StartsWith("#"))
+                {
+                    metaLines.Add(line);
+                }
+                else
+                {
+                    dataLines.Add(line);
+                }
+            }
+
+            var kappa = "kappa";
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            Console.WriteLine("CHJYBA");
         }
     }
 

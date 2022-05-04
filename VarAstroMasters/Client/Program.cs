@@ -28,7 +28,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ILightCurveService, LightCurveService>();
 
 builder.Services.AddScoped<AppAuthStateProvider>();
-builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<AppAuthStateProvider>());
+builder.Services.AddScoped<AuthenticationStateProvider>(provider =>
+    provider.GetRequiredService<AppAuthStateProvider>());
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 await builder.Build().RunAsync();

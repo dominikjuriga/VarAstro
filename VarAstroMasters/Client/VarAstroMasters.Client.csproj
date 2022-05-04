@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
+    <PackageReference Include="ChartJs.Blazor.Fork" Version="2.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.4" PrivateAssets="all" />
@@ -35,5 +36,6 @@
     <_ContentIncludedByDefault Remove="wwwroot\favicon.ico" />
     <_ContentIncludedByDefault Remove="wwwroot\icon-192.png" />
     <_ContentIncludedByDefault Remove="wwwroot\index.html" />
+    <_ContentIncludedByDefault Remove="wwwroot\JS\chart.min.js" />
   </ItemGroup>
 </Project>

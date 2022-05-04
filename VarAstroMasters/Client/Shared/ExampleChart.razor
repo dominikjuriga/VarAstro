@@ -1,0 +1,36 @@
+﻿@using ChartJs.Blazor.ScatterChart
+@using System.Text.Json
+@using System.Collections
+@using ChartJs.Blazor.Common.Axes.Ticks
+@using ChartJs.Blazor.LineChart
+@using ChartJs.Blazor.Util
+@using ChartJs.Blazor.PolarAreaChart
+@using Microsoft.Extensions.Options
+
+<Chart Config="_config"></Chart>
+
+@code {
+
+    [Parameter]
+    public string values { get; set; }
+
+    private ScatterConfig _config;
+
+    protected override void OnInitialized()
+    {
+        _config = new ScatterConfig { };
+        List<Point> points = new();
+        var vals = JsonSerializer.Deserialize<List<List<double>>>(values);
+        foreach (var val in vals)
+        {
+            points.Add(new Point(val[0], val[1]));
+        }
+        var dataset = new LineDataset<Point>();
+        foreach (var point in points)
+        {
+            dataset.Add(point);
+        }
+        _config.Data.Datasets.Add(dataset);
+    }
+
+}

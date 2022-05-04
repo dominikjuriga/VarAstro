@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Globalization;
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 
 namespace VarAstroMasters.Server.Services.LightCurveService;
 
@@ -71,20 +73,72 @@ public class LightCurveService : ILightCurveService
     public async Task<ServiceResponse<LightCurveDTO>> AddLightCurveAsync(LightCurveAdd lightCurveAdd)
     {
         var userId = _authService.GetUserId();
+        // var lightCurve = new LightCurve
+        // {
+        //     StarId = lightCurveAdd.StarId,
+        //     UserId = _authService.GetUserId()
+        // };
+        // _context.LightCurves.Add(lightCurve);
+        // await _context.SaveChangesAsync();
+        //
+        // return new ServiceResponse<LightCurveDTO>
+        // {
+        //     Data = new LightCurveDTO
+        //     {
+        //         Id = lightCurve.Id
+        //     }
+        // };
         var lightCurve = new LightCurve
         {
+            UserId = userId,
+            PublishVariant = lightCurveAdd.PublishVariant,
             StarId = lightCurveAdd.StarId,
-            UserId = _authService.GetUserId()
+            DataFileContent = lightCurveAdd.DataFileContent,
+            ImageFileName = "TODO"
         };
-        _context.LightCurves.Add(lightCurve);
+
+        var savedCurve = _context.LightCurves.Add(lightCurve);
         await _context.SaveChangesAsync();
 
         return new ServiceResponse<LightCurveDTO>
         {
             Data = new LightCurveDTO
             {
-                Id = lightCurve.Id
+                Id = savedCurve.Entity.Id
             }
+        };
+    }
+
+    public async Task<ServiceResponse<string>> GetValuesFromCurveAsync(int curveId)
+    {
+        var curve = await _context.LightCurves.Where(c => c.Id == curveId).FirstOrDefaultAsync();
+        if (curve is null)
+            return new ServiceResponse<string>
+            {
+                Data = "bad"
+            };
+
+        List<List<decimal>> values = new();
+        var fileContent = curve.DataFileContent;
+        char[] delimiters = { '\r', '\n' };
+        var lines = fileContent.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+        foreach (var line in lines)
+        {
+            if (line.StartsWith("#")) continue;
+
+            var lineValues = line.Split(" ");
+            var format = new NumberFormatInfo { NumberDecimalDigits = 6, NumberGroupSeparator = "." };
+            var val1 = decimal.Parse(lineValues[0], format);
+            var val2 = decimal.Parse(lineValues[1], format);
+            values.Add(new List<decimal>
+            {
+                val1, val2
+            });
+        }
+
+        return new ServiceResponse<string>
+        {
+            Data = JsonSerializer.Serialize(values)
         };
     }
 }

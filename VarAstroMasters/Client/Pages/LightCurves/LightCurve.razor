@@ -1,27 +1,57 @@
 ﻿@page "/LightCurves/{LightCurveId:int}"
 @inject ILightCurveService LightCurveService
-<h3>LightCurve</h3>
 
 @if (_curve is null)
 {
-    <h3>Loading curve..</h3>
+    <h3>Prebieha načítanie..</h3>
 }
 else
 {
-    <h3>Curve @_curve.Id</h3>
-    <span>Value: @_curve.Value</span>
-    <h4>Author <a href="@Endpoints.ClientUserGetSingle/@_curve.User.Id">@_curve.User.Name</a></h4>
+    <h3>Detail krivky (hviezda <strong>@_curve.Star.Name</strong>)</h3>
+
+    <table class="table">
+        <tbody>
+        <tr>
+            <th scope="row">Autor</th>
+            <td>@_curve.User.Name</td>
+        </tr>
+        <tr>
+            <th scope="row">RA</th>
+            <td>05:48:23.959</td>
+        </tr>
+        <tr>
+            <th scope="row">DEC</th>
+            <td>+30:57:03.94</td>
+        </tr>
+        <tr>
+            <th scope="row">Hvezdáreň</th>
+            <td>Brno 42</td>
+        </tr>
+        <tr>
+            <th scope="row">Zariadenie</th>
+            <td>teleskop 4000mm</td>
+        </tr>
+        </tbody>
+    </table>
+
+    @if (_values is not null)
+    {
+        <ExampleChart Values="@_values"></ExampleChart>
+    }
 }
 
 @code {
+
     [Parameter]
     public int LightCurveId { get; set; }
 
-    private LightCurveDTO? _curve = null;
+    private LightCurveDTO? _curve { get; set; } = null;
+    private string _values { get; set; } = string.Empty;
 
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         _curve = await LightCurveService.GetLightCurve(LightCurveId);
+        _values = await LightCurveService.GetLightCurveValues(LightCurveId);
     }
 
 }

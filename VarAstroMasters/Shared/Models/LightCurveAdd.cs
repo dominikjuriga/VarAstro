@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http;
-using VarAstroMasters.Shared.Static;
 
 namespace VarAstroMasters.Shared.Models;
 
 public class LightCurveAdd
 {
     [Required] public int StarId { get; set; }
-    [Required] public IFormFile DataFile { get; set; }
+
+    [Required(ErrorMessage = "Dátový súbor je povinný.")]
+    public string DataFileContent { get; set; }
 
     [Required(ErrorMessage = "Pole Formát JD je povinné.")]
     public string? JD { get; set; } = null;

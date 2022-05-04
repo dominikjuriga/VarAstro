@@ -157,7 +157,7 @@ namespace VarAstroMasters.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("DataFileName")
+                    b.Property<string>("DataFileContent")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -165,8 +165,8 @@ namespace VarAstroMasters.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("Publish")
-                        .HasColumnType("tinyint(1)");
+                    b.Property<int>("PublishVariant")
+                        .HasColumnType("int");
 
                     b.Property<int>("StarId")
                         .HasColumnType("int");
@@ -174,10 +174,6 @@ namespace VarAstroMasters.Server.Migrations
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
-
-                    b.Property<string>("Values")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 

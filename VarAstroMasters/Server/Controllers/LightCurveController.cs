@@ -16,17 +16,25 @@ public class LightCurveController : ControllerBase
         _context = context;
         _lightCurveService = lightCurveService;
     }
+
     [HttpGet]
     public async Task<ActionResult<ServiceResponse<List<LightCurveDTO>>>> GetLightCurvesAsync()
     {
         var sr = await _lightCurveService.GetLightCurvesAsync();
         return Ok(sr);
     }
-    
+
     [HttpGet("{lightCurveId}")]
     public async Task<ActionResult<ServiceResponse<LightCurveDTO>>> GetLightCurveAsync(int lightCurveId)
     {
         var sr = await _lightCurveService.GetLightCurveAsync(lightCurveId);
+        return Ok(sr);
+    }
+
+    [HttpGet("{lightCurveId}/values")]
+    public async Task<ActionResult<ServiceResponse<string>>> GetLightCurveValuesAsync(int lightCurveId)
+    {
+        var sr = await _lightCurveService.GetValuesFromCurveAsync(lightCurveId);
         return Ok(sr);
     }
 
