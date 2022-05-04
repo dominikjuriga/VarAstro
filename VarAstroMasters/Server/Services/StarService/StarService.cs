@@ -11,18 +11,17 @@ public class StarService : IStarService
     {
         _context = context;
     }
+
     public async Task<ServiceResponse<List<StarDTO>>> GetStarsAsync()
     {
         var data = await _context.Stars.ToListAsync();
         var stars = new List<StarDTO>();
         foreach (var star in data)
-        {
             stars.Add(new StarDTO
             {
                 Name = star.Name,
                 Id = star.Id
             });
-        }
         return new ServiceResponse<List<StarDTO>>
         {
             Data = stars
@@ -38,13 +37,10 @@ public class StarService : IStarService
         {
             var curves = new List<LightCurveDTO>();
             foreach (var curve in star.LightCurves)
-            {
                 curves.Add(new LightCurveDTO
                 {
-                    Id = curve.Id,
-                    Value = curve.Value
+                    Id = curve.Id
                 });
-            }
             return new ServiceResponse<StarDTO>
             {
                 Data = new StarDTO

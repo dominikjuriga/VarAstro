@@ -8,27 +8,29 @@
 }
 else
 {
-    <h3>Star <strong>@Star.Name</strong></h3>
-                   
+    <h3>Star <strong>@Star.Name</strong> <a href="@Endpoints.ClientLightCurveAdd/@Star.Id">Pridať pozorovanie</a></h3>
+
     @if (Star.LightCurves.Count > 0)
     {
         <h4>Latest Light Curves</h4>
         <ul>
             @foreach (var curve in Star.LightCurves)
             {
-                <li><a href="@Endpoints.ClientLightCurveGetSingle/@curve.Id">@curve.Value</a></li>
+                <li>
+                    <a href="@Endpoints.ClientLightCurveGetSingle/@curve.Id">@curve.Value</a>
+                </li>
             }
         </ul>
     }
-                   
 }
 
 @code {
+
     [Parameter]
     public int StarId { get; set; }
 
     private StarDTO? Star { get; set; }
-    
+
     protected override async Task OnInitializedAsync()
     {
         Star = await StarService.GetStarAsync(StarId);

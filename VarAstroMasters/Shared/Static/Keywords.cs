@@ -10,4 +10,10 @@ public static class Keywords
     public static readonly string Role_User = "User";
     public static readonly string Role_Admin = "Admin";
     public static readonly string Client_HTTP_Bearer_Header = "bearer";
+    public static readonly string LcJdFormatHeliocentric = "heliocentric";
+    public static readonly string LcJdFormatGeocentric = "geocentric";
+    public static readonly string LcFilterNoFilter = "NoFilter";
+    public static readonly string LcFilterU = "U";
+    public static readonly string LcPhotometricInstrumental = "instrumental";
+    public static readonly string LcPhotometricStandard = "standard";
 }

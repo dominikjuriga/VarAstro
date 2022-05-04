@@ -1,0 +1,30 @@
+﻿<div class="nav-item nav-dropdown @_itemClass px-3">
+    <button class="nav-link" @onclick="HandleToggle">
+        <div>
+            <span class="oi oi-list-rich" aria-hidden="true"></span> @Title
+        </div><span class="dropdown-triangle">&#9658;</span>
+    </button>
+</div>
+
+<div class="@_itemClass nav-dropdown-children">
+    @ChildContent
+</div>
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    private bool _toggled = false;
+    private string _itemClass = "nav-dropdown";
+
+    private void HandleToggle()
+    {
+        _toggled = !_toggled;
+        _itemClass = _toggled ? "nav-dropdown-active" : "";
+    }
+
+}

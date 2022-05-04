@@ -1,0 +1,30 @@
+﻿.nav-dropdown button {
+    justify-content: space-between;
+}
+
+.nav-dropdown button .oi {
+    margin-right: .5rem;
+}
+
+.nav-dropdown .dropdown-triangle {
+    transition: .3s ease-in-out;
+}
+
+.nav-dropdown .dropdown-triangle {
+    transform: rotate(180deg);
+}
+
+.nav-dropdown.nav-dropdown-active .dropdown-triangle {
+    transform: rotate(90deg);
+}
+
+.nav-dropdown-children {
+    max-height: 0;
+    overflow-y: hidden;
+    padding-left: .5rem;
+    transition: .3s ease-in-out max-height;
+}
+
+.nav-dropdown-active.nav-dropdown-children {
+    max-height: 500px;
+}

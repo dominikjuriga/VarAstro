@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+
 namespace VarAstroMasters.Server.Services.LightCurveService;
 
 public class LightCurveService : ILightCurveService
@@ -19,18 +20,15 @@ public class LightCurveService : ILightCurveService
             .ToListAsync();
         var response = new List<LightCurveDTO>();
         foreach (var curve in data)
-        {
             response.Add(new LightCurveDTO
             {
-                Value = curve.Value,
                 Star = new StarDTO
                 {
                     Name = curve.Star.Name,
-                    Id = curve.Star.Id,
+                    Id = curve.Star.Id
                 },
                 Id = curve.Id
             });
-        }
 
         return new ServiceResponse<List<LightCurveDTO>>
         {
@@ -46,18 +44,15 @@ public class LightCurveService : ILightCurveService
             .Include(lc => lc.User)
             .FirstOrDefaultAsync();
         if (data is null)
-        {
             return new ServiceResponse<LightCurveDTO>
             {
                 Success = false
             };
-        }
 
         return new ServiceResponse<LightCurveDTO>
         {
             Data = new LightCurveDTO
             {
-                Value = data.Value,
                 Id = data.Id,
                 Star = new StarDTO
                 {
@@ -76,11 +71,10 @@ public class LightCurveService : ILightCurveService
     public async Task<ServiceResponse<LightCurveDTO>> AddLightCurveAsync(LightCurveAdd lightCurveAdd)
     {
         var userId = _authService.GetUserId();
-        LightCurve lightCurve = new LightCurve
+        var lightCurve = new LightCurve
         {
             StarId = lightCurveAdd.StarId,
-            UserId = _authService.GetUserId(),
-            Value = lightCurveAdd.Value
+            UserId = _authService.GetUserId()
         };
         _context.LightCurves.Add(lightCurve);
         await _context.SaveChangesAsync();
@@ -89,8 +83,7 @@ public class LightCurveService : ILightCurveService
         {
             Data = new LightCurveDTO
             {
-                Id = lightCurve.Id,
-                Value = lightCurve.Value
+                Id = lightCurve.Id
             }
         };
     }

@@ -16,43 +16,42 @@
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+                <span class="oi oi-home" aria-hidden="true"></span> Domov
             </NavLink>
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="@Endpoints.ClientLightCurveGetAll">
-                <span class="oi oi-lightbulb" aria-hidden="true"></span> Light Curves
-            </NavLink>
-        </div>
+        <NavDropdown Title="Hviezdy">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="@Endpoints.ClientStarGetAll">
+                    <span class="oi oi-star" aria-hidden="true"></span> Zoznam hviezd
+                </NavLink>
+            </div>
+        </NavDropdown>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="@Endpoints.ClientStarGetAll">
-                <span class="oi oi-star" aria-hidden="true"></span> Stars
-            </NavLink>
-        </div>
+        <NavDropdown Title="Krivkz">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="@Endpoints.ClientLightCurveGetAll">
+                    <span class="oi oi-lightbulb" aria-hidden="true"></span> Zoznam kriviek
+                </NavLink>
+            </div>
+        </NavDropdown>
         <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">
                     <button class="nav-link" @onclick="HandleLogOut">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Log Out
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Odhlásenie
                     </button>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="@Endpoints.ClientLightCurveAdd">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Add Light Curve
-                    </NavLink>
                 </div>
             </Authorized>
             <NotAuthorized>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="@Endpoints.ClientAuthLogIn">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Login
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Prihlásenie
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="@Endpoints.ClientAuthRegister">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Register
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Registrácia
                     </NavLink>
                 </div>
             </NotAuthorized>

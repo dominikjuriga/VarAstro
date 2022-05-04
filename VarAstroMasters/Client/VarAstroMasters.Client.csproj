@@ -36,5 +36,4 @@
     <_ContentIncludedByDefault Remove="wwwroot\icon-192.png" />
     <_ContentIncludedByDefault Remove="wwwroot\index.html" />
   </ItemGroup>
-
 </Project>
