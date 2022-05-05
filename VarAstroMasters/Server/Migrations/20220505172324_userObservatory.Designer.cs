@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VarAstroMasters.Server.Data;
 
@@ -10,9 +11,10 @@ using VarAstroMasters.Server.Data;
 namespace VarAstroMasters.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220505172324_userObservatory")]
+    partial class userObservatory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -222,7 +224,6 @@ namespace VarAstroMasters.Server.Migrations
                         .HasColumnType("decimal(10,8)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
@@ -410,9 +411,7 @@ namespace VarAstroMasters.Server.Migrations
                 {
                     b.HasOne("VarAstroMasters.Shared.Models.User", null)
                         .WithMany("Observatories")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("VarAstroMasters.Shared.Models.Star", b =>

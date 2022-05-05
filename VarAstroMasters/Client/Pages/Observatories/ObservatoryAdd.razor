@@ -1,0 +1,57 @@
+﻿@page "/Observatories/Add"
+@inject IObservatoryService ObservatoryService
+<h3>Pridať hvezdáreň</h3>
+
+@if (!succeeded)
+{
+    <EditForm Model="_observatoryAdd" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator/>
+
+        <div class="my-3">
+            <label for="address" class="form-label">
+                Adresa
+            </label>
+            <InputText id="address" @bind-Value="_observatoryAdd.Address" class="form-control"></InputText>
+            <ValidationMessage For="@(() => _observatoryAdd.Address)"/>
+        </div>
+
+        <div class="my-3">
+            <label for="longitude" class="form-label">
+                Zemepisná dĺžka
+            </label>
+            <InputNumber id="longitude" @bind-Value="_observatoryAdd.Longitude" class="form-control"></InputNumber>
+            <ValidationMessage For="@(() => _observatoryAdd.Longitude)"/>
+        </div>
+
+        <div class="my-3">
+            <label for="latitude" class="form-label">
+                Zemepisná šírka
+            </label>
+            <InputNumber id="latitude" @bind-Value="_observatoryAdd.Latitude" class="form-control"></InputNumber>
+            <ValidationMessage For="@(() => _observatoryAdd.Latitude)"/>
+        </div>
+        <ValidationSummary></ValidationSummary>
+        <button class="btn btn-primary" type="submit">Pridať zariadenie</button>
+    </EditForm>
+}
+else
+{
+    <Alert type="success">
+        Zariadenie @_observatoryAdd.Address bolo vytvorené.
+    </Alert>
+}
+
+@code {
+    private Observatory _observatoryAdd { get; set; } = new();
+    private bool succeeded { get; set; } = false;
+
+    private async Task HandleSubmit()
+    {
+        var result = await ObservatoryService.AddObservatory(_observatoryAdd);
+        if (result == true)
+        {
+            succeeded = true;
+        }
+    }
+
+}

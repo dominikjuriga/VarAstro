@@ -1,0 +1,36 @@
+﻿@page "/Observatories"
+@inject IObservatoryService ObservatoryService
+
+@if (_observatories is null)
+{
+    <Loader/>
+}
+else
+{
+    <h3>Zoznam hvezdární</h3>
+
+    @if (_observatories.Count == 0)
+    {
+        <h4>Nemáte registrované žiadne hvezdárne.</h4>
+        <a href="@Endpoints.ClientObservatoriesAdd">Pridať hvezdáreň</a>
+    }
+    else
+    {
+        <ul>
+            @foreach (var observatory in _observatories)
+            {
+                <li>@observatory.Address</li>
+            }
+        </ul>
+    }
+}
+
+@code {
+    private List<Observatory>? _observatories { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _observatories = await ObservatoryService.GetMyObservatories();
+    }
+
+}

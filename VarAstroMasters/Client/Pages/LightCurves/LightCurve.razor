@@ -7,7 +7,12 @@
 }
 else
 {
-    <h3>Detail krivky (hviezda <strong>@_curve.Star.Name</strong>)</h3>
+    <h3>
+        Detail krivky (hviezda
+        <strong>
+            <a href="@Endpoints.ClientStarGetSingle/@_curve.Star.Id">@_curve.Star.Name</a>
+        </strong>)
+    </h3>
 
     <table class="table">
         <tbody>

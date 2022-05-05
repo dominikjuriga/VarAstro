@@ -25,9 +25,17 @@ public static class Endpoints
     public static readonly string ApiStarGetSingle = $"{ApiStarBasePath}";
     public static readonly string ApiUploadFile = "api/star/fileUpload";
 
+    public static readonly string ApiObservatoryBase = "api/observatory";
+    public static readonly string ApiObservatoryGetObservatories = $"{ApiObservatoryBase}";
+    public static readonly string ApiObservatoryAdd = $"{ApiObservatoryBase}";
+
     public static readonly string ClientStarBase = "/Stars";
     public static readonly string ClientStarGetAll = $"{ClientStarBase}";
     public static readonly string ClientStarGetSingle = $"{ClientStarBase}";
+
+    public static readonly string ClientObservatoriesBase = "/Observatories";
+    public static readonly string ClientObservatoriesList = $"{ClientObservatoriesBase}";
+    public static readonly string ClientObservatoriesAdd = $"{ClientObservatoriesBase}/Add";
 
     public static readonly string ClientLightCurveBase = "/LightCurves";
     public static readonly string ClientLightCurveGetAll = $"{ClientLightCurveBase}";
