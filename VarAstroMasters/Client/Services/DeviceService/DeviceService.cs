@@ -22,4 +22,17 @@ public class DeviceService : IDeviceService
         var response = await _http.GetFromJsonAsync<ServiceResponse<List<DeviceDTO>>>(Endpoints.ApiDeviceGetMyDevices);
         return response.Data;
     }
+
+    public async Task<bool> DeleteDevice(int deviceId)
+    {
+        await _http.DeleteAsync($"{Endpoints.ApiDeviceDelete}/{deviceId}");
+        return true;
+    }
+
+    public async Task<DeviceDTO> EditDevice(Device device)
+    {
+        var response = await _http.PutAsJsonAsync(Endpoints.ApiDeviceEdit, device);
+        var data = await response.Content.ReadFromJsonAsync<ServiceResponse<DeviceDTO>>();
+        return data.Data;
+    }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Data.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace VarAstroMasters.Server.Services.DeviceService;
 
@@ -44,12 +45,48 @@ public class DeviceService : IDeviceService
             response.Add(new DeviceDTO
             {
                 Id = device.Id,
-                Name = device.Name
+                Name = device.Name,
+                UserId = device.UserId
             });
 
         return new ServiceResponse<List<DeviceDTO>>
         {
             Data = response
+        };
+    }
+
+    public async Task<ServiceResponse<bool>> DeleteDevice(int deviceId)
+    {
+        var dbDevice = await _context.Devices.FindAsync(deviceId);
+        if (dbDevice is null)
+            return new ServiceResponse<bool>
+            {
+                Success = false,
+                Message = "Not Found"
+            };
+
+        _context.Devices.Remove(dbDevice);
+        await _context.SaveChangesAsync();
+
+        return new ServiceResponse<bool>
+        {
+            Data = true
+        };
+    }
+
+    public async Task<ServiceResponse<DeviceDTO>> EditDevice(Device device)
+    {
+        var dbDevice = _context.Devices.Where(d => d.Id == device.Id).FirstOrDefaultAsync();
+        dbDevice.Result.Name = device.Name;
+        await _context.SaveChangesAsync();
+        return new ServiceResponse<DeviceDTO>
+        {
+            Data = new DeviceDTO
+            {
+                Id = dbDevice.Result.Id,
+                Name = dbDevice.Result.Name,
+                UserId = dbDevice.Result.UserId
+            }
         };
     }
 }

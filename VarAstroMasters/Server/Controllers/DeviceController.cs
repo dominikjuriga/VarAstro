@@ -26,4 +26,18 @@ public class DeviceController : ControllerBase
         var sr = await _deviceService.GetMyDevices();
         return Ok(sr);
     }
+
+    [HttpDelete("{deviceId}")]
+    public async Task<ActionResult<ServiceResponse<bool>>> DeleteDevice(int deviceId)
+    {
+        var sr = await _deviceService.DeleteDevice(deviceId);
+        return Ok(sr);
+    }
+
+    [HttpPut]
+    public async Task<ActionResult<ServiceResponse<bool>>> EditDevice(Device device)
+    {
+        var sr = await _deviceService.EditDevice(device);
+        return Ok(sr);
+    }
 }

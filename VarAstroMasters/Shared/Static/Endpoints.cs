@@ -16,6 +16,8 @@ public static class Endpoints
     public static readonly string ApiLightCurveAdd = $"{ApiLightCurveBasePath}/add";
     public static readonly string ApiDeviceBasePath = "api/device";
     public static readonly string ApiDeviceAdd = $"{ApiDeviceBasePath}/add";
+    public static readonly string ApiDeviceEdit = $"{ApiDeviceBasePath}";
+    public static readonly string ApiDeviceDelete = $"{ApiDeviceBasePath}";
     public static readonly string ApiDeviceGetMyDevices = $"{ApiDeviceBasePath}/list";
 
     public static readonly string ApiStarBasePath = "api/star";
