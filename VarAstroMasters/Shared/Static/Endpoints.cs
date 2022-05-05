@@ -8,6 +8,7 @@ public static class Endpoints
     public static readonly string ApiUserBase = "api/user";
     public static readonly string ApiUserGetSingle = $"{ApiUserBase}";
     public static readonly string ApiUserGetFromToken = $"{ApiUserBase}/token";
+    public static readonly string ApiUserGetMyDevices = $"{ApiUserBase}/devices";
 
     public static readonly string ApiLightCurveBasePath = "api/lightcurve";
     public static readonly string ApiLightCurveGetAll = $"{ApiLightCurveBasePath}";

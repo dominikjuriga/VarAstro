@@ -24,4 +24,5 @@ public class LightCurveAdd
     public PublishVariant PublishVariant { get; set; } = PublishVariant.All;
 
     public string Comment { get; set; } = string.Empty;
+    public int? DeviceId { get; set; } = null;
 }

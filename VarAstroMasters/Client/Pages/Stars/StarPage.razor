@@ -2,6 +2,8 @@
 
 @inject IStarService StarService
 
+<PageTitle>@(Star is null ? "" : Star.Name) | @Keywords.DefaultPageTitle</PageTitle>
+
 @if (Star == null)
 {
     <Loader/>

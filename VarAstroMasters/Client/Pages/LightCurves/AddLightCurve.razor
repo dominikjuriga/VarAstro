@@ -1,12 +1,27 @@
 ﻿@page "/LightCurves/Add/{StarId:int}"
 @using System.Text.RegularExpressions
+@using Microsoft.Extensions.Options
 @using VarAstroMasters.Shared
 @inject ILightCurveService LightCurveService
 @inject IStarService StarService
+@inject IUserService UserService
 
 @attribute [Authorize(Roles = "User,Administrator")]
-<h3>Nové pozorovanie - hviezda <strong>@_star.Name</strong></h3>
+<PageTitle>Nové pozorovanie | @Keywords.DefaultPageTitle</PageTitle>
+<h3>
+    Nové pozorovanie
+    @if (_star is not null)
+    {
+        <span>- hviezda <strong>@_star.Name</strong></span>
+    }
+</h3>
 
+@if (_star is null || _devices is null)
+{
+    <Loader/>
+}
+else
+{
 @if (!succeeded)
 {
     <EditForm Model="_lightCurveAdd" OnValidSubmit="HandleSubmit">
@@ -76,6 +91,20 @@
         </div>
 
         <div class="my-3">
+            <label class="form-label" for="deviceId">
+                Zariadenie
+            </label>
+            <InputSelect @bind-Value="_lightCurveAdd.DeviceId" id="deviceId" class="form-select">
+                <option value="null">Vyberte zariadenie</option>
+                @foreach (var device in _devices)
+                {
+                    <option value="@device.Id">@device.Name</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => _lightCurveAdd.PublishVariant)"/>
+        </div>
+
+        <div class="my-3">
             <label class="form-check-label" for="publish">
                 Poznámky
             </label>
@@ -91,8 +120,9 @@
 else
 {
     <Alert>
-        Pozorovanie úspešne pridané.
+        Pozorovanie úspešne pridané. <a href="@Endpoints.ClientLightCurveGetSingle/@savedId">Zobraziť.</a>
     </Alert>
+}
 }
 
 @code {
@@ -105,23 +135,27 @@ else
     private static long maxFileSize { get; set; } = 1024 * 1000 * maxFileSizeKiB;
     private static string dataFileMsg { get; set; } = $"Maximálna veľkosť súboru je {maxFileSizeKiB}KiB. Pokiaľ súbor obsahuje metadáta v správnom formáte, môže byť formulár doplnený automaticky.";
     private static string maxFileSizeMsg { get; set; } = $"Maximálna veľkosť súboru je {maxFileSizeKiB}KiB. Podporované formáty .jpg.";
-    private StarDTO _star { get; set; } = new();
+    private StarDTO? _star { get; set; }
     private MatchCollection? _matches { get; set; }
-    private bool succeeded { get; set; } = false;
+    private bool succeeded { get; set; }
+    private List<DeviceDTO>? _devices { get; set; }
+    private int? savedId { get; set; }
 
 
     protected override async Task OnInitializedAsync()
     {
         _star = await StarService.GetStarAsync(StarId);
+        _devices = await UserService.GetMyDevices();
         _lightCurveAdd.StarId = _star.Id;
     }
 
     private async Task HandleSubmit()
     {
         var result = await LightCurveService.AddLightCurve(_lightCurveAdd);
-        if (result)
+        if (result.Success)
         {
             succeeded = true;
+            savedId = result.Data;
         }
     }
 
