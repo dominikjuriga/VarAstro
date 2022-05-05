@@ -9,6 +9,7 @@ global using Blazored.LocalStorage;
 global using VarAstroMasters.Client.Providers;
 global using VarAstroMasters.Shared.DTO;
 global using System.Net.Http.Json;
+global using VarAstroMasters.Client.Services.DeviceService;
 using VarAstroMasters.Client;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -25,6 +26,7 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IStarService, StarService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IDeviceService, DeviceService>();
 builder.Services.AddScoped<ILightCurveService, LightCurveService>();
 
 builder.Services.AddScoped<AppAuthStateProvider>();

@@ -1,0 +1,45 @@
+﻿@page "/Device/List"
+@inject IDeviceService DeviceService
+
+@if (_devices is null)
+{
+    <h3>Prebieha načítavanie..</h3>
+}
+else
+{
+    <h3>Vaše zariadenia</h3>
+
+    @if (_devices.Count == 0)
+    {
+        <span>Nemáte žiadne registrované zariadenia.</span>
+        <a href="@Endpoints.ClientDeviceAdd">Pridať zariadenie</a>
+    }
+    else
+    {
+        <ul>
+            @foreach (var device in _devices)
+            {
+                <li>
+                    <span class="oi oi-camera-slr"></span>
+                    @device.Name
+                    <button class="btn btn-info" @onclick="() => DeleteDevice(device.Id)">Zmazať</button>
+                </li>
+            }
+        </ul>
+    }
+}
+
+@code {
+    private List<DeviceDTO>? _devices { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _devices = await DeviceService.GetMyDevices();
+    }
+
+    private void DeleteDevice(int deviceId)
+    {
+        Console.WriteLine(deviceId);
+    }
+
+}

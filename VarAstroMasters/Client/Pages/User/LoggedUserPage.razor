@@ -1,0 +1,42 @@
+﻿@page "/me"
+@inject IUserService UserService
+
+@if (_user is null)
+{
+    <h3>Prebieha načítavanie..</h3>
+}
+else
+{
+    <h3>Váš profil</h3>
+
+    <h4>Vaše zariadenia</h4>
+
+    @if (_user.Devices.Count == 0)
+    {
+        <span>Nemáte žiadne registrované zariadenia.</span>
+        <a href="@Endpoints.ClientDeviceAdd">Pridať zariadenie</a>
+    }
+    else
+    {
+        <ul>
+            @foreach (var device in _user.Devices)
+            {
+                <li>
+                    <span class="oi oi-camera-slr"></span>
+                    @device.Name
+                </li>
+            }
+        </ul>
+    }
+}
+
+@code {
+    private UserDTO? _user = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _user = await UserService.GetUserFromTokenAsync();
+    }
+
+}
+

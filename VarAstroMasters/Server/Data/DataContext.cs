@@ -5,7 +5,9 @@ namespace VarAstroMasters.Server.Data;
 
 public class DataContext : IdentityDbContext<User>
 {
-    public DataContext(DbContextOptions<DataContext> options) : base(options) {}
+    public DataContext(DbContextOptions<DataContext> options) : base(options)
+    {
+    }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -19,7 +21,8 @@ public class DataContext : IdentityDbContext<User>
         );
         base.OnModelCreating(builder);
     }
-    
+
     public DbSet<Star> Stars { get; set; }
     public DbSet<LightCurve> LightCurves { get; set; }
+    public DbSet<Device> Devices { get; set; }
 }

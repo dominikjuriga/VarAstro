@@ -37,6 +37,23 @@
         </NavDropdown>
         <AuthorizeView>
             <Authorized>
+                <NavDropdown Title="Zariadenia">
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="@Endpoints.ClientDeviceList">
+                            <span class="oi oi-lightbulb" aria-hidden="true"></span> Zoznam zariadení
+                        </NavLink>
+                    </div>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="@Endpoints.ClientDeviceAdd">
+                            <span class="oi oi-lightbulb" aria-hidden="true"></span> Pridať zariadenie
+                        </NavLink>
+                    </div>
+                </NavDropdown>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="@Endpoints.ClientUserProfile">
+                        <span class="oi oi-person" aria-hidden="true"></span> Profil
+                    </NavLink>
+                </div>
                 <div class="nav-item px-3">
                     <button class="nav-link" @onclick="HandleLogOut">
                         <span class="oi oi-list-rich" aria-hidden="true"></span> Odhlásenie

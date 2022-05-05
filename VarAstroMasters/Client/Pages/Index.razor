@@ -1,27 +1,11 @@
 ﻿@page "/"
-@inject ILocalStorageService LocalStorageService
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject HttpClient HttpClient
-@using Blazored.LocalStorage
-@using System.Net.Http.Headers
+
 <PageTitle>Var Astro</PageTitle>
 
 <h1>Vitajte v systéme Var Astro!</h1>
 
 @code {
 
-    protected override async Task OnInitializedAsync()
-    {
-        if (await LocalStorageService.ContainKeyAsync("bearerToken"))
-        {
-            var savedToken = await LocalStorageService.GetItemAsync<string>("bearerToken");
 
-            await ((AppAuthStateProvider)AuthenticationStateProvider).LogIn();
-
-            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
-
-            StateHasChanged();
-        }
-    }
 
 }
