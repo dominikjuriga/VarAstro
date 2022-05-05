@@ -25,4 +25,5 @@ public class DataContext : IdentityDbContext<User>
     public DbSet<Star> Stars { get; set; }
     public DbSet<LightCurve> LightCurves { get; set; }
     public DbSet<Device> Devices { get; set; }
+    public DbSet<Observatory> Observatories { get; set; }
 }

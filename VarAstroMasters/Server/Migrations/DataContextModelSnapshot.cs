@@ -182,9 +182,15 @@ namespace VarAstroMasters.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("DeviceId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ImageFileName")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int?>("ObservatoryId")
+                        .HasColumnType("int");
 
                     b.Property<int>("PublishVariant")
                         .HasColumnType("int");
@@ -198,11 +204,42 @@ namespace VarAstroMasters.Server.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DeviceId");
+
+                    b.HasIndex("ObservatoryId");
+
                     b.HasIndex("StarId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("LightCurves");
+                });
+
+            modelBuilder.Entity("VarAstroMasters.Shared.Models.Observatory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<decimal>("Latitude")
+                        .HasColumnType("decimal(10,8)");
+
+                    b.Property<decimal>("Longitude")
+                        .HasColumnType("decimal(10,8)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Observatories");
                 });
 
             modelBuilder.Entity("VarAstroMasters.Shared.Models.Star", b =>
@@ -362,6 +399,14 @@ namespace VarAstroMasters.Server.Migrations
 
             modelBuilder.Entity("VarAstroMasters.Shared.Models.LightCurve", b =>
                 {
+                    b.HasOne("VarAstroMasters.Shared.Models.Device", "Device")
+                        .WithMany()
+                        .HasForeignKey("DeviceId");
+
+                    b.HasOne("VarAstroMasters.Shared.Models.Observatory", "Observatory")
+                        .WithMany()
+                        .HasForeignKey("ObservatoryId");
+
                     b.HasOne("VarAstroMasters.Shared.Models.Star", "Star")
                         .WithMany("LightCurves")
                         .HasForeignKey("StarId")
@@ -374,9 +419,22 @@ namespace VarAstroMasters.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Device");
+
+                    b.Navigation("Observatory");
+
                     b.Navigation("Star");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VarAstroMasters.Shared.Models.Observatory", b =>
+                {
+                    b.HasOne("VarAstroMasters.Shared.Models.User", null)
+                        .WithMany("Observatories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("VarAstroMasters.Shared.Models.Star", b =>
@@ -387,6 +445,8 @@ namespace VarAstroMasters.Server.Migrations
             modelBuilder.Entity("VarAstroMasters.Shared.Models.User", b =>
                 {
                     b.Navigation("Devices");
+
+                    b.Navigation("Observatories");
                 });
 #pragma warning restore 612, 618
         }

@@ -22,4 +22,11 @@ public class UserService : IUserService
             await _httpClient.GetFromJsonAsync<ServiceResponse<UserDTO>>(Endpoints.ApiUserGetFromToken);
         return response.Data;
     }
+
+    public async Task<List<DeviceDTO>> GetMyDevices()
+    {
+        var response =
+            await _httpClient.GetFromJsonAsync<ServiceResponse<List<DeviceDTO>>>(Endpoints.ApiUserGetMyDevices);
+        return response.Data;
+    }
 }

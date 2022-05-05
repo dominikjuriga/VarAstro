@@ -18,14 +18,41 @@
 
     protected override void OnInitialized()
     {
-        _config = new ScatterConfig { };
+        _config = new ScatterConfig
+        {
+            Options = new LineOptions()
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Svetelná krivka"
+                },
+                Scales = new Scales
+                {
+                    YAxes = new List<CartesianAxis>
+                    {
+                        new LinearCartesianAxis
+                        {
+                            Ticks = new LinearCartesianTicks()
+                            {
+                                Reverse = true
+                            }
+                        }
+                    }
+                }
+            }
+        };
         List<Point> points = new();
         var vals = JsonSerializer.Deserialize<List<List<double>>>(values);
         foreach (var val in vals)
         {
             points.Add(new Point(val[0], val[1]));
         }
-        var dataset = new LineDataset<Point>();
+        var dataset = new LineDataset<Point>
+        {
+            Label = "Mag"
+        };
         foreach (var point in points)
         {
             dataset.Add(point);

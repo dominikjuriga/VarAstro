@@ -6,41 +6,50 @@
 @inject HttpClient HttpClient
 @inject AppAuthStateProvider AuthStateProvider 
 
-<h3>Login</h3>
+<PageTitle>Prihlásenie | @Keywords.DefaultPageTitle</PageTitle>
 
-<EditForm Model="_userLogin" OnValidSubmit="HandleLogin">
-    <DataAnnotationsValidator/>
+<h3>Prihlásenie</h3>
 
-    <div class="form-group my-3">
-        <label for="email">Email</label>
-        <InputText @bind-Value="_userLogin.EmailAddress" id="email" class="form-control"/>
-        <ValidationMessage For="@(() => _userLogin.EmailAddress)"/>
-    </div>
+@if (!succeeded)
+{
+    <EditForm Model="_userLogin" OnValidSubmit="HandleLogin">
+        <DataAnnotationsValidator/>
 
-    <div class="form-group my-3">
-        <label for="password">Heslo</label>
-        <InputText @bind-Value="_userLogin.Password" id="password" type="password" class="form-control"/>
-        <ValidationMessage For="@(() => _userLogin.Password)"/>
-    </div>
+        <div class="form-group my-3">
+            <label for="email">Email</label>
+            <InputText @bind-Value="_userLogin.EmailAddress" id="email" class="form-control"/>
+            <ValidationMessage For="@(() => _userLogin.EmailAddress)"/>
+        </div>
 
-    <ValidationSummary/>
+        <div class="form-group my-3">
+            <label for="password">Heslo</label>
+            <InputText @bind-Value="_userLogin.Password" id="password" type="password" class="form-control"/>
+            <ValidationMessage For="@(() => _userLogin.Password)"/>
+        </div>
 
-    <button type="submit" class="btn btn-primary btn-lg">Prihlásiť sa</button>
-</EditForm>
+        <ValidationSummary/>
+
+        <button type="submit" class="btn btn-primary btn-lg">Prihlásiť sa</button>
+    </EditForm>
+}
+else
+{
+    <Alert>
+        Prihlásenie prebehlo úspešne.
+    </Alert>
+}
 
 @code {
-    private UserLogin _userLogin = new();
-    private string _message = string.Empty;
-    private string _messageCssClass = string.Empty;
-    private string _returnUrl = string.Empty;
+    private UserLogin _userLogin { get; set; } = new();
+    private bool succeeded { get; set; } = false;
 
     protected override void OnInitialized()
     {
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
-        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("returnUrl", out var url))
-        {
-            _returnUrl = url;
-        }
+    // if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("returnUrl", out var url))
+    // {
+    //     _returnUrl = url;
+    // }
     }
 
     private async Task HandleLogin()
@@ -48,16 +57,17 @@
         var response = await AuthService.LogIn(_userLogin);
         if (response is {Success: true })
         {
-            _message = string.Empty;
+    // _message = string.Empty;
             await LocalStorageService.SetItemAsync(Keywords.JWT_Bearer_Token, response.Data);
             await AuthStateProvider.LogIn();
             HttpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue(Keywords.Client_HTTP_Bearer_Header,
                     response.Data);
+            succeeded = true;
         }
         else
         {
-            _message = response.Message;
+    // _message = response.Message;
         }
     }
 

@@ -42,6 +42,7 @@ public class UserService : IUserService
         var user = await _context.Users
             .Where(u => u.Id == userId)
             .Include(u => u.Devices)
+            .Include(u => u.Observatories)
             .FirstOrDefaultAsync();
 
         var response = new ServiceResponse<UserDTO>
@@ -61,6 +62,45 @@ public class UserService : IUserService
                 Name = device.Name
             });
         response.Data.Devices = devices;
+
+        List<ObservatoryDTO> observatories = new();
+        foreach (var observatory in user.Observatories)
+            observatories.Add(new ObservatoryDTO
+            {
+                Address = observatory.Address,
+                Longitude = observatory.Longitude,
+                Latitude = observatory.Latitude,
+                Id = observatory.Id
+            });
+        response.Data.Observatories = observatories;
         return response;
+    }
+
+    public async Task<ServiceResponse<List<DeviceDTO>>> GetUserDevices()
+    {
+        var userId = _authService.GetUserId();
+        if (userId is null)
+            return new ServiceResponse<List<DeviceDTO>>
+            {
+                Success = false
+            };
+
+        var devices = await _context.Devices
+            .Where(d => d.UserId == userId)
+            .ToListAsync();
+
+        List<DeviceDTO> deviceDTOs = new();
+
+        foreach (var device in devices)
+            deviceDTOs.Add(new DeviceDTO
+            {
+                Id = device.Id,
+                Name = device.Name
+            });
+
+        return new ServiceResponse<List<DeviceDTO>>
+        {
+            Data = deviceDTOs
+        };
     }
 }

@@ -4,42 +4,41 @@
 
 namespace VarAstroMasters.Server.Migrations
 {
-    public partial class UserLink : Migration
+    public partial class lightCurveObservatory : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "UserId1",
+            migrationBuilder.AddColumn<int>(
+                name: "ObservatoryId",
                 table: "LightCurves",
-                type: "varchar(255)",
-                nullable: true)
-                .Annotation("MySql:CharSet", "utf8mb4");
+                type: "int",
+                nullable: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_LightCurves_UserId1",
+                name: "IX_LightCurves_ObservatoryId",
                 table: "LightCurves",
-                column: "UserId1");
+                column: "ObservatoryId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_LightCurves_AspNetUsers_UserId1",
+                name: "FK_LightCurves_Observatories_ObservatoryId",
                 table: "LightCurves",
-                column: "UserId1",
-                principalTable: "AspNetUsers",
+                column: "ObservatoryId",
+                principalTable: "Observatories",
                 principalColumn: "Id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_LightCurves_AspNetUsers_UserId1",
+                name: "FK_LightCurves_Observatories_ObservatoryId",
                 table: "LightCurves");
 
             migrationBuilder.DropIndex(
-                name: "IX_LightCurves_UserId1",
+                name: "IX_LightCurves_ObservatoryId",
                 table: "LightCurves");
 
             migrationBuilder.DropColumn(
-                name: "UserId1",
+                name: "ObservatoryId",
                 table: "LightCurves");
         }
     }

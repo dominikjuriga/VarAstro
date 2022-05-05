@@ -9,16 +9,16 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    <h3>Whoops, you are not allowed to see this page.</h3>
-                    <h5>Please <a href="/login">login</a> or <a href="/register">register</a> an account.</h5>
+                    <h3>K tejto stránke nemáte prístup!</h3>
+                    <h5>Prosím, <a href="/login">prihláste sa</a> alebo si <a href="/register">vytvorte účet</a>.</h5>
                 </NotAuthorized>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
         </Found>
         <NotFound>
-            <PageTitle>Not found</PageTitle>
+            <PageTitle>Stránka nenájdená | @Keywords.DefaultPageTitle</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
-                <p role="alert">Sorry, there's nothing at this address.</p>
+                <p role="alert">Na tejto adrese nič neexistuje.</p>
             </LayoutView>
         </NotFound>
     </Router>

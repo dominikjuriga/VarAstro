@@ -9,4 +9,6 @@ public class LightCurveDTO
     public int Value { get; set; }
     public StarDTO Star { get; set; }
     public UserDTO User { get; set; }
+    public DeviceDTO? Device { get; set; }
+    public ObservatoryDTO Observatory { get; set; }
 }

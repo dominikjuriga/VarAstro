@@ -6,4 +6,5 @@ public class User : IdentityUser
 {
     public DateTime Registered { get; set; } = DateTime.Now;
     public List<Device> Devices { get; set; }
+    public List<Observatory> Observatories { get; set; }
 }

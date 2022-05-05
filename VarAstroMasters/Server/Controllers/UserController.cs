@@ -24,4 +24,11 @@ public class UserController : ControllerBase
         var sr = await _userService.GetUserFromTokenAsync();
         return Ok(sr);
     }
+
+    [HttpGet("devices")]
+    public async Task<ActionResult<ServiceResponse<UserDTO>>> GetUserDevices()
+    {
+        var sr = await _userService.GetUserDevices();
+        return Ok(sr);
+    }
 }

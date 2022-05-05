@@ -1,26 +1,36 @@
 ﻿@page "/stars"
 @inject IStarService StarService
-<h3>Stars</h3>
+<h3>Hviezdy</h3>
 
 @if (_stars.Count == 0)
 {
-    <h5>Loading items..</h5>
+    <Loader/>
 }
 else
 {
-    <ul>
-        @foreach (var star in _stars)
-        {
-            <li><a href="@Endpoints.ClientStarGetSingle/@star.Id">@star.Name</a></li>
-        }
-    </ul>
+    @if (_stars.Count == 0)
+    {
+        <h4>Neexistujú žiadne hviezdy.</h4>
+    }
+    else
+    {
+        <ul>
+            @foreach (var star in _stars)
+            {
+                <li>
+                    <a href="@Endpoints.ClientStarGetSingle/@star.Id">@star.Name</a>
+                </li>
+            }
+        </ul>
+    }
 }
 
 @code {
-    private List<StarDTO> _stars = new List<StarDTO>();
+    private List<StarDTO> _stars = new();
 
     protected override async Task OnInitializedAsync()
     {
         _stars = await StarService.GetStarsAsync();
     }
+
 }

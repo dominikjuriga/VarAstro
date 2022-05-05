@@ -44,6 +44,8 @@ public class LightCurveService : ILightCurveService
             .Where(lc => lc.Id == curveId)
             .Include(lc => lc.Star)
             .Include(lc => lc.User)
+            .Include(lc => lc.Device)
+            .Include(lc => lc.Observatory)
             .FirstOrDefaultAsync();
         if (data is null)
             return new ServiceResponse<LightCurveDTO>
@@ -51,26 +53,43 @@ public class LightCurveService : ILightCurveService
                 Success = false
             };
 
+        var resData = new LightCurveDTO
+        {
+            Id = data.Id,
+            Star = new StarDTO
+            {
+                Name = data.Star.Name,
+                Id = data.Star.Id
+            },
+            User = new UserDTO
+            {
+                Id = data.User.Id,
+                Name = data.User.Email
+            }
+        };
+
+        if (data.Device is not null)
+            resData.Device = new DeviceDTO
+            {
+                Id = data.Device.Id,
+                Name = data.Device.Name
+            };
+
+        if (data.Observatory is not null)
+            resData.Observatory = new ObservatoryDTO
+            {
+                Address = data.Observatory.Address,
+                Longitude = data.Observatory.Longitude,
+                Latitude = data.Observatory.Latitude,
+                Id = data.Observatory.Id
+            };
         return new ServiceResponse<LightCurveDTO>
         {
-            Data = new LightCurveDTO
-            {
-                Id = data.Id,
-                Star = new StarDTO
-                {
-                    Name = data.Star.Name,
-                    Id = data.Star.Id
-                },
-                User = new UserDTO
-                {
-                    Id = data.User.Id,
-                    Name = data.User.Email
-                }
-            }
+            Data = resData
         };
     }
 
-    public async Task<ServiceResponse<LightCurveDTO>> AddLightCurveAsync(LightCurveAdd lightCurveAdd)
+    public async Task<ServiceResponse<int>> AddLightCurveAsync(LightCurveAdd lightCurveAdd)
     {
         var userId = _authService.GetUserId();
         // var lightCurve = new LightCurve
@@ -94,18 +113,16 @@ public class LightCurveService : ILightCurveService
             PublishVariant = lightCurveAdd.PublishVariant,
             StarId = lightCurveAdd.StarId,
             DataFileContent = lightCurveAdd.DataFileContent,
-            ImageFileName = "TODO"
+            ImageFileName = "TODO",
+            DeviceId = lightCurveAdd.DeviceId
         };
 
         var savedCurve = _context.LightCurves.Add(lightCurve);
         await _context.SaveChangesAsync();
 
-        return new ServiceResponse<LightCurveDTO>
+        return new ServiceResponse<int>
         {
-            Data = new LightCurveDTO
-            {
-                Id = savedCurve.Entity.Id
-            }
+            Data = savedCurve.Entity.Id
         };
     }
 

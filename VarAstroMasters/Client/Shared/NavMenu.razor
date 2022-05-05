@@ -20,32 +20,44 @@
             </NavLink>
         </div>
 
-        <NavDropdown Title="Hviezdy">
+        <NavDropdown Title="Hviezdy" Icon="star">
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="@Endpoints.ClientStarGetAll">
-                    <span class="oi oi-star" aria-hidden="true"></span> Zoznam hviezd
+                    <span class="oi oi-list" aria-hidden="true"></span> Zoznam hviezd
                 </NavLink>
             </div>
         </NavDropdown>
 
-        <NavDropdown Title="Krivky">
+        <NavDropdown Title="Krivky" Icon="bar-chart">
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="@Endpoints.ClientLightCurveGetAll">
-                    <span class="oi oi-lightbulb" aria-hidden="true"></span> Zoznam kriviek
+                    <span class="oi oi-list" aria-hidden="true"></span> Zoznam kriviek
                 </NavLink>
             </div>
         </NavDropdown>
         <AuthorizeView>
             <Authorized>
-                <NavDropdown Title="Zariadenia">
+                <NavDropdown Title="Zariadenia" Icon="aperture">
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href="@Endpoints.ClientDeviceList">
-                            <span class="oi oi-lightbulb" aria-hidden="true"></span> Zoznam zariadení
+                            <span class="oi oi-list" aria-hidden="true"></span> Zoznam zariadení
                         </NavLink>
                     </div>
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href="@Endpoints.ClientDeviceAdd">
-                            <span class="oi oi-lightbulb" aria-hidden="true"></span> Pridať zariadenie
+                            <span class="oi oi-plus" aria-hidden="true"></span> Pridať zariadenie
+                        </NavLink>
+                    </div>
+                </NavDropdown>
+                <NavDropdown Title="Hvezdárne" Icon="home">
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="@Endpoints.ClientObservatoriesList">
+                            <span class="oi oi-list" aria-hidden="true"></span> Zoznam hvezdární
+                        </NavLink>
+                    </div>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="@Endpoints.ClientObservatoriesAdd">
+                            <span class="oi oi-plus" aria-hidden="true"></span> Pridať hvezdáreň
                         </NavLink>
                     </div>
                 </NavDropdown>
@@ -56,19 +68,19 @@
                 </div>
                 <div class="nav-item px-3">
                     <button class="nav-link" @onclick="HandleLogOut">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Odhlásenie
+                        <span class="oi oi-account-logout" aria-hidden="true"></span> Odhlásenie
                     </button>
                 </div>
             </Authorized>
             <NotAuthorized>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="@Endpoints.ClientAuthLogIn">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Prihlásenie
+                        <span class="oi oi-account-login" aria-hidden="true"></span> Prihlásenie
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="@Endpoints.ClientAuthRegister">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Registrácia
+                        <span class="oi oi-plus" aria-hidden="true"></span> Registrácia
                     </NavLink>
                 </div>
             </NotAuthorized>

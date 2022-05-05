@@ -2,17 +2,27 @@
 
 @inject IStarService StarService
 
+<PageTitle>@(Star is null ? "" : Star.Name) | @Keywords.DefaultPageTitle</PageTitle>
+
 @if (Star == null)
 {
-    <h3>Loading details..</h3>
+    <Loader/>
 }
 else
 {
-    <h3>Star <strong>@Star.Name</strong> <a href="@Endpoints.ClientLightCurveAdd/@Star.Id">Pridať pozorovanie</a></h3>
+    <div class="d-flex justify-content-between">
+        <h3>Hviezda <strong>@Star.Name</strong></h3>
+        <a class="btn btn-outline-primary" href="@Endpoints.ClientLightCurveAdd/@Star.Id">Pridať pozorovanie</a>
+    </div>
 
-    @if (Star.LightCurves.Count > 0)
+
+    <h4>Pozorovanie tejto hviezdy</h4>
+    @if (Star.LightCurves.Count == 0)
     {
-        <h4>Latest Light Curves</h4>
+        <h4>Táto hviezda nemá žiadne pozorovania.</h4>
+    }
+    else
+    {
         <ul>
             @foreach (var curve in Star.LightCurves)
             {
