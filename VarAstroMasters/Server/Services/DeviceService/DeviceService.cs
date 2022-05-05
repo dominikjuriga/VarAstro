@@ -74,7 +74,7 @@ public class DeviceService : IDeviceService
         };
     }
 
-    public async Task<ServiceResponse<DeviceDTO>> EditDevice(Device device)
+    public async Task<ServiceResponse<DeviceDTO>> EditDevice(DeviceEdit device)
     {
         var dbDevice = _context.Devices.Where(d => d.Id == device.Id).FirstOrDefaultAsync();
         dbDevice.Result.Name = device.Name;
@@ -84,8 +84,7 @@ public class DeviceService : IDeviceService
             Data = new DeviceDTO
             {
                 Id = dbDevice.Result.Id,
-                Name = dbDevice.Result.Name,
-                UserId = dbDevice.Result.UserId
+                Name = dbDevice.Result.Name
             }
         };
     }

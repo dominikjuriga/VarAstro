@@ -29,7 +29,7 @@ public class DeviceService : IDeviceService
         return true;
     }
 
-    public async Task<DeviceDTO> EditDevice(Device device)
+    public async Task<DeviceDTO> EditDevice(DeviceEdit device)
     {
         var response = await _http.PutAsJsonAsync(Endpoints.ApiDeviceEdit, device);
         var data = await response.Content.ReadFromJsonAsync<ServiceResponse<DeviceDTO>>();

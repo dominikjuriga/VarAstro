@@ -23,11 +23,19 @@ else
             <ValidationSummary></ValidationSummary>
 
             <button type="submit" class="btn btn-primary">Uložiť</button>
+            <button type="button" @onclick="CancelEdit" class="btn btn-secondary">Zrušiť</button>
         </EditForm>
     }
     else
     {
         <h3>Vaše zariadenia</h3>
+
+        @if (_message is not null)
+        {
+            <Alert type="success">
+                @_message
+            </Alert>
+        }
 
         @if (_devices.Count == 0)
         {
@@ -39,7 +47,7 @@ else
             <ul>
                 @foreach (var device in _devices)
                 {
-                    <li>
+                    <li class="mb-3">
                         <span class="oi oi-camera-slr"></span>
                         @device.Name
                         <button class="btn btn-outline-info" @onclick="() => DeleteDevice(device.Id)">Zmazať</button>
@@ -53,11 +61,19 @@ else
 
 @code {
     private List<DeviceDTO>? _devices { get; set; } = null;
-    private Device? _deviceEdit { get; set; } = null;
+    private DeviceEdit? _deviceEdit { get; set; } = null;
+    private string? _message { get; set; } = null;
+    private string? _alertType { get; set; } = null;
 
     protected override async Task OnInitializedAsync()
     {
         _devices = await DeviceService.GetMyDevices();
+    }
+
+    private void CancelEdit()
+    {
+        _message = null;
+        _deviceEdit = null;
     }
 
     private async Task DeleteDevice(int deviceId)
@@ -66,17 +82,28 @@ else
         if (result && _devices is not null)
         {
             _devices = _devices.Where(d => d.Id != deviceId).ToList();
+            SetMessage("Zariadenie zmazané.");
+        }
+        else
+        {
+            SetMessage("Nastala chyba pri spracovaní.", "danger");
         }
     }
 
     private void OpenEditDevice(DeviceDTO device)
     {
-        _deviceEdit = new Device
+        _message = null;
+        _deviceEdit = new DeviceEdit
         {
             Id = device.Id,
-            Name = device.Name,
-            UserId = device.UserId
+            Name = device.Name
         };
+    }
+
+    private void SetMessage(string? message = null, string type = "success")
+    {
+        _message = message;
+        _alertType = type;
     }
 
     private async Task HandleSubmit()
@@ -87,6 +114,12 @@ else
             var dev = _devices.Where(d => d.Id == result.Id).First();
             _devices.Remove(dev);
             _devices.Add(result);
+            CancelEdit();
+            SetMessage("Zmena uložená");
+        }
+        else
+        {
+            SetMessage("Nastala chyba pri spracovaní.", "danger");
         }
     }
 

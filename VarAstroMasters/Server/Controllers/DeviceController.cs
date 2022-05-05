@@ -35,7 +35,7 @@ public class DeviceController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult<ServiceResponse<bool>>> EditDevice(Device device)
+    public async Task<ActionResult<ServiceResponse<bool>>> EditDevice(DeviceEdit device)
     {
         var sr = await _deviceService.EditDevice(device);
         return Ok(sr);
