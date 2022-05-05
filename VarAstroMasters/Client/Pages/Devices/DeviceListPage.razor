@@ -1,0 +1,126 @@
+﻿@page "/Device/List"
+@inject IDeviceService DeviceService
+
+@if (_devices is null)
+{
+    <h3>Prebieha načítavanie..</h3>
+}
+else
+{
+    @if (_deviceEdit is not null)
+    {
+        <h3>Úprava zariadenia</h3>
+
+        <EditForm Model="_deviceEdit" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator/>
+
+            <div class="my-3">
+                <label for="name" class="form-label">
+                    Názov zariadenia
+                </label>
+                <InputText id="name" @bind-Value="_deviceEdit.Name" class="form-control"></InputText>
+            </div>
+            <ValidationSummary></ValidationSummary>
+
+            <button type="submit" class="btn btn-primary">Uložiť</button>
+            <button type="button" @onclick="CancelEdit" class="btn btn-secondary">Zrušiť</button>
+        </EditForm>
+    }
+    else
+    {
+        <h3>Vaše zariadenia</h3>
+
+        @if (_message is not null)
+        {
+            <Alert type="success">
+                @_message
+            </Alert>
+        }
+
+        @if (_devices.Count == 0)
+        {
+            <span>Nemáte žiadne registrované zariadenia.</span>
+            <a href="@Endpoints.ClientDeviceAdd">Pridať zariadenie</a>
+        }
+        else
+        {
+            <ul>
+                @foreach (var device in _devices)
+                {
+                    <li class="mb-3">
+                        <span class="oi oi-camera-slr"></span>
+                        @device.Name
+                        <button class="btn btn-outline-info" @onclick="() => DeleteDevice(device.Id)">Zmazať</button>
+                        <button class="btn btn-outline-success" @onclick="() => OpenEditDevice(device)">Upraviť</button>
+                    </li>
+                }
+            </ul>
+        }
+    }
+}
+
+@code {
+    private List<DeviceDTO>? _devices { get; set; } = null;
+    private DeviceEdit? _deviceEdit { get; set; } = null;
+    private string? _message { get; set; } = null;
+    private string? _alertType { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _devices = await DeviceService.GetMyDevices();
+    }
+
+    private void CancelEdit()
+    {
+        _message = null;
+        _deviceEdit = null;
+    }
+
+    private async Task DeleteDevice(int deviceId)
+    {
+        var result = await DeviceService.DeleteDevice(deviceId);
+        if (result && _devices is not null)
+        {
+            _devices = _devices.Where(d => d.Id != deviceId).ToList();
+            SetMessage("Zariadenie zmazané.");
+        }
+        else
+        {
+            SetMessage("Nastala chyba pri spracovaní.", "danger");
+        }
+    }
+
+    private void OpenEditDevice(DeviceDTO device)
+    {
+        _message = null;
+        _deviceEdit = new DeviceEdit
+        {
+            Id = device.Id,
+            Name = device.Name
+        };
+    }
+
+    private void SetMessage(string? message = null, string type = "success")
+    {
+        _message = message;
+        _alertType = type;
+    }
+
+    private async Task HandleSubmit()
+    {
+        var result = await DeviceService.EditDevice(_deviceEdit);
+        if (result is not null && _devices is not null)
+        {
+            var dev = _devices.Where(d => d.Id == result.Id).First();
+            _devices.Remove(dev);
+            _devices.Add(result);
+            CancelEdit();
+            SetMessage("Zmena uložená");
+        }
+        else
+        {
+            SetMessage("Nastala chyba pri spracovaní.", "danger");
+        }
+    }
+
+}

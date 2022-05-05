@@ -1,4 +1,10 @@
-﻿<CascadingAuthenticationState>
+﻿@inject ILocalStorageService LocalStorageService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HttpClient HttpClient
+@using Blazored.LocalStorage
+@using System.Net.Http.Headers
+
+<CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
@@ -17,3 +23,20 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        if (await LocalStorageService.ContainKeyAsync("bearerToken"))
+        {
+            var savedToken = await LocalStorageService.GetItemAsync<string>("bearerToken");
+
+            await ((AppAuthStateProvider)AuthenticationStateProvider).LogIn();
+
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
+
+            StateHasChanged();
+        }
+    }
+}

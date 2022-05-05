@@ -8,12 +8,10 @@ namespace VarAstroMasters.Server.Controllers;
 [ApiController]
 public class LightCurveController : ControllerBase
 {
-    private readonly DataContext _context;
     private readonly ILightCurveService _lightCurveService;
 
-    public LightCurveController(DataContext context, ILightCurveService lightCurveService)
+    public LightCurveController(ILightCurveService lightCurveService)
     {
-        _context = context;
         _lightCurveService = lightCurveService;
     }
 

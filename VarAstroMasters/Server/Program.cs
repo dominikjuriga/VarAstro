@@ -6,10 +6,10 @@ global using Microsoft.AspNetCore.Identity;
 global using VarAstroMasters.Server.Services.AuthService;
 global using VarAstroMasters.Server.Services.StarService;
 global using VarAstroMasters.Server.Services.UserService;
+global using VarAstroMasters.Server.Services.DeviceService;
 global using VarAstroMasters.Server.Services.LightCurveService;
 global using VarAstroMasters.Shared.DTO;
 global using VarAstroMasters.Server.Data;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -21,10 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Set CORS policy so that the client can send requests to the server
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(Keywords.CORS_Policy, b =>
-    {
-        b.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-    });
+    options.AddPolicy(Keywords.CORS_Policy, b => { b.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); });
 });
 
 // Connect the server application to the database and create Identity Context
@@ -39,6 +36,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IStarService, StarService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IDeviceService, DeviceService>();
 builder.Services.AddScoped<ILightCurveService, LightCurveService>();
 
 builder.Services.AddDefaultIdentity<User>(options =>
@@ -47,8 +45,8 @@ builder.Services.AddDefaultIdentity<User>(options =>
         options.Password.RequireUppercase = false;
         options.Password.RequireNonAlphanumeric = false;
     })
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<DataContext>();
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<DataContext>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -87,11 +85,11 @@ if (app.Environment.IsDevelopment())
     // Use Swagger when app is in development mode
     app.UseSwagger();
     app.UseSwaggerUI();
-    
+
     // Seed DB in development mode
-    RoleManager<IdentityRole>? roleManager = builder.Services.BuildServiceProvider().GetService<RoleManager<IdentityRole>>();
-    UserManager<User>? userManager = builder.Services.BuildServiceProvider().GetService<UserManager<User>>();
-    Seed(userManager, roleManager); 
+    var roleManager = builder.Services.BuildServiceProvider().GetService<RoleManager<IdentityRole>>();
+    var userManager = builder.Services.BuildServiceProvider().GetService<UserManager<User>>();
+    Seed(userManager, roleManager);
 }
 else
 {
