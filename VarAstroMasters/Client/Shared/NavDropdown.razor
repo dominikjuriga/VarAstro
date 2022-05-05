@@ -1,7 +1,7 @@
 ﻿<div class="nav-item nav-dropdown @_itemClass px-3">
     <button class="nav-link" @onclick="HandleToggle">
         <div>
-            <span class="oi oi-list-rich" aria-hidden="true"></span> @Title
+            <span class="oi oi-@Icon" aria-hidden="true"></span> @Title
         </div><span class="dropdown-triangle">&#9658;</span>
     </button>
 </div>
@@ -17,6 +17,9 @@
 
     [Parameter]
     public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Icon { get; set; } = "list-rich";
 
     private bool _toggled = false;
     private string _itemClass = "nav-dropdown";

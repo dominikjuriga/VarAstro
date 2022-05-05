@@ -1,23 +1,31 @@
 ﻿@page "/LightCurves"
 @inject ILightCurveService LightCurveService
-<h3>LightCurves</h3>
+<h3>Svetelné krivky</h3>
 
 @if (_lightCurves is null)
 {
-    <h3>Loading light curves..</h3>
+    <Loader/>
 }
 else
 {
-    foreach (var curve in _lightCurves)
+    if (_lightCurves.Count == 0)
     {
-        <a href="@Endpoints.ClientLightCurveGetSingle/@curve.Id">@curve.Id - @curve.Value</a><br />
+        <h4>Neexistujú žiadne svetelné krivky.</h4>
+    }
+    else
+    {
+        foreach (var curve in _lightCurves)
+        {
+            <a href="@Endpoints.ClientLightCurveGetSingle/@curve.Id">@curve.Id - @curve.Value</a>
+            <br/>
+        }
     }
 }
 
 @code {
     private List<LightCurveDTO>? _lightCurves = null;
 
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         _lightCurves = await LightCurveService.GetLightCurves();
     }

@@ -9,26 +9,52 @@ else
 {
     <h3>Váš profil</h3>
 
-    <h4>Vaše zariadenia</h4>
+    <section>
+        <h4>Vaše zariadenia</h4>
 
-    @if (_user.Devices.Count == 0)
-    {
-        <span>Nemáte žiadne registrované zariadenia.</span>
-        <a href="@Endpoints.ClientDeviceAdd">Pridať zariadenie</a>
-    }
-    else
-    {
-        <ul>
-            @foreach (var device in _user.Devices)
-            {
-                <li>
-                    <span class="oi oi-camera-slr"></span>
-                    @device.Name
-                </li>
-            }
-        </ul>
-    }
+        @if (_user.Devices.Count == 0)
+        {
+            <span>Nemáte žiadne registrované zariadenia.</span>
+            <a href="@Endpoints.ClientDeviceAdd">Pridať zariadenie</a>
+        }
+        else
+        {
+            <ul>
+                @foreach (var device in _user.Devices)
+                {
+                    <li>
+                        <span class="oi oi-camera-slr"></span>
+                        @device.Name
+                    </li>
+                }
+            </ul>
+        }
+    </section>
+    <section>
+        <h4>Vaše hvezdárne</h4>
+        @if (_user.Observatories.Count == 0)
+        {
+            <span>Nemáte žiadne registrované hvezdárne.</span>
+            <a href="@Endpoints.ClientObservatoriesAdd">Pridať hvezdáreň</a>
+        }
+        else
+        {
+            <ul>
+                @foreach (var observatory in _user.Observatories)
+                {
+                    <li>
+                        <span class="oi oi-home"></span>
+                        @observatory.Address
+                    </li>
+                }
+
+            </ul>
+        }
+    </section>
 }
+
+
+
 
 @code {
     private UserDTO? _user = null;
@@ -39,4 +65,3 @@ else
     }
 
 }
-

@@ -11,8 +11,8 @@ using VarAstroMasters.Server.Data;
 namespace VarAstroMasters.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220505172324_userObservatory")]
-    partial class userObservatory
+    [Migration("20220505202443_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -224,6 +224,7 @@ namespace VarAstroMasters.Server.Migrations
                         .HasColumnType("decimal(10,8)");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
@@ -411,7 +412,9 @@ namespace VarAstroMasters.Server.Migrations
                 {
                     b.HasOne("VarAstroMasters.Shared.Models.User", null)
                         .WithMany("Observatories")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("VarAstroMasters.Shared.Models.Star", b =>

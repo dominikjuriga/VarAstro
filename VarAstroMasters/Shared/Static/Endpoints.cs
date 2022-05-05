@@ -28,6 +28,8 @@ public static class Endpoints
     public static readonly string ApiObservatoryBase = "api/observatory";
     public static readonly string ApiObservatoryGetObservatories = $"{ApiObservatoryBase}";
     public static readonly string ApiObservatoryAdd = $"{ApiObservatoryBase}";
+    public static readonly string ApiObservatoryDelete = $"{ApiObservatoryBase}";
+    public static readonly string ApiObservatoryEdit = $"{ApiObservatoryBase}";
 
     public static readonly string ClientStarBase = "/Stars";
     public static readonly string ClientStarGetAll = $"{ClientStarBase}";

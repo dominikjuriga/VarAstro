@@ -16,4 +16,5 @@ public static class Keywords
     public static readonly string LcFilterU = "U";
     public static readonly string LcPhotometricInstrumental = "instrumental";
     public static readonly string LcPhotometricStandard = "standard";
+    public static readonly string DefaultPageTitle = "Var Astro";
 }

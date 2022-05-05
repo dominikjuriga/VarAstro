@@ -42,13 +42,13 @@ else
 }
 
 @code {
-    private Observatory _observatoryAdd { get; set; } = new();
+    private ObservatoryAdd _observatoryAdd { get; set; } = new();
     private bool succeeded { get; set; } = false;
 
     private async Task HandleSubmit()
     {
         var result = await ObservatoryService.AddObservatory(_observatoryAdd);
-        if (result == true)
+        if (result.Data)
         {
             succeeded = true;
         }
