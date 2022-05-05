@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace VarAstroMasters.Server.Migrations
 {
-    public partial class init : Migration
+    public partial class initialmigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -272,7 +272,8 @@ namespace VarAstroMasters.Server.Migrations
                     DataFileContent = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ImageFileName = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DeviceId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -283,6 +284,11 @@ namespace VarAstroMasters.Server.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LightCurves_Devices_DeviceId",
+                        column: x => x.DeviceId,
+                        principalTable: "Devices",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_LightCurves_Stars_StarId",
                         column: x => x.StarId,
@@ -340,6 +346,11 @@ namespace VarAstroMasters.Server.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LightCurves_DeviceId",
+                table: "LightCurves",
+                column: "DeviceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LightCurves_StarId",
                 table: "LightCurves",
                 column: "StarId");
@@ -373,9 +384,6 @@ namespace VarAstroMasters.Server.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Devices");
-
-            migrationBuilder.DropTable(
                 name: "LightCurves");
 
             migrationBuilder.DropTable(
@@ -383,6 +391,9 @@ namespace VarAstroMasters.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Devices");
 
             migrationBuilder.DropTable(
                 name: "Stars");

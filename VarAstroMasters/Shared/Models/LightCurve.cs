@@ -14,5 +14,8 @@ public class LightCurve
     public Star Star { get; set; }
     [Required] public string DataFileContent { get; set; } = string.Empty;
     [Required] public string ImageFileName { get; set; } = string.Empty;
-    public int? DeviceId { get; set; } = null;
+    public int? DeviceId { get; set; }
+    public Device? Device { get; set; }
+    public int? ObservatoryId { get; set; }
+    public Observatory? Observatory { get; set; }
 }

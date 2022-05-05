@@ -11,8 +11,8 @@ using VarAstroMasters.Server.Data;
 namespace VarAstroMasters.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220505202443_init")]
-    partial class init
+    [Migration("20220505233117_lightCurveObservatory")]
+    partial class lightCurveObservatory
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -184,9 +184,15 @@ namespace VarAstroMasters.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("DeviceId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ImageFileName")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int?>("ObservatoryId")
+                        .HasColumnType("int");
 
                     b.Property<int>("PublishVariant")
                         .HasColumnType("int");
@@ -199,6 +205,10 @@ namespace VarAstroMasters.Server.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DeviceId");
+
+                    b.HasIndex("ObservatoryId");
 
                     b.HasIndex("StarId");
 
@@ -391,6 +401,14 @@ namespace VarAstroMasters.Server.Migrations
 
             modelBuilder.Entity("VarAstroMasters.Shared.Models.LightCurve", b =>
                 {
+                    b.HasOne("VarAstroMasters.Shared.Models.Device", "Device")
+                        .WithMany()
+                        .HasForeignKey("DeviceId");
+
+                    b.HasOne("VarAstroMasters.Shared.Models.Observatory", "Observatory")
+                        .WithMany()
+                        .HasForeignKey("ObservatoryId");
+
                     b.HasOne("VarAstroMasters.Shared.Models.Star", "Star")
                         .WithMany("LightCurves")
                         .HasForeignKey("StarId")
@@ -402,6 +420,10 @@ namespace VarAstroMasters.Server.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Device");
+
+                    b.Navigation("Observatory");
 
                     b.Navigation("Star");
 

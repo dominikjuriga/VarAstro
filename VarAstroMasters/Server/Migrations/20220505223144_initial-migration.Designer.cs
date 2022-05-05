@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VarAstroMasters.Server.Data;
 
@@ -10,9 +11,10 @@ using VarAstroMasters.Server.Data;
 namespace VarAstroMasters.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220505223144_initial-migration")]
+    partial class initialmigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -189,9 +191,6 @@ namespace VarAstroMasters.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("ObservatoryId")
-                        .HasColumnType("int");
-
                     b.Property<int>("PublishVariant")
                         .HasColumnType("int");
 
@@ -205,8 +204,6 @@ namespace VarAstroMasters.Server.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DeviceId");
-
-                    b.HasIndex("ObservatoryId");
 
                     b.HasIndex("StarId");
 
@@ -403,10 +400,6 @@ namespace VarAstroMasters.Server.Migrations
                         .WithMany()
                         .HasForeignKey("DeviceId");
 
-                    b.HasOne("VarAstroMasters.Shared.Models.Observatory", "Observatory")
-                        .WithMany()
-                        .HasForeignKey("ObservatoryId");
-
                     b.HasOne("VarAstroMasters.Shared.Models.Star", "Star")
                         .WithMany("LightCurves")
                         .HasForeignKey("StarId")
@@ -420,8 +413,6 @@ namespace VarAstroMasters.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("Device");
-
-                    b.Navigation("Observatory");
 
                     b.Navigation("Star");
 

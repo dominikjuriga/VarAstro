@@ -30,11 +30,11 @@ else
         </tr>
         <tr>
             <th scope="row">Hvezdáreň</th>
-            <td>Brno 42</td>
+            <td>@(_curve.Observatory is null ? "Nešpecifikovaná" : _curve.Observatory.Address)</td>
         </tr>
         <tr>
             <th scope="row">Zariadenie</th>
-            <td>teleskop 4000mm</td>
+            <td>@(_curve.Device is null ? "Nešpecifikované" : _curve.Device.Name)</td>
         </tr>
         </tbody>
     </table>
@@ -51,7 +51,7 @@ else
     public int LightCurveId { get; set; }
 
     private LightCurveDTO? _curve { get; set; } = null;
-    private string _values { get; set; } = string.Empty;
+    private string? _values { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {

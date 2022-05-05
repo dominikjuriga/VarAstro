@@ -38,9 +38,9 @@ public class LightCurveService : ILightCurveService
         return "chyba";
     }
 
-    public async Task<bool> AddLightCurve(LightCurveAdd lightCurveAdd)
+    public async Task<ServiceResponse<int>> AddLightCurve(LightCurveAdd lightCurveAdd)
     {
         var response = await _http.PostAsJsonAsync(Endpoints.ApiLightCurveAdd, lightCurveAdd);
-        return response != null;
+        return await response.Content.ReadFromJsonAsync<ServiceResponse<int>>();
     }
 }

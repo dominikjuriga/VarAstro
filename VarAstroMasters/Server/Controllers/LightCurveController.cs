@@ -37,7 +37,7 @@ public class LightCurveController : ControllerBase
     }
 
     [HttpPost("Add")]
-    public async Task<ActionResult<ServiceResponse<LightCurveDTO>>> AddLightCurveAsync(LightCurveAdd lightCurveAdd)
+    public async Task<ActionResult<ServiceResponse<int>>> AddLightCurveAsync(LightCurveAdd lightCurveAdd)
     {
         var sr = await _lightCurveService.AddLightCurveAsync(lightCurveAdd);
         return Ok(sr);
