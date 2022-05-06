@@ -11,8 +11,8 @@ using VarAstroMasters.Server.Data;
 namespace VarAstroMasters.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220506135803_magDecimalPlaces")]
-    partial class magDecimalPlaces
+    [Migration("20220506200717_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -204,6 +204,9 @@ namespace VarAstroMasters.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<int?>("DeviceId")
                         .HasColumnType("int");
 
@@ -274,9 +277,6 @@ namespace VarAstroMasters.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<decimal>("RA")
-                        .HasColumnType("decimal(10,3)");
-
                     b.HasKey("Id");
 
                     b.ToTable("Stars");
@@ -285,8 +285,7 @@ namespace VarAstroMasters.Server.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "CzeV 612",
-                            RA = 123.456m
+                            Name = "CzeV 343"
                         });
                 });
 
@@ -321,6 +320,115 @@ namespace VarAstroMasters.Server.Migrations
                     b.HasIndex("StarId");
 
                     b.ToTable("StarCatalog");
+
+                    b.HasData(
+                        new
+                        {
+                            CatalogId = "UCAC4",
+                            StarId = 1,
+                            CrossId = "605-025126",
+                            Dec = "+30:57:03.59",
+                            Mag = 13.71m,
+                            Primary = true,
+                            Ra = "05:48:24.012"
+                        });
+                });
+
+            modelBuilder.Entity("VarAstroMasters.Shared.Models.StarDraft", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Dec")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Ra")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("StarsDrafts");
+                });
+
+            modelBuilder.Entity("VarAstroMasters.Shared.Models.StarPublish", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Discoverer")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PublicationLink")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("StarId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StarId")
+                        .IsUnique();
+
+                    b.ToTable("StarPublish");
+                });
+
+            modelBuilder.Entity("VarAstroMasters.Shared.Models.StarVariability", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Epoch")
+                        .HasColumnType("decimal(18,9)");
+
+                    b.Property<decimal>("Period")
+                        .HasColumnType("decimal(18,9)");
+
+                    b.Property<double>("PrimaryMinimum")
+                        .HasColumnType("double");
+
+                    b.Property<int>("StarId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VariabilityType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StarId")
+                        .IsUnique();
+
+                    b.ToTable("StarVariability");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Epoch = 2455958.36058m,
+                            Period = 1.209373m,
+                            PrimaryMinimum = 13.720000000000001,
+                            StarId = 1,
+                            VariabilityType = 1
+                        });
                 });
 
             modelBuilder.Entity("VarAstroMasters.Shared.Models.User", b =>
@@ -501,11 +609,46 @@ namespace VarAstroMasters.Server.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("VarAstroMasters.Shared.Models.StarDraft", b =>
+                {
+                    b.HasOne("VarAstroMasters.Shared.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VarAstroMasters.Shared.Models.StarPublish", b =>
+                {
+                    b.HasOne("VarAstroMasters.Shared.Models.Star", null)
+                        .WithOne("StarPublish")
+                        .HasForeignKey("VarAstroMasters.Shared.Models.StarPublish", "StarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("VarAstroMasters.Shared.Models.StarVariability", b =>
+                {
+                    b.HasOne("VarAstroMasters.Shared.Models.Star", null)
+                        .WithOne("StarVariability")
+                        .HasForeignKey("VarAstroMasters.Shared.Models.StarVariability", "StarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("VarAstroMasters.Shared.Models.Star", b =>
                 {
                     b.Navigation("LightCurves");
 
                     b.Navigation("StarCatalogs");
+
+                    b.Navigation("StarPublish")
+                        .IsRequired();
+
+                    b.Navigation("StarVariability")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("VarAstroMasters.Shared.Models.User", b =>

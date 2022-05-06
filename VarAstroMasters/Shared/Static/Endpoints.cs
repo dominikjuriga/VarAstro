@@ -22,9 +22,12 @@ public static class Endpoints
     public static readonly string ApiDeviceGetMyDevices = $"{ApiDeviceBasePath}/list";
 
     public static readonly string ApiStarBasePath = "api/star";
+    public static readonly string ApiStarCreateDraft = $"{ApiStarBasePath}/draft";
     public static readonly string ApiStarGetAll = $"{ApiStarBasePath}";
     public static readonly string ApiStarGetSingle = $"{ApiStarBasePath}";
     public static readonly string ApiStarSearch = $"{ApiStarBasePath}/search";
+    public static readonly string ApiStarGetDraft = $"{ApiStarBasePath}/draft";
+    public static readonly string ApiStarGetDraftList = $"{ApiStarBasePath}/draft";
 
     public static readonly string ApiObservatoryBase = "api/observatory";
     public static readonly string ApiObservatoryGetObservatories = $"{ApiObservatoryBase}";
@@ -35,7 +38,10 @@ public static class Endpoints
 
     public static readonly string ClientStarBase = "/Stars";
     public static readonly string ClientStarGetAll = $"{ClientStarBase}";
+    public static readonly string ClientStarGetDrafts = $"{ClientStarBase}/Drafts";
+    public static readonly string ClientStarCreateDraft = $"{ClientStarBase}/Drafts/Create";
     public static readonly string ClientStarGetSingle = $"{ClientStarBase}";
+    public static readonly string ClientStarDraftSingle = $"{ClientStarBase}/Drafts";
 
     public static readonly string ClientObservatoriesBase = "/Observatories";
     public static readonly string ClientObservatoriesList = $"{ClientObservatoriesBase}";

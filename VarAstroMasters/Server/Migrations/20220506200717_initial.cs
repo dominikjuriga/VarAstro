@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace VarAstroMasters.Server.Migrations
 {
-    public partial class initialmigration : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -69,14 +69,26 @@ namespace VarAstroMasters.Server.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Catalogs",
+                columns: table => new
+                {
+                    Name = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Catalogs", x => x.Name);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Stars",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    RA = table.Column<decimal>(type: "decimal(10,3)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -260,6 +272,110 @@ namespace VarAstroMasters.Server.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "StarsDrafts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Ra = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Dec = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StarsDrafts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StarsDrafts_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "StarCatalog",
+                columns: table => new
+                {
+                    StarId = table.Column<int>(type: "int", nullable: false),
+                    CatalogId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Ra = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Dec = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Mag = table.Column<decimal>(type: "decimal(10,3)", nullable: false),
+                    CrossId = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Primary = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StarCatalog", x => new { x.CatalogId, x.StarId });
+                    table.ForeignKey(
+                        name: "FK_StarCatalog_Stars_StarId",
+                        column: x => x.StarId,
+                        principalTable: "Stars",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "StarPublish",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    StarId = table.Column<int>(type: "int", nullable: false),
+                    Year = table.Column<int>(type: "int", nullable: false),
+                    Discoverer = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PublicationLink = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StarPublish", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StarPublish_Stars_StarId",
+                        column: x => x.StarId,
+                        principalTable: "Stars",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "StarVariability",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    StarId = table.Column<int>(type: "int", nullable: false),
+                    VariabilityType = table.Column<int>(type: "int", nullable: false),
+                    Epoch = table.Column<decimal>(type: "decimal(18,9)", nullable: false),
+                    Period = table.Column<decimal>(type: "decimal(18,9)", nullable: false),
+                    PrimaryMinimum = table.Column<double>(type: "double", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StarVariability", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StarVariability_Stars_StarId",
+                        column: x => x.StarId,
+                        principalTable: "Stars",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "LightCurves",
                 columns: table => new
                 {
@@ -269,11 +385,13 @@ namespace VarAstroMasters.Server.Migrations
                     UserId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     StarId = table.Column<int>(type: "int", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     DataFileContent = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ImageFileName = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DeviceId = table.Column<int>(type: "int", nullable: true)
+                    DeviceId = table.Column<int>(type: "int", nullable: true),
+                    ObservatoryId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -290,6 +408,11 @@ namespace VarAstroMasters.Server.Migrations
                         principalTable: "Devices",
                         principalColumn: "Id");
                     table.ForeignKey(
+                        name: "FK_LightCurves_Observatories_ObservatoryId",
+                        column: x => x.ObservatoryId,
+                        principalTable: "Observatories",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_LightCurves_Stars_StarId",
                         column: x => x.StarId,
                         principalTable: "Stars",
@@ -299,9 +422,29 @@ namespace VarAstroMasters.Server.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.InsertData(
+                table: "Catalogs",
+                column: "Name",
+                value: "2MASS");
+
+            migrationBuilder.InsertData(
+                table: "Catalogs",
+                column: "Name",
+                value: "UCAC4");
+
+            migrationBuilder.InsertData(
                 table: "Stars",
-                columns: new[] { "Id", "Name", "RA" },
-                values: new object[] { 1, "CzeV 612", 123.456m });
+                columns: new[] { "Id", "Name" },
+                values: new object[] { 1, "CzeV 343" });
+
+            migrationBuilder.InsertData(
+                table: "StarCatalog",
+                columns: new[] { "CatalogId", "StarId", "CrossId", "Dec", "Mag", "Primary", "Ra" },
+                values: new object[] { "UCAC4", 1, "605-025126", "+30:57:03.59", 13.71m, true, "05:48:24.012" });
+
+            migrationBuilder.InsertData(
+                table: "StarVariability",
+                columns: new[] { "Id", "Epoch", "Period", "PrimaryMinimum", "StarId", "VariabilityType" },
+                values: new object[] { 1, 2455958.36058m, 1.209373m, 13.720000000000001, 1, 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -351,6 +494,11 @@ namespace VarAstroMasters.Server.Migrations
                 column: "DeviceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LightCurves_ObservatoryId",
+                table: "LightCurves",
+                column: "ObservatoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LightCurves_StarId",
                 table: "LightCurves",
                 column: "StarId");
@@ -364,6 +512,28 @@ namespace VarAstroMasters.Server.Migrations
                 name: "IX_Observatories_UserId",
                 table: "Observatories",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StarCatalog_StarId",
+                table: "StarCatalog",
+                column: "StarId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StarPublish_StarId",
+                table: "StarPublish",
+                column: "StarId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StarsDrafts_UserId",
+                table: "StarsDrafts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StarVariability_StarId",
+                table: "StarVariability",
+                column: "StarId",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -384,16 +554,31 @@ namespace VarAstroMasters.Server.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Catalogs");
+
+            migrationBuilder.DropTable(
                 name: "LightCurves");
 
             migrationBuilder.DropTable(
-                name: "Observatories");
+                name: "StarCatalog");
+
+            migrationBuilder.DropTable(
+                name: "StarPublish");
+
+            migrationBuilder.DropTable(
+                name: "StarsDrafts");
+
+            migrationBuilder.DropTable(
+                name: "StarVariability");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Devices");
+
+            migrationBuilder.DropTable(
+                name: "Observatories");
 
             migrationBuilder.DropTable(
                 name: "Stars");

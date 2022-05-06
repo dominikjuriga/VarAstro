@@ -1,4 +1,4 @@
-﻿@page "/stars/{StarId:int}"
+﻿@page "/Stars/{StarId:int}"
 
 @inject IStarService StarService
 
@@ -52,15 +52,15 @@ else
                         </td>
                     </tr>
                 }
-                @if (_primaryStarCatalog is not null)
+                @if (PrimaryStarCatalog is not null)
                 {
                     <tr>
                         <th scope="row">RA</th>
-                        <td>@_primaryStarCatalog.Ra (@_primaryStarCatalog.CatalogId)</td>
+                        <td>@PrimaryStarCatalog.Ra (@PrimaryStarCatalog.CatalogId)</td>
                     </tr>
                     <tr>
                         <th scope="row">DEC</th>
-                        <td>@_primaryStarCatalog.Dec (@_primaryStarCatalog.CatalogId)</td>
+                        <td>@PrimaryStarCatalog.Dec (@PrimaryStarCatalog.CatalogId)</td>
                     </tr>
                 }
                 </tbody>
@@ -114,13 +114,13 @@ else
 
     <section>
         <h4> Pozorovanie tejto hviezdy</h4>
-        @if (Star.LightCurves.Count == 0)
+        @if (Star is {LightCurves.Count: 0})
         {
             <h5>
                 Táto hviezda nemá žiadne pozorovania.
             </h5>
         }
-        else
+        else if (Star is {LightCurves.Count: > 0})
         {
             <ul>
                 @foreach (var curve in Star.LightCurves)
@@ -140,7 +140,7 @@ else
     public int StarId { get; set; }
 
     private StarDTO? Star { get; set; }
-    private StarCatalog? _primaryStarCatalog { get; set; }
+    private StarCatalog? PrimaryStarCatalog { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -148,7 +148,7 @@ else
         if (response.Success)
         {
             Star = response.Data;
-            _primaryStarCatalog = Star.StarCatalogs.Where(sc => sc.Primary).FirstOrDefault();
+            PrimaryStarCatalog = Star?.StarCatalogs?.FirstOrDefault(sc => sc.Primary);
         }
     }
 
