@@ -12,6 +12,11 @@ public class StarCatalog
     [Required] public string Ra { get; set; }
 
     [Required] public string Dec { get; set; }
+
+    [Column(TypeName = "decimal(10, 3)")]
+    [Required]
+    public decimal Mag { get; set; }
+
     [Required] public string CrossId { get; set; }
     public bool Primary { get; set; } = false;
 }

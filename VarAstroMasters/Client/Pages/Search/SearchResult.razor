@@ -1,0 +1,43 @@
+﻿@page "/Search/{searchQuery}"
+@inject IStarService StarService
+<h3>Výsledky vyhľadávania</h3>
+
+@if (_message is not null)
+{
+    <Alert type="danger">
+        @_message
+        <a href="@Endpoints.ClientSearch">Späť na vyhľadávanie.</a>
+    </Alert>
+}
+
+@if (_results is not null)
+{
+    foreach (var result in _results.Data)
+    {
+        <a href="@Endpoints.ClientStarGetSingle/@result.Id">@result.Name</a>
+    }
+}
+
+@code {
+
+    [Parameter]
+    public string searchQuery { get; set; } = string.Empty;
+
+    private string? _message { get; set; }
+    private StarSearchDTO? _results { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (searchQuery.Length < 3)
+        {
+            _message = "Dĺžka dotazu musí byť aspoň 3 znaky.";
+        }
+        else
+        {
+            var response = await StarService.Search(searchQuery);
+            _results = response.Data;
+        }
+    }
+
+}
+

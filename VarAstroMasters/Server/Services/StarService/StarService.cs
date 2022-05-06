@@ -66,14 +66,10 @@ public class StarService : IStarService
         };
     }
 
-    public async Task<ServiceResponse<StarSearchDTO>> Search(string query, int page)
+    public async Task<ServiceResponse<StarSearchDTO>> Search(string searchQuery)
     {
-        var pageResults = 5f;
-        var pageCount = Math.Ceiling((await FindByQuery(query)).Count / pageResults);
         var data = await _context.Stars
-            .Where(s => s.Name.ToLower().Contains(query.ToLower()))
-            .Skip((page - 1) * (int)pageResults)
-            .Take((int)pageResults)
+            .Where(s => s.Name.ToLower().Contains(searchQuery.ToLower()))
             .ToListAsync();
         List<StarDTO> dtos = new();
         foreach (var star in data)
@@ -86,19 +82,10 @@ public class StarService : IStarService
         {
             Data = new StarSearchDTO
             {
-                Data = dtos,
-                CurrentPage = page,
-                Pages = (int)pageCount
+                Data = dtos
             }
         };
 
         return response;
-    }
-
-    private async Task<List<Star>> FindByQuery(string query)
-    {
-        return await _context.Stars
-            .Where(s => s.Name.ToLower().Contains(query.ToLower()))
-            .ToListAsync();
     }
 }

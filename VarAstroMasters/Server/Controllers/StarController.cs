@@ -1,11 +1,3 @@
-using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using Microsoft.AspNetCore.Authorization;
-using NuGet.Protocol;
-using VarAstroMasters.Shared.DTO;
-
 namespace VarAstroMasters.Server.Controllers;
 
 [Route("api/[controller]")]
@@ -35,10 +27,10 @@ public class StarController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost]
-    public async Task<ActionResult<ServiceResponse<List<StarDTO>>>> Search(string query)
+    [HttpGet("search/{searchQuery}")]
+    public async Task<ActionResult<ServiceResponse<StarSearchDTO>>> Search(string searchQuery)
     {
-        var response = await _starService.Search(query);
+        var response = await _starService.Search(searchQuery);
         return Ok(response);
     }
 }

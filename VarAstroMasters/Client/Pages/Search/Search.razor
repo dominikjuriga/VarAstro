@@ -1,0 +1,57 @@
+﻿@page "/Search"
+@inject IStarService StarService
+@inject NavigationManager NavigationManager
+<h3>Vyhľadávanie</h3>
+
+@if (_message is not null)
+{
+    <Alert type="danger">
+        @_message
+    </Alert>
+}
+
+<section>
+    <div class="my-3">
+        <label for="Query" class="form-label">
+            Dotaz (vyhľadajte hviezdy podľa názvu)
+        </label>
+        <input class="form-control" @bind-value="_query" @ref="searchInput"/>
+    </div>
+    <button class="btn btn-primary" type="button" @onclick="HandleSearch">Vyhľadať</button>
+</section>
+@if (_results is not null)
+{
+    <section>
+        <h4>Výsledky</h4>
+
+        TODO
+    </section>
+}
+
+@code {
+    private string _query { get; set; } = string.Empty;
+    private StarSearchDTO _results = null;
+    protected ElementReference searchInput;
+    private string? _message { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await searchInput.FocusAsync();
+        }
+    }
+
+    private async Task HandleSearch()
+    {
+        if (_query.Length < 3)
+        {
+            _message = "Dĺžka musí byť aspoň 3 znaky.";
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/Search/{_query}");
+        }
+    }
+
+}

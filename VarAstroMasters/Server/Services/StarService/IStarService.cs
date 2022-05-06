@@ -4,5 +4,5 @@ public interface IStarService
 {
     Task<ServiceResponse<List<StarDTO>>> GetStarsAsync();
     Task<ServiceResponse<StarDTO>> GetStarAsync(int starId);
-    Task<ServiceResponse<StarSearchDTO>> Search(string query, int page);
+    Task<ServiceResponse<StarSearchDTO>> Search(string searchQuery);
 }
