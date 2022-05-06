@@ -24,13 +24,14 @@ public static class Endpoints
     public static readonly string ApiStarBasePath = "api/star";
     public static readonly string ApiStarGetAll = $"{ApiStarBasePath}";
     public static readonly string ApiStarGetSingle = $"{ApiStarBasePath}";
-    public static readonly string ApiUploadFile = "api/star/fileUpload";
+    public static readonly string ApiStarSearch = $"{ApiStarBasePath}/search";
 
     public static readonly string ApiObservatoryBase = "api/observatory";
     public static readonly string ApiObservatoryGetObservatories = $"{ApiObservatoryBase}";
     public static readonly string ApiObservatoryAdd = $"{ApiObservatoryBase}";
     public static readonly string ApiObservatoryDelete = $"{ApiObservatoryBase}";
     public static readonly string ApiObservatoryEdit = $"{ApiObservatoryBase}";
+
 
     public static readonly string ClientStarBase = "/Stars";
     public static readonly string ClientStarGetAll = $"{ClientStarBase}";
@@ -55,4 +56,7 @@ public static class Endpoints
 
     public static readonly string ClientAuthLogIn = "/Login";
     public static readonly string ClientAuthRegister = "/Register";
+
+    public static readonly string ClientSearch = "/Search";
+    public static readonly string ClientAdmin = "/Admin";
 }
