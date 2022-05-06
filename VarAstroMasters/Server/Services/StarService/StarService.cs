@@ -1,15 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using VarAstroMasters.Server.Data;
 
 namespace VarAstroMasters.Server.Services.StarService;
 
 public class StarService : IStarService
 {
     private readonly DataContext _context;
+    private readonly IAuthService _authService;
 
-    public StarService(DataContext context)
+    public StarService(DataContext context, IAuthService authService)
     {
         _context = context;
+        _authService = authService;
     }
 
     public async Task<ServiceResponse<List<StarDTO>>> GetStarsAsync()
@@ -34,6 +35,7 @@ public class StarService : IStarService
             .Include(s => s.LightCurves)
             .ThenInclude(lc => lc.User)
             .Include(s => s.StarCatalogs)
+            .Include(s => s.StarPublish)
             .Include(s => s.StarVariability)
             .FirstOrDefaultAsync(s => s.Id == starId);
         if (star is not null)
@@ -89,5 +91,50 @@ public class StarService : IStarService
         };
 
         return response;
+    }
+
+    public async Task<ServiceResponse<int>> CreateDraft(StarDraftAdd starDraftAdd)
+    {
+        var userId = _authService.GetUserId();
+        var starDraft = new StarDraft
+        {
+            Name = starDraftAdd.Name,
+            Ra = starDraftAdd.Ra,
+            Dec = starDraftAdd.Dec,
+            UserId = userId
+        };
+        _context.StarsDrafts.Add(starDraft);
+
+        await _context.SaveChangesAsync();
+        return new ServiceResponse<int>
+        {
+            Data = starDraft.Id,
+            Message = "Používateľská hviezda vytvorená"
+        };
+    }
+
+    public async Task<ServiceResponse<StarDraft>> GetDraft(int id)
+    {
+        var sd = await _context.StarsDrafts
+            .Where(sd => sd.Id == id)
+            .FirstOrDefaultAsync();
+
+        return new ServiceResponse<StarDraft>
+        {
+            Data = sd
+        };
+    }
+
+    public async Task<ServiceResponse<List<StarDraft>>> GetDraftList()
+    {
+        var userId = _authService.GetUserId();
+        var sd = await _context.StarsDrafts
+            .Where(sd => sd.UserId == userId)
+            .ToListAsync();
+
+        return new ServiceResponse<List<StarDraft>>
+        {
+            Data = sd
+        };
     }
 }

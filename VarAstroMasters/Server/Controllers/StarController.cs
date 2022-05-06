@@ -27,6 +27,27 @@ public class StarController : ControllerBase
         return Ok(response);
     }
 
+    [HttpPost("draft")]
+    public async Task<ActionResult<ServiceResponse<int>>> CreateDraft(StarDraftAdd starDraftAdd)
+    {
+        var response = await _starService.CreateDraft(starDraftAdd);
+        return Ok(response);
+    }
+
+    [HttpGet("draft/{id:int}")]
+    public async Task<ActionResult<ServiceResponse<int>>> GetDraft(int id)
+    {
+        var response = await _starService.GetDraft(id);
+        return Ok(response);
+    }
+
+    [HttpGet("draft")]
+    public async Task<ActionResult<ServiceResponse<StarDraft>>> GetDraftList()
+    {
+        var response = await _starService.GetDraftList();
+        return Ok(response);
+    }
+
     [HttpGet("search/{searchQuery}")]
     public async Task<ActionResult<ServiceResponse<StarSearchDTO>>> Search(string searchQuery)
     {

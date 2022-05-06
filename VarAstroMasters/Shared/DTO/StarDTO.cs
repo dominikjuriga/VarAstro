@@ -9,4 +9,5 @@ public class StarDTO
     public List<LightCurveDTO>? LightCurves { get; set; }
     public List<StarCatalog>? StarCatalogs { get; set; }
     public StarVariability? StarVariability { get; set; }
+    public StarPublish? StarPublish { get; set; }
 }

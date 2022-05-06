@@ -53,11 +53,21 @@
         {
             Label = "Mag"
         };
+        var dataset2 = new LineDataset<Point>
+        {
+            Label = "Mag2"
+        };
+        foreach (var point in points)
+        {
+            var pt = new Point(point.X, point.Y + 0.1);
+            dataset2.Add(pt);
+        }
         foreach (var point in points)
         {
             dataset.Add(point);
         }
         _config.Data.Datasets.Add(dataset);
+        _config.Data.Datasets.Add(dataset2);
     }
 
 }

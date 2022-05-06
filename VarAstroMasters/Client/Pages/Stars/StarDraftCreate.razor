@@ -1,0 +1,58 @@
+﻿@page "/Stars/Drafts/Create"
+@attribute [Authorize]
+@inject IStarService StarService
+<h3>Pridať novú hviezdu</h3>
+
+@if (_response is null)
+{
+    <EditForm Model="StarDraftAdd" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator/>
+        <div class="my-3">
+            <label for="name" class="form-label">
+                <Tooltip Text="Identifikácia používateľom">Názov</Tooltip>
+            </label>
+            <InputText id="name" @bind-Value="StarDraftAdd.Name" class="form-control"></InputText>
+        </div>
+        <div class="my-3">
+            <label for="ra" class="form-label">
+                <Tooltip Text="Right Ascension">Ra</Tooltip>
+            </label>
+            <InputText id="ra" @bind-Value="StarDraftAdd.Ra" class="form-control"></InputText>
+        </div>
+        <div class="my-3">
+            <label for="dec" class="form-label">
+                <Tooltip Text="Declination">DEC</Tooltip>
+            </label>
+            <InputText id="dec" @bind-Value="StarDraftAdd.Dec" class="form-control"></InputText>
+        </div>
+        <ValidationSummary/>
+        <button type="submit" class="btn btn-primary btn-lg">Pridať používateľskú hviezdu</button>
+    </EditForm>
+}
+else
+{
+    @if (_response.Success)
+    {
+        <Alert>
+            @_response.Message <br/>
+            <a href="@Endpoints.ClientStarDraftSingle/@_response.Data">Zobraziť</a>
+        </Alert>
+    }
+    else
+    {
+        <Alert type="danger">
+            @_response.Message
+        </Alert>
+    }
+}
+
+@code {
+    private StarDraftAdd StarDraftAdd { get; set; } = new();
+    private ServiceResponse<int>? _response = null;
+
+    private async Task HandleSubmit()
+    {
+        _response = await StarService.CreateDraft(StarDraftAdd);
+    }
+
+}

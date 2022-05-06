@@ -1,0 +1,40 @@
+﻿@page "/Stars/Drafts"
+@inject IStarService StarService
+<h3>Moje hviezdy</h3>
+
+@if (Drafts is null)
+{
+    <Loader/>
+}
+else
+{
+    if (Drafts.Count == 0)
+    {
+        <h4>Nemáte žiadne hviezdy. <a href="@Endpoints.ClientStarCreateDraft">Vytvoriť hviezdu.</a></h4>
+    }
+    else
+    {
+        <ul>
+            @foreach (var draft in Drafts)
+            {
+                <li>
+                    <a href="@Endpoints.ClientStarDraftSingle/@draft.Id">@draft.Name</a>
+                </li>
+            }
+        </ul>
+    }
+}
+
+@code {
+    private List<StarDraft>? Drafts { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await StarService.GetDraftList();
+        if (response.Success)
+        {
+            Drafts = response.Data;
+        }
+    }
+
+}
