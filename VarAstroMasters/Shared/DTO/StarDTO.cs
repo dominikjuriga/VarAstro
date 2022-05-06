@@ -6,6 +6,7 @@ public class StarDTO
 {
     public int Id { get; set; }
     public string Name { get; set; }
-    public List<LightCurveDTO> LightCurves { get; set; }
-    public List<StarCatalog> StarCatalogs { get; set; }
+    public List<LightCurveDTO>? LightCurves { get; set; }
+    public List<StarCatalog>? StarCatalogs { get; set; }
+    public StarVariability? StarVariability { get; set; }
 }

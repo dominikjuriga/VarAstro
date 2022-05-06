@@ -7,6 +7,7 @@ public class LightCurveDTO
 {
     public int Id { get; set; }
     public int Value { get; set; }
+    public DateTime DateCreated { get; set; }
     public StarDTO Star { get; set; }
     public UserDTO User { get; set; }
     public DeviceDTO? Device { get; set; }

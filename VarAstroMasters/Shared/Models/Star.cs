@@ -10,4 +10,5 @@ public class Star
 
     public List<LightCurve> LightCurves { get; set; } = new();
     public List<StarCatalog> StarCatalogs { get; set; }
+    public StarVariability StarVariability { get; set; }
 }

@@ -90,4 +90,7 @@ a, .btn-link {
 
 section {
     margin-top: 3rem;
+    background: rgb(33 37 41 / 4%);
+    padding: 1rem;
+    border-radius: .5rem;
 }
