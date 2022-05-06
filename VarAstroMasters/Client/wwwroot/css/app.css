@@ -98,3 +98,7 @@ section {
 .sidebar {
     overflow-y: auto;
 }
+
+section:last-of-type {
+    margin-bottom: 5rem;
+}

@@ -7,12 +7,23 @@
 @using ChartJs.Blazor.PolarAreaChart
 @using Microsoft.Extensions.Options
 
-<Chart Config="_config"></Chart>
+@if (Message is null)
+{
+    <Chart Config="_config"></Chart>
+}
+else
+{
+    <Alert type="danger">
+        @Message
+    </Alert>
+}
 
 @code {
 
     [Parameter]
-    public string values { get; set; }
+    public string Values { get; set; } = string.Empty;
+
+    private string? Message { get; set; }
 
     private ScatterConfig _config;
 
@@ -43,31 +54,23 @@
                 }
             }
         };
-        List<Point> points = new();
-        var vals = JsonSerializer.Deserialize<List<List<double>>>(values);
-        foreach (var val in vals)
-        {
-            points.Add(new Point(val[0], val[1]));
-        }
         var dataset = new LineDataset<Point>
         {
             Label = "Mag"
         };
-        var dataset2 = new LineDataset<Point>
+        var valDictionary = JsonSerializer.Deserialize<Dictionary<string, List<decimal>>>(Values);
+        if (valDictionary != null)
         {
-            Label = "Mag2"
-        };
-        foreach (var point in points)
-        {
-            var pt = new Point(point.X, point.Y + 0.1);
-            dataset2.Add(pt);
+            for (var i = 0; i < valDictionary["HJD"].Count; i++)
+            {
+                dataset.Add(new Point((double)valDictionary["HJD"][i], (double)valDictionary["V-C"][i]));
+            }
+            _config.Data.Datasets.Add(dataset);
         }
-        foreach (var point in points)
+        else
         {
-            dataset.Add(point);
+            Message = "Nebolo možné získať údaje krivky.";
         }
-        _config.Data.Datasets.Add(dataset);
-        _config.Data.Datasets.Add(dataset2);
     }
 
 }

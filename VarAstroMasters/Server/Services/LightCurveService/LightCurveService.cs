@@ -106,21 +106,6 @@ public class LightCurveService : ILightCurveService
     public async Task<ServiceResponse<int>> AddLightCurveAsync(LightCurveAdd lightCurveAdd)
     {
         var userId = _authService.GetUserId();
-        // var lightCurve = new LightCurve
-        // {
-        //     StarId = lightCurveAdd.StarId,
-        //     UserId = _authService.GetUserId()
-        // };
-        // _context.LightCurves.Add(lightCurve);
-        // await _context.SaveChangesAsync();
-        //
-        // return new ServiceResponse<LightCurveDTO>
-        // {
-        //     Data = new LightCurveDTO
-        //     {
-        //         Id = lightCurve.Id
-        //     }
-        // };
         var lightCurve = new LightCurve
         {
             UserId = userId,
@@ -146,30 +131,37 @@ public class LightCurveService : ILightCurveService
         if (curve is null)
             return new ServiceResponse<string>
             {
-                Data = "bad"
+                Data = "Not Found",
+                Success = false
             };
 
-        List<List<decimal>> values = new();
-        var fileContent = curve.DataFileContent;
         char[] delimiters = { '\r', '\n' };
-        var lines = fileContent.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+        var format = new NumberFormatInfo { NumberDecimalDigits = 6, NumberGroupSeparator = "." };
+        List<List<decimal>> valueHolder = new();
+
+        // Load the file content, split by lines
+        //     and extract column names (on first line)
+        var lines = curve.DataFileContent.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+        var columnNames = lines[0].Split(" ").ToList();
+        columnNames.RemoveAt(0); // remove # symbol
+
+        // Create a new list for each column
+        for (var i = 0; i < columnNames.Count; i++) valueHolder.Add(new List<decimal>());
         foreach (var line in lines)
         {
             if (line.StartsWith("#")) continue;
-
             var lineValues = line.Split(" ");
-            var format = new NumberFormatInfo { NumberDecimalDigits = 6, NumberGroupSeparator = "." };
-            var val1 = decimal.Parse(lineValues[0], format);
-            var val2 = decimal.Parse(lineValues[1], format);
-            values.Add(new List<decimal>
-            {
-                val1, val2
-            });
+            // For each column in the data, add to corresponding list
+            for (var i = 0; i < lineValues.Length; i++) valueHolder[i].Add(decimal.Parse(lineValues[i], format));
         }
+
+        // Map column names with the values
+        Dictionary<string, List<decimal>> responseData = new();
+        for (var i = 0; i < columnNames.Count; i++) responseData.Add(columnNames[i], valueHolder[i]);
 
         return new ServiceResponse<string>
         {
-            Data = JsonSerializer.Serialize(values)
+            Data = JsonSerializer.Serialize(responseData)
         };
     }
 }
