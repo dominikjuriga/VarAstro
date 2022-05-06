@@ -144,7 +144,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _star = await StarService.GetStarAsync(StarId);
+        var response = await StarService.GetStarAsync(StarId);
+        _star = response.Data;
         _devices = await UserService.GetMyDevices();
         _lightCurveAdd.StarId = _star.Id;
     }

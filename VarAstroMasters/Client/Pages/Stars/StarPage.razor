@@ -15,23 +15,58 @@ else
         <a class="btn btn-outline-primary" href="@Endpoints.ClientLightCurveAdd/@Star.Id">Pridať pozorovanie</a>
     </div>
 
+    <section>
+        <h4>Prítomnosť hviezdy v katalógoch</h4>
+        @if (Star is {StarCatalogs: not null, StarCatalogs.Count: > 0})
+        {
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Katalóg</th>
+                        <th scope="col">RA</th>
+                        <th scope="col">DEC</th>
+                    </tr>
+                    </thead>
+                    <tbody>
 
-    <h4>Pozorovanie tejto hviezdy</h4>
-    @if (Star.LightCurves.Count == 0)
-    {
-        <h4>Táto hviezda nemá žiadne pozorovania.</h4>
-    }
-    else
-    {
-        <ul>
-            @foreach (var curve in Star.LightCurves)
-            {
-                <li>
-                    <a href="@Endpoints.ClientLightCurveGetSingle/@curve.Id">@curve.Value</a>
-                </li>
-            }
-        </ul>
-    }
+                    @foreach (var sc in Star.StarCatalogs)
+                    {
+                        <tr>
+                            <th scope="row">@sc.CatalogId</th>
+                            <td>@sc.Ra</td>
+                            <td>@sc.Dec</td>
+                        </tr>
+                    }
+
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <h4>Táto hviezda sa nenachádza v žiadnych katalógoch.</h4>
+        }
+    </section>
+
+    <section>
+        <h4>Pozorovanie tejto hviezdy</h4>
+        @if (Star.LightCurves.Count == 0)
+        {
+            <h5>Táto hviezda nemá žiadne pozorovania.</h5>
+        }
+        else
+        {
+            <ul>
+                @foreach (var curve in Star.LightCurves)
+                {
+                    <li>
+                        <a href="@Endpoints.ClientLightCurveGetSingle/@curve.Id">@curve.Id (@curve.User.Name)</a>
+                    </li>
+                }
+            </ul>
+        }
+    </section>
 }
 
 @code {
@@ -43,7 +78,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Star = await StarService.GetStarAsync(StarId);
+        var response = await StarService.GetStarAsync(StarId);
+        if (response.Success)
+        {
+            Star = response.Data;
+        }
     }
 
 }

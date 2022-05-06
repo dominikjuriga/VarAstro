@@ -32,6 +32,8 @@ public class StarService : IStarService
     {
         var star = await _context.Stars
             .Include(s => s.LightCurves)
+            .ThenInclude(lc => lc.User)
+            .Include(s => s.StarCatalogs)
             .FirstOrDefaultAsync(s => s.Id == starId);
         if (star is not null)
         {
@@ -39,7 +41,12 @@ public class StarService : IStarService
             foreach (var curve in star.LightCurves)
                 curves.Add(new LightCurveDTO
                 {
-                    Id = curve.Id
+                    Id = curve.Id,
+                    User = new UserDTO
+                    {
+                        Id = curve.User.Id,
+                        Name = curve.User.UserName
+                    }
                 });
             return new ServiceResponse<StarDTO>
             {
@@ -47,7 +54,8 @@ public class StarService : IStarService
                 {
                     Id = star.Id,
                     LightCurves = curves,
-                    Name = star.Name
+                    Name = star.Name,
+                    StarCatalogs = star.StarCatalogs
                 }
             };
         }

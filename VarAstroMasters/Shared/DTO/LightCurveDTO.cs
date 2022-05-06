@@ -11,4 +11,5 @@ public class LightCurveDTO
     public UserDTO User { get; set; }
     public DeviceDTO? Device { get; set; }
     public ObservatoryDTO Observatory { get; set; }
+    public Dictionary<string, string>? Meta { get; set; }
 }

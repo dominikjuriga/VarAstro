@@ -1,4 +1,5 @@
 ﻿@page "/LightCurves/{LightCurveId:int}"
+@using Newtonsoft.Json
 @inject ILightCurveService LightCurveService
 
 @if (_curve is null)
@@ -14,34 +15,41 @@ else
         </strong>)
     </h3>
 
-    <table class="table">
-        <tbody>
-        <tr>
-            <th scope="row">Autor</th>
-            <td>@_curve.User.Name</td>
-        </tr>
-        <tr>
-            <th scope="row">RA</th>
-            <td>05:48:23.959</td>
-        </tr>
-        <tr>
-            <th scope="row">DEC</th>
-            <td>+30:57:03.94</td>
-        </tr>
-        <tr>
-            <th scope="row">Hvezdáreň</th>
-            <td>@(_curve.Observatory is null ? "Nešpecifikovaná" : _curve.Observatory.Address)</td>
-        </tr>
-        <tr>
-            <th scope="row">Zariadenie</th>
-            <td>@(_curve.Device is null ? "Nešpecifikované" : _curve.Device.Name)</td>
-        </tr>
-        </tbody>
-    </table>
+    <section>
+        <div class="table-responsive">
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th scope="row">Autor</th>
+                    <td>@_curve.User.Name</td>
+                </tr>
+                <tr>
+                    <th scope="row">RA</th>
+                    <td>@_starRa</td>
+                </tr>
+                <tr>
+                    <th scope="row">DEC</th>
+                    <td>@_starDec</td>
+                </tr>
+                <tr>
+                    <th scope="row">Hvezdáreň</th>
+                    <td>@(_curve.Observatory is null ? "Nešpecifikovaná" : _curve.Observatory.Address)</td>
+                </tr>
+                <tr>
+                    <th scope="row">Zariadenie</th>
+                    <td>@(_curve.Device is null ? "Nešpecifikované" : _curve.Device.Name)</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
 
     @if (_values is not null)
     {
-        <ExampleChart Values="@_values"></ExampleChart>
+        <section>
+            <ScatterChart Values="@_values"></ScatterChart>
+        </section>
     }
 }
 
@@ -52,10 +60,27 @@ else
 
     private LightCurveDTO? _curve { get; set; } = null;
     private string? _values { get; set; } = string.Empty;
+    private string _starRa = "-";
+    private string _starDec = "-";
+    private Dictionary<string, string>? _meta = null;
 
     protected override async Task OnInitializedAsync()
     {
         _curve = await LightCurveService.GetLightCurve(LightCurveId);
+        var sc = _curve.Star.StarCatalogs.Where(c => c.Primary).FirstOrDefault();
+        if (sc is not null)
+        {
+            _starRa = $"{sc.Ra} ({sc.CatalogId})";
+            _starDec = $"{sc.Dec} ({sc.CatalogId})";
+        }
+        else
+        {
+            if (_curve.Meta is not null)
+            {
+                _starRa = $"{_curve.Meta.GetValueOrDefault("RA", "-")} (fotometria)";
+                _starDec = $"{_curve.Meta.GetValueOrDefault("DEC", "-")} (fotometria)";
+            }
+        }
         _values = await LightCurveService.GetLightCurveValues(LightCurveId);
     }
 

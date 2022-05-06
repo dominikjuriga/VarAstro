@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VarAstroMasters.Server.Data;
 
@@ -10,9 +11,10 @@ using VarAstroMasters.Server.Data;
 namespace VarAstroMasters.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220506000255_catalogs")]
+    partial class catalogs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -296,10 +298,6 @@ namespace VarAstroMasters.Server.Migrations
                     b.Property<int>("StarId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CrossId")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Dec")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -312,8 +310,6 @@ namespace VarAstroMasters.Server.Migrations
                         .HasColumnType("longtext");
 
                     b.HasKey("CatalogId", "StarId");
-
-                    b.HasIndex("StarId");
 
                     b.ToTable("StarCatalog");
                 });
@@ -487,20 +483,9 @@ namespace VarAstroMasters.Server.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("VarAstroMasters.Shared.Models.StarCatalog", b =>
-                {
-                    b.HasOne("VarAstroMasters.Shared.Models.Star", null)
-                        .WithMany("StarCatalogs")
-                        .HasForeignKey("StarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("VarAstroMasters.Shared.Models.Star", b =>
                 {
                     b.Navigation("LightCurves");
-
-                    b.Navigation("StarCatalogs");
                 });
 
             modelBuilder.Entity("VarAstroMasters.Shared.Models.User", b =>

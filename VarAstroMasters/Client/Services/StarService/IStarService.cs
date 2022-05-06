@@ -1,9 +1,7 @@
-﻿
-
-namespace VarAstroMasters.Client.Services.StarService;
+﻿namespace VarAstroMasters.Client.Services.StarService;
 
 public interface IStarService
 {
     Task<List<StarDTO>> GetStarsAsync();
-    Task<StarDTO> GetStarAsync(int starId);
+    Task<ServiceResponse<StarDTO>> GetStarAsync(int starId);
 }

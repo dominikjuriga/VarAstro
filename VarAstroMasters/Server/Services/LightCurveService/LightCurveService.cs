@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 
 namespace VarAstroMasters.Server.Services.LightCurveService;
@@ -43,15 +44,25 @@ public class LightCurveService : ILightCurveService
         var data = await _context.LightCurves
             .Where(lc => lc.Id == curveId)
             .Include(lc => lc.Star)
+            .ThenInclude(s => s.StarCatalogs)
             .Include(lc => lc.User)
             .Include(lc => lc.Device)
             .Include(lc => lc.Observatory)
             .FirstOrDefaultAsync();
+
         if (data is null)
             return new ServiceResponse<LightCurveDTO>
             {
                 Success = false
             };
+
+        var linePattern = @"\#\sVAR\s(.*)";
+        var metaLine = Regex.Matches(data.DataFileContent, linePattern)[0].Groups[1].Value;
+
+        var metaPattern = @"\s*(\S+):\s(\S+)";
+        var metaMatches = Regex.Matches(metaLine, metaPattern);
+        Dictionary<string, string> meta = new();
+        foreach (Match match in metaMatches) meta.Add(match.Groups[1].Value.ToUpper(), match.Groups[2].Value);
 
         var resData = new LightCurveDTO
         {
@@ -59,13 +70,15 @@ public class LightCurveService : ILightCurveService
             Star = new StarDTO
             {
                 Name = data.Star.Name,
-                Id = data.Star.Id
+                Id = data.Star.Id,
+                StarCatalogs = data.Star.StarCatalogs
             },
             User = new UserDTO
             {
                 Id = data.User.Id,
                 Name = data.User.Email
-            }
+            },
+            Meta = meta
         };
 
         if (data.Device is not null)
