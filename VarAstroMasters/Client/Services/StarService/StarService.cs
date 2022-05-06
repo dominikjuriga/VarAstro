@@ -23,4 +23,10 @@ public class StarService : IStarService
             await _httpClient.GetFromJsonAsync<ServiceResponse<StarDTO>>($"{Endpoints.ApiStarGetSingle}/{starId}");
         return response;
     }
+
+    public async Task<ServiceResponse<List<StarDTO>>> Search(string query)
+    {
+        var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiStarSearch, query);
+        return await response.Content.ReadFromJsonAsync<ServiceResponse<List<StarDTO>>>();
+    }
 }
