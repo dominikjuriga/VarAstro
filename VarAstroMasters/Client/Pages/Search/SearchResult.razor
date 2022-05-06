@@ -10,11 +10,19 @@
     </Alert>
 }
 
-@if (_results is not null)
+@if (_results is {Data: not null})
 {
-    foreach (var result in _results.Data)
+    @if (_results.Data.Count == 0)
     {
-        <a href="@Endpoints.ClientStarGetSingle/@result.Id">@result.Name</a>
+        <h4>Nenašli sa žiadne výsledky pre dotaz <strong>@searchQuery</strong>.</h4>
+        <a href="@Endpoints.ClientSearch">Späť na vyhľadávanie.</a>
+    }
+    else
+    {
+        foreach (var result in _results.Data)
+        {
+            <a href="@Endpoints.ClientStarGetSingle/@result.Id">@result.Name</a>
+        }
     }
 }
 
@@ -40,4 +48,3 @@
     }
 
 }
-

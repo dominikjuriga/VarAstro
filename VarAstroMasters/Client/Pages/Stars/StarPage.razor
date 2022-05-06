@@ -16,6 +16,58 @@ else
     </div>
 
     <section>
+        <h4>Údaje o hviezde</h4>
+        <div class="table-responsive">
+            <table class="table">
+                <tbody>
+                @if (Star is {StarVariability: not null})
+                {
+                    <tr>
+                        <th scope="row">Epocha</th>
+                        <td>@Star.StarVariability.Epoch</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Perióda</th>
+                        <td>@Star.StarVariability.Period</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Primárne minimum</th>
+                        <td>@Star.StarVariability.PrimaryMinimum</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Typ premennej hviezdy</th>
+                        <td>
+                            @if (Star.StarVariability.VariabilityType == VariabilityType.Intrinsic)
+                            {
+                                <span>Fyzikálna</span>
+                            }
+                            else if (Star.StarVariability.VariabilityType == VariabilityType.Extrinsic)
+                            {
+                                <span>Geometrická</span>
+                            }
+                            else
+                            {
+                                <span>-</span>
+                            }
+                        </td>
+                    </tr>
+                }
+                @if (_primaryStarCatalog is not null)
+                {
+                    <tr>
+                        <th scope="row">RA</th>
+                        <td>@_primaryStarCatalog.Ra (@_primaryStarCatalog.CatalogId)</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">DEC</th>
+                        <td>@_primaryStarCatalog.Dec (@_primaryStarCatalog.CatalogId)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section>
         <h4>Prítomnosť hviezdy v katalógoch</h4>
         @if (Star is {StarCatalogs: not null, StarCatalogs.Count: > 0})
         {
@@ -50,7 +102,6 @@ else
                             <td>@sc.CrossId</td>
                         </tr>
                     }
-
                     </tbody>
                 </table>
             </div>
@@ -62,10 +113,12 @@ else
     </section>
 
     <section>
-        <h4>Pozorovanie tejto hviezdy</h4>
+        <h4> Pozorovanie tejto hviezdy</h4>
         @if (Star.LightCurves.Count == 0)
         {
-            <h5>Táto hviezda nemá žiadne pozorovania.</h5>
+            <h5>
+                Táto hviezda nemá žiadne pozorovania.
+            </h5>
         }
         else
         {
@@ -73,7 +126,7 @@ else
                 @foreach (var curve in Star.LightCurves)
                 {
                     <li>
-                        <a href="@Endpoints.ClientLightCurveGetSingle/@curve.Id">@curve.Id (@curve.User.Name)</a>
+                        <a href="@Endpoints.ClientLightCurveGetSingle/@curve.Id"> @curve.Id (@curve.User.Name) </a>
                     </li>
                 }
             </ul>
@@ -87,6 +140,7 @@ else
     public int StarId { get; set; }
 
     private StarDTO? Star { get; set; }
+    private StarCatalog? _primaryStarCatalog { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -94,6 +148,7 @@ else
         if (response.Success)
         {
             Star = response.Data;
+            _primaryStarCatalog = Star.StarCatalogs.Where(sc => sc.Primary).FirstOrDefault();
         }
     }
 

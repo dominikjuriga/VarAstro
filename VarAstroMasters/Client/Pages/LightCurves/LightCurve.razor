@@ -39,6 +39,10 @@ else
                     <th scope="row">Zariadenie</th>
                     <td>@(_curve.Device is null ? "Nešpecifikované" : _curve.Device.Name)</td>
                 </tr>
+                <tr>
+                    <th scope="row">Pridané</th>
+                    <td>@_curve.DateCreated.ToString(@Keywords.DefaultDateTimeFormat)</td>
+                </tr>
                 </tbody>
             </table>
         </div>

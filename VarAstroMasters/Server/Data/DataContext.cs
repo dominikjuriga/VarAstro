@@ -40,4 +40,5 @@ public class DataContext : IdentityDbContext<User>
     public DbSet<Observatory> Observatories { get; set; }
     public DbSet<Catalog> Catalogs { get; set; }
     public DbSet<StarCatalog> StarCatalog { get; set; }
+    public DbSet<StarCatalog> StarVariability { get; set; }
 }

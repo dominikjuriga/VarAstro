@@ -35,13 +35,7 @@
                 </NavLink>
             </div>
         </NavDropdown>
-        <NavDropdown Title="Administrácia" Icon="lock-locked">
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="@Endpoints.ClientAdmin">
-                    <span class="oi oi-list" aria-hidden="true"></span> Admin
-                </NavLink>
-            </div>
-        </NavDropdown>
+
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="@Endpoints.ClientSearch">
                 <span class="oi oi-magnifying-glass" aria-hidden="true"></span> Vyhľadávanie
@@ -49,6 +43,13 @@
         </div>
         <AuthorizeView>
             <Authorized>
+                <NavDropdown Title="Administrácia" Icon="lock-locked">
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="@Endpoints.ClientAdmin">
+                            <span class="oi oi-list" aria-hidden="true"></span> Admin
+                        </NavLink>
+                    </div>
+                </NavDropdown>
                 <NavDropdown Title="Zariadenia" Icon="aperture">
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href="@Endpoints.ClientDeviceList">

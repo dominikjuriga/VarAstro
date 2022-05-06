@@ -34,6 +34,7 @@ public class StarService : IStarService
             .Include(s => s.LightCurves)
             .ThenInclude(lc => lc.User)
             .Include(s => s.StarCatalogs)
+            .Include(s => s.StarVariability)
             .FirstOrDefaultAsync(s => s.Id == starId);
         if (star is not null)
         {
@@ -55,7 +56,8 @@ public class StarService : IStarService
                     Id = star.Id,
                     LightCurves = curves,
                     Name = star.Name,
-                    StarCatalogs = star.StarCatalogs
+                    StarCatalogs = star.StarCatalogs,
+                    StarVariability = star.StarVariability
                 }
             };
         }

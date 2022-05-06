@@ -73,6 +73,7 @@ public class LightCurveService : ILightCurveService
                 Id = data.Star.Id,
                 StarCatalogs = data.Star.StarCatalogs
             },
+            DateCreated = data.DateCreated,
             User = new UserDTO
             {
                 Id = data.User.Id,
