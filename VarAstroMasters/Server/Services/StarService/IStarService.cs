@@ -8,4 +8,6 @@ public interface IStarService
     Task<ServiceResponse<int>> CreateDraft(StarDraftAdd starDraftAdd);
     Task<ServiceResponse<StarDraft>> GetDraft(int id);
     Task<ServiceResponse<List<StarDraft>>> GetDraftList();
+    Task<ServiceResponse<List<ObservationLogDTO>>> GetObservationLogList();
+    Task<ServiceResponse<ObservationLogDetailDTO>> GetObservationLog(string id);
 }

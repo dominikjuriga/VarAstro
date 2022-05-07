@@ -48,6 +48,20 @@ public class StarController : ControllerBase
         return Ok(response);
     }
 
+    [HttpGet("logs")]
+    public async Task<ActionResult<ServiceResponse<List<ObservationLogDTO>>>> GetObservationLogList()
+    {
+        var response = await _starService.GetObservationLogList();
+        return Ok(response);
+    }
+
+    [HttpGet("logs/{id}")]
+    public async Task<ActionResult<ServiceResponse<ObservationLogDetailDTO>>> GetObservationLog(string id)
+    {
+        var response = await _starService.GetObservationLog(id);
+        return Ok(response);
+    }
+
     [HttpGet("search/{searchQuery}")]
     public async Task<ActionResult<ServiceResponse<StarSearchDTO>>> Search(string searchQuery)
     {

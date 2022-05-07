@@ -51,4 +51,20 @@ public class StarService : IStarService
             await _httpClient.GetFromJsonAsync<ServiceResponse<List<StarDraft>>>(Endpoints.ApiStarGetDraftList);
         return response;
     }
+
+    public async Task<ServiceResponse<List<ObservationLogDTO>>> GetObservationLogList()
+    {
+        var response =
+            await _httpClient.GetFromJsonAsync<ServiceResponse<List<ObservationLogDTO>>>(Endpoints
+                .ApiStarGetObservationLogList);
+        return response;
+    }
+
+    public async Task<ServiceResponse<ObservationLogDetailDTO>> GetObservationLog(string id)
+    {
+        var response =
+            await _httpClient.GetFromJsonAsync<ServiceResponse<ObservationLogDetailDTO>>(
+                $"{Endpoints.ApiStarGetObservationLog}/{id}");
+        return response;
+    }
 }

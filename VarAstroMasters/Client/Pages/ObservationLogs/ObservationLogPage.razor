@@ -1,0 +1,53 @@
+﻿@page "/ObservationLogs/{Id}"
+@inject IStarService StarService
+
+<h3>
+    Pozorovací denník
+    @if (log is {User: not null})
+    {
+        <span>- @log.User.Name</span>
+    }
+</h3>
+
+@if (log is null)
+{
+    <Loader/>
+}
+else
+{
+    @if (log.Curves.Count == 0)
+    {
+        <p>Tento denník nemá žiadne pozorovania.</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var lc in log.Curves)
+            {
+                <li>
+                    <span class="oi oi-aperture"></span> @(lc.Observatory?.Address ?? "Nešpecifikované") <br/>
+                    <span class="oi oi-home"></span> @(lc.Observatory?.Address ?? "Nešpecifikovaná")
+                </li>
+            }
+        </ul>
+    }
+}
+
+@code {
+
+    [Parameter]
+    public string Id { get; set; }
+
+    private ObservationLogDetailDTO? log { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await StarService.GetObservationLog(Id);
+        if (response.Success)
+        {
+            log = response.Data;
+        }
+    }
+
+
+}

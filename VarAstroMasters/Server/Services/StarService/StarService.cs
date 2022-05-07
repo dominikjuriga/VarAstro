@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore;
 
 namespace VarAstroMasters.Server.Services.StarService;
 
@@ -135,6 +136,87 @@ public class StarService : IStarService
         return new ServiceResponse<List<StarDraft>>
         {
             Data = sd
+        };
+    }
+
+    public async Task<ServiceResponse<List<ObservationLogDTO>>> GetObservationLogList()
+    {
+        var q = from lc in _context.Set<LightCurve>()
+            orderby lc.DateCreated
+            group lc by lc.UserId
+            into g
+            where g.Count() > 0
+            orderby g.Key
+            select new
+            {
+                User = g.SingleOrDefault().User,
+                Contributions = g.Count()
+            };
+        var result = await q.ToListAsync();
+
+        List<ObservationLogDTO> data = new();
+        foreach (var item in result)
+            data.Add(new ObservationLogDTO
+            {
+                Contributions = item.Contributions,
+                User = new UserSimpleDTO
+                {
+                    Id = item.User.Id,
+                    Name = item.User.UserName
+                }
+            });
+        return new ServiceResponse<List<ObservationLogDTO>>
+        {
+            Data = data
+        };
+    }
+
+    public async Task<ServiceResponse<ObservationLogDetailDTO>> GetObservationLog(string id)
+    {
+        var data = await _context.LightCurves
+            .Where(lc => lc.UserId == id)
+            .Include(lc => lc.Device)
+            .Include(lc => lc.Observatory)
+            .Include(lc => lc.Star)
+            .ToListAsync();
+        var user = await _context.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
+
+        List<LightCurveDTO> response = new();
+        foreach (var lc in data)
+        {
+            var dto = new LightCurveDTO
+            {
+                Id = lc.Id,
+                DateCreated = lc.DateCreated,
+                Star = new StarDTO
+                {
+                    Id = lc.Star.Id,
+                    Name = lc.Star.Name
+                }
+            };
+            if (lc.Device is not null)
+                dto.Device = new DeviceDTO
+                {
+                    Name = lc.Device.Name
+                };
+            if (lc.Observatory is not null)
+                dto.Observatory = new ObservatoryDTO
+                {
+                    Address = lc.Observatory.Address
+                };
+            response.Add(dto);
+        }
+
+        return new ServiceResponse<ObservationLogDetailDTO>
+        {
+            Data = new ObservationLogDetailDTO
+            {
+                Curves = response,
+                User = new UserDTO
+                {
+                    Name = user.UserName
+                }
+            }
         };
     }
 }

@@ -29,6 +29,9 @@ public static class Endpoints
     public static readonly string ApiStarGetDraft = $"{ApiStarBasePath}/draft";
     public static readonly string ApiStarGetDraftList = $"{ApiStarBasePath}/draft";
 
+    public static readonly string ApiStarGetObservationLogList = $"{ApiStarBasePath}/logs";
+    public static readonly string ApiStarGetObservationLog = $"{ApiStarBasePath}/logs";
+
     public static readonly string ApiObservatoryBase = "api/observatory";
     public static readonly string ApiObservatoryGetObservatories = $"{ApiObservatoryBase}";
     public static readonly string ApiObservatoryAdd = $"{ApiObservatoryBase}";
@@ -42,6 +45,10 @@ public static class Endpoints
     public static readonly string ClientStarCreateDraft = $"{ClientStarBase}/Drafts/Create";
     public static readonly string ClientStarGetSingle = $"{ClientStarBase}";
     public static readonly string ClientStarDraftSingle = $"{ClientStarBase}/Drafts";
+
+    public static readonly string ClientObservationLogBase = "/ObservationLogs";
+    public static readonly string ClientObservationLogList = $"{ClientObservationLogBase}";
+    public static readonly string ClientObservationLogSingle = $"{ClientObservationLogBase}";
 
     public static readonly string ClientObservatoriesBase = "/Observatories";
     public static readonly string ClientObservatoriesList = $"{ClientObservatoriesBase}";
