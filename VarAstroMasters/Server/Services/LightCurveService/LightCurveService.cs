@@ -56,13 +56,6 @@ public class LightCurveService : ILightCurveService
                 Success = false
             };
 
-        var linePattern = @"\#\sVAR\s(.*)";
-        var metaLine = Regex.Matches(data.DataFileContent, linePattern)[0].Groups[1].Value;
-
-        var metaPattern = @"\s*(\S+):\s(\S+)";
-        var metaMatches = Regex.Matches(metaLine, metaPattern);
-        Dictionary<string, string> meta = new();
-        foreach (Match match in metaMatches) meta.Add(match.Groups[1].Value.ToUpper(), match.Groups[2].Value);
 
         var resData = new LightCurveDTO
         {
@@ -78,9 +71,21 @@ public class LightCurveService : ILightCurveService
             {
                 Id = data.User.Id,
                 Name = data.User.Email
-            },
-            Meta = meta
+            }
         };
+
+        var linePattern = @"\#\sVAR\s(.*)";
+        var regRes = Regex.Matches(data.DataFileContent, linePattern);
+        var metaLine = regRes.Count > 0 ? regRes[0].Groups[1].Value : null;
+        if (metaLine is { Length: > 0 })
+        {
+            var metaPattern = @"\s*(\S+):\s(\S+)";
+            var metaMatches = Regex.Matches(metaLine, metaPattern);
+            Dictionary<string, string> meta = new();
+            foreach (Match match in metaMatches) meta.Add(match.Groups[1].Value.ToUpper(), match.Groups[2].Value);
+            resData.Meta = meta;
+        }
+
 
         if (data.Device is not null)
             resData.Device = new DeviceDTO
@@ -136,6 +141,8 @@ public class LightCurveService : ILightCurveService
             };
 
         char[] delimiters = { '\r', '\n' };
+
+        // TODO can be different amount of decimal digits
         var format = new NumberFormatInfo { NumberDecimalDigits = 6, NumberGroupSeparator = "." };
         List<List<decimal>> valueHolder = new();
 
