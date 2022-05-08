@@ -1,0 +1,17 @@
+﻿<div class="row">
+    @foreach (var curve in Curves)
+    {
+        <SingleCurve Curve="@curve" CurveLayout="@CurveLayout"/>
+    }
+</div>
+
+@code {
+
+    [Parameter]
+    public List<LightCurveDTO> Curves { get; set; }
+
+
+    [Parameter]
+    public string CurveLayout { get; set; }
+
+}

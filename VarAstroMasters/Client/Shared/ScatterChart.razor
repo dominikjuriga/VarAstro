@@ -54,18 +54,68 @@ else
                 }
             }
         };
+        var pointOfInterestHoverRadius = 15;
+        var pointOfInterestRadius = 5;
+        var regularPointRadius = 2;
+    // Holds all the values except min and max
         var dataset = new LineDataset<Point>
         {
-            Label = $"Mag"
+            Label = $"Mag",
+            ShowLine = false,
+            BackgroundColor = "rgba(255,255,255,.05)",
+            PointBackgroundColor = "rgba(0,0,0,.8)",
+            PointRadius = regularPointRadius
         };
+
+    // Holds the minimum value
+        var minDataset = new LineDataset<Point>
+        {
+            Label = $"Min",
+            PointBackgroundColor = "rgba(255, 0, 0, 1)",
+            BackgroundColor = "rgba(255, 0, 0, .05)",
+            PointHoverRadius = pointOfInterestHoverRadius,
+            PointRadius = pointOfInterestRadius,
+            PointStyle = PointStyle.RectRot
+        };
+
+    // Holds the maximum value
+        var maxDataset = new LineDataset<Point>
+        {
+            Label = $"Max",
+            PointBackgroundColor = "rgba(0, 255, 0, 1)",
+            BackgroundColor = "rgba(0, 255, 0, .05)",
+            PointHoverRadius = pointOfInterestHoverRadius,
+            PointRadius = pointOfInterestRadius,
+            PointStyle = PointStyle.RectRot
+        };
+
         var valDictionary = JsonSerializer.Deserialize<Dictionary<string, List<decimal>>>(Values);
+
+    // A minimum of a curve is the maximum of this value and vice versa
+        var maxValue = valDictionary["V-C"].Min();
+        var minValue = valDictionary["V-C"].Max();
         if (valDictionary != null)
         {
             for (var i = 0; i < valDictionary["HJD"].Count; i++)
             {
-                dataset.Add(new Point((double)valDictionary["HJD"][i], (double)valDictionary["V-C"][i]));
+                var currentVC = valDictionary["V-C"][i];
+                var point = new Point((double)valDictionary["HJD"][i], (double)currentVC);
+                if (currentVC == maxValue)
+                {
+                    maxDataset.Add(point);
+                }
+                else if (currentVC == minValue)
+                {
+                    minDataset.Add(point);
+                }
+                else
+                {
+                    dataset.Add(point);
+                }
             }
             _config.Data.Datasets.Add(dataset);
+            _config.Data.Datasets.Add(minDataset);
+            _config.Data.Datasets.Add(maxDataset);
         }
         else
         {

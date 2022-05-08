@@ -151,27 +151,14 @@ else
         }
         else if (Star is {LightCurves.Count: > 0})
         {
-            <ul>
-                @if (loadingCurveValues)
-                {
-                    <li>
-                        <Loader/>
-                    </li>
-                }
-                else
-                {
-                    @foreach (var curve in Star.LightCurves)
-                    {
-                        <li>
-                            <a href="@Endpoints.ClientLightCurveSingleGet/@curve.Id"> @curve.Id (@curve.User.Name) </a>
-                            @if (curve.Values is not null)
-                            {
-                                <ScatterChart Values="@curve.Values"></ScatterChart>
-                            }
-                        </li>
-                    }
-                }
-            </ul>
+            @if (loadingCurveValues)
+            {
+                <Loader/>
+            }
+            else
+            {
+                <LightCurveListWithValues Curves="@Star.LightCurves" CurveLayout="col-12"/>
+            }
         }
     </section>
 }
@@ -211,3 +198,4 @@ else
     }
 
 }
+

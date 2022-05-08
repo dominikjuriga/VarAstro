@@ -1,0 +1,55 @@
+﻿<div class="@CurveLayout mb-3">
+    <div class="card">
+        <div class="card-body">
+            <span>
+                Krivka pridaná
+                <a href="@Endpoints.ClientLightCurveSingleGet/@curve.Id">
+                    @curve.DateCreated.ToString(Keywords.DefaultDateTimeFormat)
+                </a>
+            </span>
+            <br/>
+            <span>
+                Autor
+                <a href="@Endpoints.ClientObservationLogSingleGet/@curve.User.Id">@curve.User.Name</a>
+            </span>
+            <br/>
+            @if (curve.Device is not null)
+            {
+                <span>
+                    <span class="oi oi-aperture"></span>
+                    @curve.Device.Name
+                </span>
+                <br/>
+            }
+            @if (curve.Observatory is not null)
+            {
+                <span>
+                    <span class="oi oi-aperture"></span>
+                    @curve.Observatory.Address
+                </span>
+                <br/>
+            }
+            @if (curve.Values is not null)
+            {
+                <ScatterChart Values="@curve.Values"/>
+            }
+            else
+            {
+                <Loader/>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public bool IsCard { get; set; }
+
+    [Parameter]
+    public LightCurveDTO curve { get; set; }
+
+    [Parameter]
+    public string CurveLayout { get; set; } = "col-lg-6 col-xl-4";
+
+}
