@@ -16,36 +16,38 @@ else
     </h3>
 
     <section>
-        <div class="table-responsive">
-            <table class="table">
-                <tbody>
-                <tr>
-                    <th scope="row">Autor</th>
-                    <td>@_curve.User.Name</td>
-                </tr>
-                <tr>
-                    <th scope="row">RA</th>
-                    <td>@_starRa</td>
-                </tr>
-                <tr>
-                    <th scope="row">DEC</th>
-                    <td>@_starDec</td>
-                </tr>
-                <tr>
-                    <th scope="row">Hvezdáreň</th>
-                    <td>@(_curve.Observatory is null ? "Nešpecifikovaná" : _curve.Observatory.Address)</td>
-                </tr>
-                <tr>
-                    <th scope="row">Zariadenie</th>
-                    <td>@(_curve.Device is null ? "Nešpecifikované" : _curve.Device.Name)</td>
-                </tr>
-                <tr>
-                    <th scope="row">Pridané</th>
-                    <td>@_curve.DateCreated.ToString(@Keywords.DefaultDateTimeFormat)</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+        <ResponsiveTable>
+            <tbody>
+            <tr>
+                <th scope="row">Autor</th>
+                <td>@_curve.User.Name</td>
+            </tr>
+            <tr>
+                <th scope="row">RA</th>
+                <td>@_starRa</td>
+            </tr>
+            <tr>
+                <th scope="row">DEC</th>
+                <td>@_starDec</td>
+            </tr>
+            <tr>
+                <th scope="row">Hvezdáreň</th>
+                <td>@(_curve.Observatory is null ? "Nešpecifikovaná" : _curve.Observatory.Address)</td>
+            </tr>
+            <tr>
+                <th scope="row">Zariadenie</th>
+                <td>@(_curve.Device is null ? "Nešpecifikované" : _curve.Device.Name)</td>
+            </tr>
+            <tr>
+                <th scope="row">Pridané</th>
+                <td>@_curve.DateCreated.ToString(@Keywords.DefaultDateTimeFormat)</td>
+            </tr>
+            <tr>
+                <th scope="row">Poznámky</th>
+                <td>@(_curve.Comment.Length == 0 ? "Nezadané" : @_curve.Comment)</td>
+            </tr>
+            </tbody>
+        </ResponsiveTable>
     </section>
 
 
@@ -62,8 +64,8 @@ else
     [Parameter]
     public int LightCurveId { get; set; }
 
-    private LightCurveDTO? _curve { get; set; } = null;
-    private string? _values { get; set; } = string.Empty;
+    private LightCurveDTO? _curve { get; set; }
+    private string? _values { get; set; }
     private string _starRa = "-";
     private string _starDec = "-";
     private Dictionary<string, string>? _meta = null;

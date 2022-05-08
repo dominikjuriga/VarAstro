@@ -59,15 +59,20 @@
             </div>
         </NavDropdown>
 
-        <AuthorizeView>
+        <AuthorizeView Roles="Administrator">
             <Authorized>
                 <NavDropdown Title="Administrácia" Icon="lock-locked">
                     <div class="nav-item px-3">
-                        <NavLink class="nav-link" href="@Endpoints.ClientAdmin">
-                            <span class="oi oi-list" aria-hidden="true"></span> Admin
+                        <NavLink class="nav-link" href="@Endpoints.ClientAdminStars">
+                            <span class="oi oi-list" aria-hidden="true"></span> Hviezdy
                         </NavLink>
                     </div>
                 </NavDropdown>
+            </Authorized>
+        </AuthorizeView>
+
+        <AuthorizeView>
+            <Authorized>
                 <NavDropdown Title="Zariadenia" Icon="aperture">
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href="@Endpoints.ClientDeviceList">

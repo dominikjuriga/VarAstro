@@ -71,7 +71,8 @@ public class LightCurveService : ILightCurveService
             {
                 Id = data.User.Id,
                 Name = data.User.Email
-            }
+            },
+            Comment = data.Comment
         };
 
         var linePattern = @"\#\sVAR\s(.*)";
@@ -141,25 +142,41 @@ public class LightCurveService : ILightCurveService
             };
 
         char[] delimiters = { '\r', '\n' };
-
-        // TODO can be different amount of decimal digits
-        var format = new NumberFormatInfo { NumberDecimalDigits = 6, NumberGroupSeparator = "." };
         List<List<decimal>> valueHolder = new();
 
         // Load the file content, split by lines
         //     and extract column names (on first line)
         var lines = curve.DataFileContent.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-        var columnNames = lines[0].Split(" ").ToList();
+        var columnNames = lines[0].Split(" ", StringSplitOptions.RemoveEmptyEntries).ToList();
         columnNames.RemoveAt(0); // remove # symbol
 
         // Create a new list for each column
         for (var i = 0; i < columnNames.Count; i++) valueHolder.Add(new List<decimal>());
+        // var formatVerified = false;
         foreach (var line in lines)
         {
-            if (line.StartsWith("#")) continue;
-            var lineValues = line.Split(" ");
+            // If the line does not begin with a digit, skip
+            if (!Regex.Match(line, @"^\d+").Success) continue;
+            var lineValues = line.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+
             // For each column in the data, add to corresponding list
-            for (var i = 0; i < lineValues.Length; i++) valueHolder[i].Add(decimal.Parse(lineValues[i], format));
+            for (var i = 0; i < lineValues.Length; i++)
+            {
+                // This cycle is INCREDIBLY cumbersome, but for some reason 
+                // decimal.Parse(string) works in normal c# without specifying 
+                // number of decimal digits, it does not in asp.net
+                // or at least not in this file - might be my error, but there is 
+                // not enough time for me to investigate - this will have to do for now
+                var currentValue = lineValues[i];
+
+                // First we have to determine the number of decimal digits a string has 
+                // E.g. regex match will be 123[.456], the number of digits is match - 1
+                // becuase it includes the "." symbol, then the number can be parsed
+                var decimalDigits = Regex.Match(currentValue, @"\.\d+").Value.Length - 1;
+                var decimalValue = decimal.Parse(currentValue, new NumberFormatInfo
+                    { NumberDecimalDigits = decimalDigits, NumberGroupSeparator = "." });
+                valueHolder[i].Add(decimalValue);
+            }
         }
 
         // Map column names with the values

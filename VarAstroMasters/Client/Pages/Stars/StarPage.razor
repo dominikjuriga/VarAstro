@@ -15,96 +15,124 @@ else
         <a class="btn btn-outline-primary" href="@Endpoints.ClientLightCurveAdd/@Star.Id">Pridať pozorovanie</a>
     </div>
 
+    <AuthorizeView Roles="Administrator">
+        <section>
+            <h4>Administrácia hviezdy</h4>
+            <a href="@Endpoints.ClientAdminStars/@Star.Id/Publication" class="btn btn-primary">Spravovať publikáciu</a>
+            <a href="@Endpoints.ClientAdminStars/@Star.Id/Catalogs" class="btn btn-primary">Identifikácia v katalógoch</a>
+        </section>
+    </AuthorizeView>
+
     <section>
         <h4>Údaje o hviezde</h4>
-        <div class="table-responsive">
-            <table class="table">
-                <tbody>
-                @if (Star is {StarVariability: not null})
-                {
-                    <tr>
-                        <th scope="row">Epocha</th>
-                        <td>@Star.StarVariability.Epoch</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Perióda</th>
-                        <td>@Star.StarVariability.Period</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Primárne minimum</th>
-                        <td>@Star.StarVariability.PrimaryMinimum</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Typ premennej hviezdy</th>
-                        <td>
-                            @if (Star.StarVariability.VariabilityType == VariabilityType.Intrinsic)
-                            {
-                                <span>Fyzikálna</span>
-                            }
-                            else if (Star.StarVariability.VariabilityType == VariabilityType.Extrinsic)
-                            {
-                                <span>Geometrická</span>
-                            }
-                            else
-                            {
-                                <span>-</span>
-                            }
-                        </td>
-                    </tr>
-                }
-                @if (PrimaryStarCatalog is not null)
-                {
-                    <tr>
-                        <th scope="row">RA</th>
-                        <td>@PrimaryStarCatalog.Ra (@PrimaryStarCatalog.CatalogId)</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">DEC</th>
-                        <td>@PrimaryStarCatalog.Dec (@PrimaryStarCatalog.CatalogId)</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
+        <ResponsiveTable>
+            <tbody>
+            @if (Star is {StarVariability: not null})
+            {
+                <tr>
+                    <th scope="row">Epocha</th>
+                    <td>@Star.StarVariability.Epoch</td>
+                </tr>
+                <tr>
+                    <th scope="row">Perióda</th>
+                    <td>@Star.StarVariability.Period</td>
+                </tr>
+                <tr>
+                    <th scope="row">Primárne minimum</th>
+                    <td>@Star.StarVariability.PrimaryMinimum</td>
+                </tr>
+                <tr>
+                    <th scope="row">Typ premennej hviezdy</th>
+                    <td>
+                        @if (Star.StarVariability.VariabilityType == VariabilityType.Intrinsic)
+                        {
+                            <span>Fyzikálna</span>
+                        }
+                        else if (Star.StarVariability.VariabilityType == VariabilityType.Extrinsic)
+                        {
+                            <span>Geometrická</span>
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                    </td>
+                </tr>
+            }
+            @if (PrimaryStarCatalog is not null)
+            {
+                <tr>
+                    <th scope="row">RA</th>
+                    <td>@PrimaryStarCatalog.Ra (@PrimaryStarCatalog.CatalogId)</td>
+                </tr>
+                <tr>
+                    <th scope="row">DEC</th>
+                    <td>@PrimaryStarCatalog.Dec (@PrimaryStarCatalog.CatalogId)</td>
+                </tr>
+            }
+            @if (Star is {StarPublish: not null})
+            {
+                <tr>
+                    <th scope="row">Objavená</th>
+                    <td>@Star.StarPublish.Year</td>
+                </tr>
+                <tr>
+                    <th scope="row">Objaviteľ</th>
+                    <td>@Star.StarPublish.Discoverer</td>
+                </tr>
+                <tr>
+                    <th scope="row">Odkaz na publikáciu</th>
+                    <td>
+                        <a href="/@Star.StarPublish.PublicationLink" target="_blank" rel="noopener noreferrer">@Star.StarPublish.PublicationLink</a>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <th scope="row">Publikovaná</th>
+                    <td>Nie</td>
+                </tr>
+            }
+            </tbody>
+        </ResponsiveTable>
     </section>
     <section>
         <h4>Prítomnosť hviezdy v katalógoch</h4>
         @if (Star is {StarCatalogs: not null, StarCatalogs.Count: > 0})
         {
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th scope="col">Katalóg</th>
-                        <th scope="col">
-                            RA
-                        </th>
-                        <th scope="col">
-                            DEC
-                        </th>
-                        <th scope="col">
-                            MAG
-                        </th>
-                        <th scope="col">
-                            Cross-ID
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
+            <ResponsiveTable>
+                <thead>
+                <tr>
+                    <th scope="col">Katalóg</th>
+                    <th scope="col">
+                        RA
+                    </th>
+                    <th scope="col">
+                        DEC
+                    </th>
+                    <th scope="col">
+                        MAG
+                    </th>
+                    <th scope="col">
+                        Cross-ID
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
 
-                    @foreach (var sc in Star.StarCatalogs)
-                    {
-                        <tr>
-                            <th scope="row">@sc.CatalogId</th>
-                            <td>@sc.Ra</td>
-                            <td>@sc.Dec</td>
-                            <td>@sc.Mag</td>
-                            <td>@sc.CrossId</td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
+                @foreach (var sc in Star.StarCatalogs)
+                {
+                    <tr>
+                        <th scope="row">@sc.CatalogId</th>
+                        <td>@sc.Ra</td>
+                        <td>@sc.Dec</td>
+                        <td>@sc.Mag</td>
+                        <td>@sc.CrossId</td>
+                    </tr>
+                }
+                </tbody>
+            </ResponsiveTable>
         }
         else
         {
@@ -127,6 +155,7 @@ else
                 {
                     <li>
                         <a href="@Endpoints.ClientLightCurveGetSingle/@curve.Id"> @curve.Id (@curve.User.Name) </a>
+                        <ScatterChart Values="@curve.Values"></ScatterChart>
                     </li>
                 }
             </ul>

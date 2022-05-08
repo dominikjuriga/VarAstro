@@ -1,11 +1,11 @@
-﻿<div class="alert alert-@type" role="alert">
+﻿<div class="alert alert-@type my-3" role="alert">
     @ChildContent
 </div>
 
 @code {
 
     [Parameter]
-    public string type { get; set; } = "success";
+    public string type { get; set; } = Keywords.AlertSuccess;
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }

@@ -1,5 +1,6 @@
 global using VarAstroMasters.Shared.Models;
 global using VarAstroMasters.Shared.Static;
+global using VarAstroMasters.Shared.CompositeKeys;
 global using VarAstroMasters.Shared.Responses;
 global using VarAstroMasters.Client.Services.AuthService;
 global using VarAstroMasters.Client.Services.StarService;

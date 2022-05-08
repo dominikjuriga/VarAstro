@@ -1,3 +1,5 @@
+using VarAstroMasters.Shared.CompositeKeys;
+
 namespace VarAstroMasters.Server.Controllers;
 
 [Route("api/[controller]")]
@@ -66,6 +68,55 @@ public class StarController : ControllerBase
     public async Task<ActionResult<ServiceResponse<StarSearchDTO>>> Search(string searchQuery)
     {
         var response = await _starService.Search(searchQuery);
+        return Ok(response);
+    }
+
+    [HttpGet("publication/{starId:int}")]
+    public async Task<ActionResult<ServiceResponse<StarPublish>>> GetPublication(int starId)
+    {
+        var response = await _starService.GetPublication(starId);
+        return Ok(response);
+    }
+
+    [HttpPost("publication")]
+    public async Task<ActionResult<ServiceResponse<bool>>> SavePublication(StarPublish starPublish)
+    {
+        var response = await _starService.SavePublication(starPublish);
+        return Ok(response);
+    }
+
+    [HttpGet("catalogs/{starId:int}")]
+    public async Task<ActionResult<ServiceResponse<List<StarCatalog>>>> GetStarCatalogs(int starId)
+    {
+        var response = await _starService.GetStarCatalogs(starId);
+        return Ok(response);
+    }
+
+    [HttpDelete("starcatalog/{starId:int}/{catalogId}")]
+    public async Task<ActionResult<ServiceResponse<bool>>> DeleteStarCatalog(int starId, string catalogId)
+    {
+        var response = await _starService.DeleteStarCatalog(starId, catalogId);
+        return Ok(response);
+    }
+
+    [HttpPost("starcatalog")]
+    public async Task<ActionResult<ServiceResponse<StarCatalog>>> SaveStarCatalog(StarCatalog starCatalog)
+    {
+        var response = await _starService.SaveStarCatalog(starCatalog);
+        return Ok(response);
+    }
+
+    [HttpPost("starcatalog/primary")]
+    public async Task<ActionResult<ServiceResponse<StarCatalog>>> SetStarCatalogPrimary(StarCatalogCK identification)
+    {
+        var response = await _starService.SetStarCatalogPrimary(identification);
+        return Ok(response);
+    }
+
+    [HttpGet("catalogs")]
+    public async Task<ActionResult<ServiceResponse<List<Catalog>>>> GetCatalogs()
+    {
+        var response = await _starService.GetCatalogs();
         return Ok(response);
     }
 }

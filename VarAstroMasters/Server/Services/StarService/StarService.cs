@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
+using VarAstroMasters.Shared.CompositeKeys;
 
 namespace VarAstroMasters.Server.Services.StarService;
 
@@ -7,11 +8,13 @@ public class StarService : IStarService
 {
     private readonly DataContext _context;
     private readonly IAuthService _authService;
+    private readonly ILightCurveService _lightCurveService;
 
-    public StarService(DataContext context, IAuthService authService)
+    public StarService(DataContext context, IAuthService authService, ILightCurveService lightCurveService)
     {
         _context = context;
         _authService = authService;
+        _lightCurveService = lightCurveService;
     }
 
     public async Task<ServiceResponse<List<StarDTO>>> GetStarsAsync()
@@ -42,7 +45,10 @@ public class StarService : IStarService
         if (star is not null)
         {
             var curves = new List<LightCurveDTO>();
+
             foreach (var curve in star.LightCurves)
+            {
+                var values = await _lightCurveService.GetValuesFromCurveAsync(curve.Id);
                 curves.Add(new LightCurveDTO
                 {
                     Id = curve.Id,
@@ -50,8 +56,12 @@ public class StarService : IStarService
                     {
                         Id = curve.User.Id,
                         Name = curve.User.UserName
-                    }
+                    },
+                    DateCreated = curve.DateCreated,
+                    Values = values.Success ? values.Data : null
                 });
+            }
+
             return new ServiceResponse<StarDTO>
             {
                 Data = new StarDTO
@@ -60,7 +70,8 @@ public class StarService : IStarService
                     LightCurves = curves,
                     Name = star.Name,
                     StarCatalogs = star.StarCatalogs,
-                    StarVariability = star.StarVariability
+                    StarVariability = star.StarVariability,
+                    StarPublish = star.StarPublish
                 }
             };
         }
@@ -126,6 +137,40 @@ public class StarService : IStarService
         };
     }
 
+    public async Task<ServiceResponse<StarPublish>> GetPublication(int starId)
+    {
+        var star = await _context.Stars
+            .Where(s => s.Id == starId)
+            .Include(s => s.StarPublish).FirstOrDefaultAsync();
+        star.StarPublish.StarName = star.Name;
+        return new ServiceResponse<StarPublish>
+        {
+            Data = star.StarPublish
+        };
+    }
+
+    public async Task<ServiceResponse<bool>> SavePublication(StarPublish starPublish)
+    {
+        var star = await _context.Stars
+            .Where(s => s.Id == starPublish.StarId)
+            .Include(s => s.StarPublish)
+            .FirstOrDefaultAsync();
+        if (star is null)
+            return new ServiceResponse<bool>
+            {
+                Success = false,
+                Message = "Hviezda nenájdená."
+            };
+
+        star.StarPublish = starPublish;
+        await _context.SaveChangesAsync();
+        return new ServiceResponse<bool>
+        {
+            Data = true,
+            Message = "Publikácia uložená."
+        };
+    }
+
     public async Task<ServiceResponse<List<StarDraft>>> GetDraftList()
     {
         var userId = _authService.GetUserId();
@@ -136,6 +181,34 @@ public class StarService : IStarService
         return new ServiceResponse<List<StarDraft>>
         {
             Data = sd
+        };
+    }
+
+    public async Task<ServiceResponse<bool>> SetStarCatalogPrimary(StarCatalogCK identification)
+    {
+        var sc = await _context.StarCatalog
+            .Where(sc => sc.StarId == identification.StarId && sc.CatalogId == identification.CatalogId)
+            .FirstOrDefaultAsync();
+
+        if (sc is null)
+            return new ServiceResponse<bool>
+            {
+                Success = false,
+                Message = "Záznam nenájdený."
+            };
+
+        var items = _context.StarCatalog
+            .Where(sc => sc.StarId == identification.StarId);
+
+        foreach (var item in items) item.Primary = false;
+
+        sc.Primary = true;
+
+        await _context.SaveChangesAsync();
+
+        return new ServiceResponse<bool>
+        {
+            Message = "Zmena vykonaná."
         };
     }
 
@@ -217,6 +290,109 @@ public class StarService : IStarService
                     Name = user.UserName
                 }
             }
+        };
+    }
+
+    public async Task<ServiceResponse<List<StarCatalog>>> GetStarCatalogs(int starId)
+    {
+        var star = await _context.Stars
+            .Where(s => s.Id == starId)
+            .Include(s => s.StarCatalogs)
+            .FirstOrDefaultAsync();
+
+        if (star is null)
+            return new ServiceResponse<List<StarCatalog>>
+            {
+                Success = false,
+                Message = "Hviezda nenájdená"
+            };
+
+        return new ServiceResponse<List<StarCatalog>>
+        {
+            Data = star.StarCatalogs
+        };
+    }
+
+    public async Task<ServiceResponse<StarCatalog>> SaveStarCatalog(StarCatalog starCatalog)
+    {
+        if (starCatalog.New)
+        {
+            if (_context.StarCatalog.Any(sc =>
+                    sc.StarId == starCatalog.StarId && sc.CatalogId == starCatalog.CatalogId))
+                return new ServiceResponse<StarCatalog>
+                {
+                    Success = false,
+                    Message = "Záznam pre tento katalóg už existuje"
+                };
+            _context.StarCatalog.Add(starCatalog);
+        }
+        else
+        {
+            var sc = await _context.StarCatalog.Where(sc =>
+                sc.StarId == starCatalog.StarId && sc.CatalogId == starCatalog.CatalogId).FirstOrDefaultAsync();
+            if (sc is null)
+                return new ServiceResponse<StarCatalog>
+                {
+                    Success = false,
+                    Message = "Záznam nenájdený"
+                };
+
+            sc.Ra = starCatalog.Ra;
+            sc.Dec = starCatalog.Dec;
+            sc.CatalogId = starCatalog.CatalogId;
+            sc.Mag = starCatalog.Mag;
+            sc.CrossId = starCatalog.CrossId;
+
+            await _context.SaveChangesAsync();
+            return new ServiceResponse<StarCatalog>
+            {
+                Data = sc,
+                Message = "Záznam upravený."
+            };
+        }
+
+        await _context.SaveChangesAsync();
+        return new ServiceResponse<StarCatalog>
+        {
+            Data = starCatalog,
+            Message = "Záznam vytvorený."
+        };
+    }
+
+    public async Task<ServiceResponse<bool>> DeleteStarCatalog(int starId, string catalogId)
+    {
+        var sc = await _context.StarCatalog
+            .Where(sc => sc.StarId == starId && sc.CatalogId == catalogId)
+            .FirstOrDefaultAsync();
+        if (sc is null)
+            return new ServiceResponse<bool>
+            {
+                Data = false,
+                Message = "Záznam neexistuje."
+            };
+        if (sc is { Primary: true })
+            return new ServiceResponse<bool>
+            {
+                Data = false,
+                Message = "Primárny katalóg nie je možné zmazať."
+            };
+
+        _context.StarCatalog.Remove(sc);
+        await _context.SaveChangesAsync();
+
+        return new ServiceResponse<bool>
+        {
+            Data = true,
+            Message = "Záznam zmazaný."
+        };
+    }
+
+    public async Task<ServiceResponse<List<Catalog>>> GetCatalogs()
+    {
+        var data = await _context.Catalogs.ToListAsync();
+        return new ServiceResponse<List<Catalog>>
+        {
+            Data = data
         };
     }
 }

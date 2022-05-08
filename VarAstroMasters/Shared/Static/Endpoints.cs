@@ -28,7 +28,14 @@ public static class Endpoints
     public static readonly string ApiStarSearch = $"{ApiStarBasePath}/search";
     public static readonly string ApiStarGetDraft = $"{ApiStarBasePath}/draft";
     public static readonly string ApiStarGetDraftList = $"{ApiStarBasePath}/draft";
+    public static readonly string ApiStarGetPublication = $"{ApiStarBasePath}/publication";
+    public static readonly string ApiStarGetCatalogs = $"{ApiStarBasePath}/catalogs";
+    public static readonly string ApiCatalogsGetCatalogs = $"{ApiStarBasePath}/catalogs";
+    public static readonly string ApiStarPostPublication = $"{ApiStarBasePath}/publication";
 
+    public static readonly string ApiStarSetStarCatalogPrimary = $"{ApiStarBasePath}/starcatalog/primary";
+    public static readonly string ApiStarDeleteStarCatalog = $"api/star/starcatalog";
+    public static readonly string ApiStarPostStarCatalog = $"{ApiStarBasePath}/starcatalog";
     public static readonly string ApiStarGetObservationLogList = $"{ApiStarBasePath}/logs";
     public static readonly string ApiStarGetObservationLog = $"{ApiStarBasePath}/logs";
 
@@ -71,5 +78,7 @@ public static class Endpoints
     public static readonly string ClientAuthRegister = "/Register";
 
     public static readonly string ClientSearch = "/Search";
-    public static readonly string ClientAdmin = "/Admin";
+
+    public static readonly string ClientAdminBase = "/Admin";
+    public static readonly string ClientAdminStars = $"{ClientAdminBase}/Stars";
 }
