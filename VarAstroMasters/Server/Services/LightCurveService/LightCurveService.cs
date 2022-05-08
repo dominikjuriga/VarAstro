@@ -29,37 +29,7 @@ public class LightCurveService : ILightCurveService
             {
                 Data = new List<LightCurveDTO>()
             };
-        List<LightCurveDTO> response = new();
-        foreach (var curve in data)
-        {
-            var currentDTO = new LightCurveDTO
-            {
-                Star = new StarDTO
-                {
-                    Name = curve.Star.Name,
-                    Id = curve.Star.Id
-                },
-                User = new UserDTO
-                {
-                    Id = curve.User.Id,
-                    Name = $"{curve.User.FirstName} {curve.User.LastName}"
-                },
-                Id = curve.Id,
-                DateCreated = curve.DateCreated
-            };
-            if (curve.Device is not null)
-                currentDTO.Device = new DeviceDTO
-                {
-                    Name = curve.Device.Name
-                };
-            if (curve.Observatory is not null)
-                currentDTO.Observatory = new ObservatoryDTO
-                {
-                    Address = curve.Observatory.Address
-                };
-            response.Add(currentDTO);
-        }
-
+        var response = MapCurversToList(data);
 
         return new ServiceResponse<List<LightCurveDTO>>
         {
@@ -215,5 +185,99 @@ public class LightCurveService : ILightCurveService
         {
             Data = JsonSerializer.Serialize(responseData)
         };
+    }
+
+
+    public async Task<ServiceResponse<List<ObservationLogDTO>>> ObservationLogListGet()
+    {
+        var q = from lc in _context.Set<LightCurve>()
+            orderby lc.DateCreated
+            group lc by lc.UserId
+            into g
+            where g.Count() > 0
+            orderby g.Key
+            select new
+            {
+                User = g.SingleOrDefault().User,
+                Contributions = g.Count()
+            };
+        var result = await q.ToListAsync();
+
+        List<ObservationLogDTO> data = new();
+        foreach (var item in result)
+            data.Add(new ObservationLogDTO
+            {
+                Contributions = item.Contributions,
+                User = new UserSimpleDTO
+                {
+                    Id = item.User.Id,
+                    Name = item.User.UserName
+                }
+            });
+        return new ServiceResponse<List<ObservationLogDTO>>
+        {
+            Data = data
+        };
+    }
+
+    public async Task<ServiceResponse<ObservationLogDetailDTO>> ObservationLogSingleGet(string id)
+    {
+        var data = await _context.LightCurves
+            .Where(lc => lc.UserId == id)
+            .Include(lc => lc.Device)
+            .Include(lc => lc.Observatory)
+            .Include(lc => lc.Star)
+            .ToListAsync();
+        var user = await _context.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
+
+        var response = MapCurversToList(data);
+
+        return new ServiceResponse<ObservationLogDetailDTO>
+        {
+            Data = new ObservationLogDetailDTO
+            {
+                Curves = response,
+                User = new UserDTO
+                {
+                    Name = $"{user.FirstName} {user.LastName}"
+                }
+            }
+        };
+    }
+
+    private List<LightCurveDTO> MapCurversToList(List<LightCurve> curves)
+    {
+        List<LightCurveDTO> response = new();
+        foreach (var curve in curves)
+        {
+            var currentDTO = new LightCurveDTO
+            {
+                Star = new StarDTO
+                {
+                    Name = curve.Star.Name,
+                    Id = curve.Star.Id
+                },
+                User = new UserDTO
+                {
+                    Id = curve.User.Id,
+                    Name = $"{curve.User.FirstName} {curve.User.LastName}"
+                },
+                Id = curve.Id,
+                DateCreated = curve.DateCreated
+            };
+            if (curve.Device is not null)
+                currentDTO.Device = new DeviceDTO
+                {
+                    Name = curve.Device.Name
+                };
+            if (curve.Observatory is not null)
+                currentDTO.Observatory = new ObservatoryDTO
+                {
+                    Address = curve.Observatory.Address
+                };
+            response.Add(currentDTO);
+        }
+
+        return response;
     }
 }

@@ -87,21 +87,6 @@ public class StarService : IStarService
         return await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
     }
 
-    public async Task<ServiceResponse<List<ObservationLogDTO>>> GetObservationLogList()
-    {
-        var response =
-            await _httpClient.GetFromJsonAsync<ServiceResponse<List<ObservationLogDTO>>>(Endpoints
-                .ApiStarObservationLogListGet);
-        return response;
-    }
-
-    public async Task<ServiceResponse<ObservationLogDetailDTO>> GetObservationLog(string id)
-    {
-        var response =
-            await _httpClient.GetFromJsonAsync<ServiceResponse<ObservationLogDetailDTO>>(
-                $"{Endpoints.ApiStarObservationLogSingleGet}/{id}");
-        return response;
-    }
 
     public async Task<ServiceResponse<Catalog>> CatalogPost(CatalogEdit catalog)
     {

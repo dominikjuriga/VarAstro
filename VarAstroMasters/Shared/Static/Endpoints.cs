@@ -61,8 +61,8 @@ public static class Endpoints
     public static readonly string ApiStarPublicationPost = $"{ApiStarBasePath}/publication";
 
     // Observation Logs
-    public static readonly string ApiStarObservationLogListGet = $"{ApiStarBasePath}/logs";
-    public static readonly string ApiStarObservationLogSingleGet = $"{ApiStarBasePath}/logs";
+    public static readonly string ApiStarObservationLogListGet = $"{ApiLightCurveBasePath}/logs";
+    public static readonly string ApiStarObservationLogSingleGet = $"{ApiLightCurveBasePath}/logs";
 
     // Observatories
     public static readonly string ApiObservatoryBase = "api/observatory";

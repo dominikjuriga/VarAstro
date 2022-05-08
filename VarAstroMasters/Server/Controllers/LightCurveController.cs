@@ -42,4 +42,19 @@ public class LightCurveController : ControllerBase
         var sr = await _lightCurveService.LightCurvePost(lightCurveAdd);
         return Ok(sr);
     }
+
+
+    [HttpGet("logs")]
+    public async Task<ActionResult<ServiceResponse<List<ObservationLogDTO>>>> ObservationLogListGet()
+    {
+        var response = await _lightCurveService.ObservationLogListGet();
+        return Ok(response);
+    }
+
+    [HttpGet("logs/{id}")]
+    public async Task<ActionResult<ServiceResponse<ObservationLogDetailDTO>>> ObservationLogSingleGet(string id)
+    {
+        var response = await _lightCurveService.ObservationLogSingleGet(id);
+        return Ok(response);
+    }
 }

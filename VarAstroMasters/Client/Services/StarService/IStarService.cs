@@ -15,8 +15,6 @@ public interface IStarService
     Task<ServiceResponse<bool>> CatalogDelete(string catalogName);
     Task<ServiceResponse<bool>> SetStarCatalogPrimary(StarCatalogCK identification);
     Task<ServiceResponse<bool>> SavePublication(StarPublish starPublish);
-    Task<ServiceResponse<List<ObservationLogDTO>>> GetObservationLogList();
-    Task<ServiceResponse<ObservationLogDetailDTO>> GetObservationLog(string id);
 
     //////////////////////////
     Task<ServiceResponse<Catalog>> CatalogPost(CatalogEdit catalog);

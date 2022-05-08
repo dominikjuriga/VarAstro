@@ -1,5 +1,5 @@
 ﻿@page "/ObservationLogs"
-@inject IStarService StarService
+@inject ILightCurveService LightCurveService
 <h3>Pozorovacie denníky</h3>
 
 @if (Logs is null)
@@ -30,7 +30,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await StarService.GetObservationLogList();
+        var response = await LightCurveService.GetObservationLogList();
         if (response.Success)
         {
             Logs = response.Data;
@@ -38,4 +38,3 @@ else
     }
 
 }
-

@@ -1,13 +1,6 @@
 ﻿@page "/ObservationLogs/{Id}"
-@inject IStarService StarService
-
-<h3>
-    Pozorovací denník
-    @if (log is {User: not null})
-    {
-        <span>- @log.User.Name</span>
-    }
-</h3>
+@using VarAstroMasters.Client.Pages.LightCurves.components
+@inject ILightCurveService LightCurveService
 
 @if (log is null)
 {
@@ -15,22 +8,26 @@
 }
 else
 {
-    @if (log.Curves.Count == 0)
-    {
-        <p>Tento denník nemá žiadne pozorovania.</p>
-    }
-    else
-    {
-        <ul>
-            @foreach (var lc in log.Curves)
+    <h3>
+        Pozorovací denník @log.User.Name
+    </h3>
+    <section>
+        @if (_lightCurves is null)
+        {
+            <Loader/>
+        }
+        else
+        {
+            if (log.Curves.Count == 0)
             {
-                <li>
-                    <span class="oi oi-aperture"></span> @(lc.Observatory?.Address ?? "Nešpecifikované") <br/>
-                    <span class="oi oi-home"></span> @(lc.Observatory?.Address ?? "Nešpecifikovaná")
-                </li>
+                <p>Tento denník nemá žiadne pozorovania.</p>
             }
-        </ul>
-    }
+            else
+            {
+                <LightCurveListWithValues Curves="@_lightCurves"/>
+            }
+        }
+    </section>
 }
 
 @code {
@@ -39,13 +36,29 @@ else
     public string Id { get; set; }
 
     private ObservationLogDetailDTO? log { get; set; }
+    private List<LightCurveDTO>? _lightCurves { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await StarService.GetObservationLog(Id);
+        var response = await LightCurveService.GetObservationLog(Id);
         if (response.Success)
         {
             log = response.Data;
+            _lightCurves = response.Data.Curves;
+            GetValuesForCurves();
+        }
+    }
+
+    private async Task GetValuesForCurves()
+    {
+        foreach (var curve in _lightCurves)
+        {
+            var response = await LightCurveService.LightCurveSingleValuesGet(curve.Id);
+            if (response.Success)
+            {
+                curve.Values = response.Data;
+                StateHasChanged();
+            }
         }
     }
 

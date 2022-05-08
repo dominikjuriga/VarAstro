@@ -41,4 +41,21 @@ public class LightCurveService : ILightCurveService
         var response = await _http.PostAsJsonAsync(Endpoints.ApiLightCurvePost, lightCurveAdd);
         return await response.Content.ReadFromJsonAsync<ServiceResponse<int>>();
     }
+
+
+    public async Task<ServiceResponse<List<ObservationLogDTO>>> GetObservationLogList()
+    {
+        var response =
+            await _http.GetFromJsonAsync<ServiceResponse<List<ObservationLogDTO>>>(Endpoints
+                .ApiStarObservationLogListGet);
+        return response;
+    }
+
+    public async Task<ServiceResponse<ObservationLogDetailDTO>> GetObservationLog(string id)
+    {
+        var response =
+            await _http.GetFromJsonAsync<ServiceResponse<ObservationLogDetailDTO>>(
+                $"{Endpoints.ApiStarObservationLogSingleGet}/{id}");
+        return response;
+    }
 }

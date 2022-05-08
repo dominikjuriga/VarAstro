@@ -27,20 +27,6 @@ public class StarController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("logs")]
-    public async Task<ActionResult<ServiceResponse<List<ObservationLogDTO>>>> ObservationLogListGet()
-    {
-        var response = await _starService.ObservationLogListGet();
-        return Ok(response);
-    }
-
-    [HttpGet("logs/{id}")]
-    public async Task<ActionResult<ServiceResponse<ObservationLogDetailDTO>>> ObservationLogSingleGet(string id)
-    {
-        var response = await _starService.ObservationLogSingleGet(id);
-        return Ok(response);
-    }
-
     [HttpGet("search/{searchQuery}")]
     public async Task<ActionResult<ServiceResponse<StarSearchDTO>>> Search(string searchQuery)
     {
