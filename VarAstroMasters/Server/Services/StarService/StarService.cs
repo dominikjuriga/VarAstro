@@ -103,6 +103,22 @@ public class StarService : IStarService
         var star = await _context.Stars
             .Where(s => s.Id == starId)
             .Include(s => s.StarPublish).FirstOrDefaultAsync();
+        if (star is null)
+            return new ServiceResponse<StarPublish>
+            {
+                Success = false,
+                Message = "Hviezda nenájdená."
+            };
+
+        if (star.StarPublish is null)
+            return new ServiceResponse<StarPublish>
+            {
+                Data = new StarPublish
+                {
+                    StarName = star.Name
+                }
+            };
+
         star.StarPublish.StarName = star.Name;
         return new ServiceResponse<StarPublish>
         {

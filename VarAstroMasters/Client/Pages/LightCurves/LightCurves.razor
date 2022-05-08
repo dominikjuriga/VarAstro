@@ -8,26 +8,81 @@
 }
 else
 {
-    if (_lightCurves.Count == 0)
-    {
-        <h4>Neexistujú žiadne svetelné krivky.</h4>
-    }
-    else
-    {
-        foreach (var curve in _lightCurves)
+    <section>
+        @if (_lightCurves.Count == 0)
         {
-            <a href="@Endpoints.ClientLightCurveSingleGet/@curve.Id">@curve.Id - ----</a>
-            <br/>
+            <h4>Neexistujú žiadne svetelné krivky.</h4>
         }
-    }
+        else
+        {
+            <div class="row">
+                @foreach (var curve in _lightCurves)
+                {
+                    <div class="col-lg-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <span>
+                                    Krivka pridaná
+                                    <a href="@Endpoints.ClientLightCurveSingleGet/@curve.Id">@curve.DateCreated.ToString(Keywords.DefaultDateTimeFormat)</a>
+                                </span><br/>
+                                <span>
+                                    Autor
+                                    <a href="@Endpoints.ClientObservationLogSingleGet/@curve.User.Id">@curve.User.Name</a>
+                                </span><br/>
+                                @if (curve.Device is not null)
+                                {
+                                    <span>
+                                        <span class="oi oi-aperture"></span>
+                                        @curve.Device.Name
+                                    </span>
+                                    <br/>
+                                }
+                                @if (curve.Observatory is not null)
+                                {
+                                    <span>
+                                        <span class="oi oi-aperture"></span>
+                                        @curve.Observatory.Address
+                                    </span>
+                                    <br/>
+                                }
+
+                                @if (curve.Values is not null)
+                                {
+                                    <ScatterChart Values="@curve.Values"/>
+                                }
+                                else
+                                {
+                                    <Loader/>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </section>
 }
 
 @code {
-    private List<LightCurveDTO>? _lightCurves = null;
+    private List<LightCurveDTO>? _lightCurves { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        _lightCurves = await LightCurveService.GetLightCurves();
+        _lightCurves = await LightCurveService.LightCurveListGet();
+        GetValuesForCurves();
+    }
+
+    private async Task GetValuesForCurves()
+    {
+        foreach (var curve in _lightCurves)
+        {
+            var response = await LightCurveService.LightCurveSingleValuesGet(curve.Id);
+            if (response.Success)
+            {
+                curve.Values = response.Data;
+                StateHasChanged();
+            }
+        }
     }
 
 }

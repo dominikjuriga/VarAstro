@@ -11,7 +11,7 @@ public class ObservatoryService : IObservatoryService
         _http = http;
     }
 
-    public async Task<List<ObservatoryDTO>> GetMyObservatories()
+    public async Task<List<ObservatoryDTO>> ObservatoryListFromTokenGet()
     {
         var response =
             await _http.GetFromJsonAsync<ServiceResponse<List<ObservatoryDTO>>>(
@@ -19,19 +19,19 @@ public class ObservatoryService : IObservatoryService
         return response.Data;
     }
 
-    public async Task<ServiceResponse<bool>> AddObservatory(ObservatoryAdd observatoryAdd)
+    public async Task<ServiceResponse<bool>> ObservatoryPost(ObservatoryAdd observatoryAdd)
     {
         var response = await _http.PostAsJsonAsync(Endpoints.ApiObservatoryPost, observatoryAdd);
         return await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
     }
 
-    public async Task<ServiceResponse<bool>> DeleteObservatory(int modelId)
+    public async Task<ServiceResponse<bool>> ObservatoryDelete(int modelId)
     {
         var response = await _http.DeleteAsync($"{Endpoints.ApiObservatoryDelete}/{modelId}");
         return await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
     }
 
-    public async Task<ServiceResponse<ObservatoryDTO>> EditObservatory(ObservatoryEdit observatoryEdit)
+    public async Task<ServiceResponse<ObservatoryDTO>> ObservatoryEdit(ObservatoryEdit observatoryEdit)
     {
         var response = await _http.PutAsJsonAsync(Endpoints.ApiObservatoryEdit, observatoryEdit);
         return await response.Content.ReadFromJsonAsync<ServiceResponse<ObservatoryDTO>>();

@@ -32,7 +32,7 @@ else
 
     private async Task HandleSubmit()
     {
-        var result = await DeviceService.AddDevice(_deviceAdd);
+        var result = await DeviceService.DevicePost(_deviceAdd);
         if (result == true)
         {
             succeeded = true;

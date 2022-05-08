@@ -23,104 +23,113 @@ else
         </Alert>
     }
 
-    @if (_StarCatalogs is not null)
-    {
-        @if (_editSC is null)
+    <section>
+        @if (_StarCatalogs is not null)
         {
-            <ResponsiveTable>
-                <thead>
-                <tr>
-                    <th>ID Katalógu</th>
-                    <th>Cross ID</th>
-                    <th>RA</th>
-                    <th>DEC</th>
-                    <th>MAG</th>
-                    <th>Primárny katalóg</th>
-                    <th>Akcie</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var sc in _StarCatalogs)
+            @if (_editSC is null)
+            {
+                @if (_StarCatalogs.Count == 0)
                 {
-                    <tr>
-                        <td>
-                            @sc.CatalogId
-                        </td>
-                        <td>
-                            @sc.CrossId
-                        </td>
-                        <td>@sc.Ra</td>
-                        <td>@sc.Dec</td>
-                        <td>@sc.Mag</td>
-                        <td>@(sc.Primary ? "Áno" : "Nie")</td>
-                        <td>
-                            <button @onclick="() => EditSC(sc)" class="btn btn-primary">Upraviť</button>
-                            <button @onclick="() => DeleteSC(sc)" class="btn btn-primary">Zmazať</button>
-                            @if (!sc.Primary)
-                            {
-                                <button @onclick="() => MakeSCPrimary(sc)" class="btn btn-primary">Nastaviť ako primárny</button>
-                            }
-                        </td>
-                    </tr>
+                    <p>Neexistuje žiadny záznam.</p>
                 }
-                </tbody>
-            </ResponsiveTable>
-        }
-        else
-        {
-            <EditForm Model="_editSC" OnValidSubmit="SaveEdit">
-                <DataAnnotationsValidator/>
-                <div class="my-3">
-                    <label for="catalog" class="form-label">
-                        ID Katalógu
-                    </label>
-                    <InputSelect class="form-select" id="catalog" @bind-Value="_editSC.CatalogId">
-                        <option value="null">Vyberte katalóg</option>
-                        @foreach (var catalog in Catalogs)
+                else
+                {
+                    <ResponsiveTable>
+                        <thead>
+                        <tr>
+                            <th>ID Katalógu</th>
+                            <th>Cross ID</th>
+                            <th>RA</th>
+                            <th>DEC</th>
+                            <th>MAG</th>
+                            <th>Primárny katalóg</th>
+                            <th>Akcie</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var sc in _StarCatalogs)
                         {
-                            <option value="@catalog.Name">@catalog.Name</option>
+                            <tr>
+                                <td>
+                                    @sc.CatalogId
+                                </td>
+                                <td>
+                                    @sc.CrossId
+                                </td>
+                                <td>@sc.Ra</td>
+                                <td>@sc.Dec</td>
+                                <td>@sc.Mag</td>
+                                <td>@(sc.Primary ? "Áno" : "Nie")</td>
+                                <td>
+                                    <button @onclick="() => EditSC(sc)" class="btn btn-primary">Upraviť</button>
+                                    <button @onclick="() => DeleteSC(sc)" class="btn btn-primary">Zmazať</button>
+                                    @if (!sc.Primary)
+                                    {
+                                        <button @onclick="() => MakeSCPrimary(sc)" class="btn btn-primary">Nastaviť ako primárny</button>
+                                    }
+                                </td>
+                            </tr>
                         }
-                    </InputSelect>
-                    <ValidationMessage For="@(() => _editSC.CatalogId)"/>
-                </div>
+                        </tbody>
+                    </ResponsiveTable>
+                }
+            }
+            else
+            {
+                <EditForm Model="_editSC" OnValidSubmit="SaveEdit">
+                    <DataAnnotationsValidator/>
+                    <div class="my-3">
+                        <label for="catalog" class="form-label">
+                            ID Katalógu
+                        </label>
+                        <InputSelect class="form-select" id="catalog" @bind-Value="_editSC.CatalogId">
+                            <option value="null">Vyberte katalóg</option>
+                            @foreach (var catalog in Catalogs)
+                            {
+                                <option value="@catalog.Name">@catalog.Name</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => _editSC.CatalogId)"/>
+                    </div>
 
-                <div class="my-3">
-                    <label for="crossid" class="form-label">
-                        Cross ID
-                    </label>
-                    <InputText id="crossid" @bind-Value="_editSC.CrossId" class="form-control"></InputText>
-                    <ValidationMessage For="@(() => _editSC.CrossId)"/>
-                </div>
+                    <div class="my-3">
+                        <label for="crossid" class="form-label">
+                            Cross ID
+                        </label>
+                        <InputText id="crossid" @bind-Value="_editSC.CrossId" class="form-control"></InputText>
+                        <ValidationMessage For="@(() => _editSC.CrossId)"/>
+                    </div>
 
-                <div class="my-3">
-                    <label for="ra" class="form-label">
-                        RA
-                    </label>
-                    <InputText id="ra" @bind-Value="_editSC.Ra" class="form-control"></InputText>
-                    <ValidationMessage For="@(() => _editSC.Ra)"/>
-                </div>
+                    <div class="my-3">
+                        <label for="ra" class="form-label">
+                            RA
+                        </label>
+                        <InputText id="ra" @bind-Value="_editSC.Ra" class="form-control"></InputText>
+                        <ValidationMessage For="@(() => _editSC.Ra)"/>
+                    </div>
 
-                <div class="my-3">
-                    <label for="dec" class="form-label">
-                        DEC
-                    </label>
-                    <InputText id="dec" @bind-Value="_editSC.Dec" class="form-control"></InputText>
-                    <ValidationMessage For="@(() => _editSC.Dec)"/>
-                </div>
+                    <div class="my-3">
+                        <label for="dec" class="form-label">
+                            DEC
+                        </label>
+                        <InputText id="dec" @bind-Value="_editSC.Dec" class="form-control"></InputText>
+                        <ValidationMessage For="@(() => _editSC.Dec)"/>
+                    </div>
 
-                <div class="my-3">
-                    <label for="mag" class="form-label">
-                        MAG
-                    </label>
-                    <InputNumber id="mag" @bind-Value="_editSC.Mag" class="form-control"></InputNumber>
-                    <ValidationMessage For="@(() => _editSC.Mag)"/>
-                </div>
+                    <div class="my-3">
+                        <label for="mag" class="form-label">
+                            MAG
+                        </label>
+                        <InputNumber id="mag" @bind-Value="_editSC.Mag" class="form-control"></InputNumber>
+                        <ValidationMessage For="@(() => _editSC.Mag)"/>
+                    </div>
 
-                <button type="submit" class="btn btn-primary btn-lg">Uložiť zmenu</button>
-                <button type="button" class="btn btn-secondary btn-lg" @onclick="CancelEdit">Späť na prehľad</button>
-            </EditForm>
+                    <button type="submit" class="btn btn-primary btn-lg">Uložiť zmenu</button>
+                    <button type="button" class="btn btn-secondary btn-lg" @onclick="CancelEdit">Späť na prehľad</button>
+                </EditForm>
+            }
         }
-    }
+    </section>
 }
 
 @code {

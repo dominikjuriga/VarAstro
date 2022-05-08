@@ -8,19 +8,21 @@
 }
 else
 {
-    @if (Logs.Count == 0)
-    {
-        <h4>Neexistujú žiadne denníky.</h4>
-    }
-    else
-    {
-        <ul>
-            @foreach (var log in Logs)
-            {
-                <li><a href="@Endpoints.ClientObservationLogSingleGet/@log.User.Id">@log.User.Name</a> (@log.Contributions príspevkov)</li>
-            }
-        </ul>
-    }
+    <section>
+        @if (Logs.Count == 0)
+        {
+            <h4>Neexistujú žiadne denníky.</h4>
+        }
+        else
+        {
+            <ul>
+                @foreach (var log in Logs)
+                {
+                    <li><a href="@Endpoints.ClientObservationLogSingleGet/@log.User.Id">@log.User.Name</a> (@log.Contributions príspevkov)</li>
+                }
+            </ul>
+        }
+    </section>
 }
 
 @code {
@@ -36,3 +38,4 @@ else
     }
 
 }
+

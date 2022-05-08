@@ -9,7 +9,7 @@ public class LightCurveService : ILightCurveService
         _http = http;
     }
 
-    public async Task<List<LightCurveDTO>> GetLightCurves()
+    public async Task<List<LightCurveDTO>> LightCurveListGet()
     {
         var response =
             await _http.GetFromJsonAsync<ServiceResponse<List<LightCurveDTO>>>(Endpoints.ApiLightCurveListGet);
@@ -18,7 +18,7 @@ public class LightCurveService : ILightCurveService
         return new List<LightCurveDTO>();
     }
 
-    public async Task<LightCurveDTO> GetLightCurve(int lightCurveId)
+    public async Task<LightCurveDTO> LightCurveSingleGet(int lightCurveId)
     {
         var response =
             await _http.GetFromJsonAsync<ServiceResponse<LightCurveDTO>>(
@@ -28,7 +28,7 @@ public class LightCurveService : ILightCurveService
         return new LightCurveDTO();
     }
 
-    public async Task<ServiceResponse<string>> GetLightCurveValues(int lightCurveId)
+    public async Task<ServiceResponse<string>> LightCurveSingleValuesGet(int lightCurveId)
     {
         var response =
             await _http.GetFromJsonAsync<ServiceResponse<string>>(
@@ -36,7 +36,7 @@ public class LightCurveService : ILightCurveService
         return response;
     }
 
-    public async Task<ServiceResponse<int>> AddLightCurve(LightCurveAdd lightCurveAdd)
+    public async Task<ServiceResponse<int>> LightCurvePost(LightCurveAdd lightCurveAdd)
     {
         var response = await _http.PostAsJsonAsync(Endpoints.ApiLightCurvePost, lightCurveAdd);
         return await response.Content.ReadFromJsonAsync<ServiceResponse<int>>();

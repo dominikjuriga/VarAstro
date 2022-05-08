@@ -2,8 +2,8 @@
 
 public interface IDeviceService
 {
-    Task<bool> AddDevice(DeviceAdd deviceAdd);
-    Task<List<DeviceDTO>> GetMyDevices();
-    Task<bool> DeleteDevice(int deviceId);
-    Task<DeviceDTO> EditDevice(DeviceEdit device);
+    Task<bool> DevicePost(DeviceAdd deviceAdd);
+    Task<List<DeviceDTO>> DevicesFromTokenGet();
+    Task<bool> DeviceDelete(int deviceId);
+    Task<DeviceDTO> DeviceEdit(DeviceEdit device);
 }

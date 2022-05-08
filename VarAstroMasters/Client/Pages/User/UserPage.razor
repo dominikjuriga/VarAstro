@@ -11,14 +11,15 @@ else
 }
 
 @code {
+
     [Parameter]
     public string UserId { get; set; }
 
     private UserDTO? _user = null;
 
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        _user = await UserService.GetUserAsync(UserId);
+        _user = await UserService.UserSingleGet(UserId);
     }
 
 }

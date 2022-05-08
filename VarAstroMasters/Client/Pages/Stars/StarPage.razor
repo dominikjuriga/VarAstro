@@ -200,7 +200,7 @@ else
     {
         foreach (var lc in Star.LightCurves)
         {
-            var res = await LightCurveService.GetLightCurveValues(lc.Id);
+            var res = await LightCurveService.LightCurveSingleValuesGet(lc.Id);
             if (res.Success)
             {
                 lc.Values = res.Data;

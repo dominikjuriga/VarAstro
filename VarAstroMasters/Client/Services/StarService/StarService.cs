@@ -32,31 +32,12 @@ public class StarService : IStarService
         return response;
     }
 
-    public async Task<ServiceResponse<int>> CreateDraft(StarDraftAdd starDraftAdd)
-    {
-        var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiStarDraftPost, starDraftAdd);
-        return await response.Content.ReadFromJsonAsync<ServiceResponse<int>>();
-    }
-
-    public async Task<ServiceResponse<StarDraft>> GetDraft(int id)
-    {
-        var response =
-            await _httpClient.GetFromJsonAsync<ServiceResponse<StarDraft>>($"{Endpoints.ApiStarDraftSingleGet}/{id}");
-        return response;
-    }
 
     public async Task<ServiceResponse<StarPublish>> GetPublication(int starId)
     {
         var response =
             await _httpClient.GetFromJsonAsync<ServiceResponse<StarPublish>>(
                 $"{Endpoints.ApiStarPublicationGet}/{starId}");
-        return response;
-    }
-
-    public async Task<ServiceResponse<List<StarDraft>>> GetDraftList()
-    {
-        var response =
-            await _httpClient.GetFromJsonAsync<ServiceResponse<List<StarDraft>>>(Endpoints.ApiStarDraftListGet);
         return response;
     }
 

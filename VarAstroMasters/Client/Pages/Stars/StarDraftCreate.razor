@@ -1,58 +1,67 @@
 ﻿@page "/Stars/Drafts/Create"
 @attribute [Authorize]
-@inject IStarService StarService
+@inject IStarDraftService StarDraftService
 <h3>Pridať novú hviezdu</h3>
 
 @if (_response is null)
 {
-    <EditForm Model="StarDraftAdd" OnValidSubmit="HandleSubmit">
-        <DataAnnotationsValidator/>
-        <div class="my-3">
-            <label for="name" class="form-label">
-                <Tooltip Text="Identifikácia používateľom">Názov</Tooltip>
-            </label>
-            <InputText id="name" @bind-Value="StarDraftAdd.Name" class="form-control"></InputText>
-        </div>
-        <div class="my-3">
-            <label for="ra" class="form-label">
-                <Tooltip Text="Right Ascension">Ra</Tooltip>
-            </label>
-            <InputText id="ra" @bind-Value="StarDraftAdd.Ra" class="form-control"></InputText>
-        </div>
-        <div class="my-3">
-            <label for="dec" class="form-label">
-                <Tooltip Text="Declination">DEC</Tooltip>
-            </label>
-            <InputText id="dec" @bind-Value="StarDraftAdd.Dec" class="form-control"></InputText>
-        </div>
-        <ValidationSummary/>
-        <button type="submit" class="btn btn-primary btn-lg">Pridať používateľskú hviezdu</button>
-    </EditForm>
+    <section>
+        <EditForm Model="StarDraftAdd" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator/>
+            <div class="my-3">
+                <label for="name" class="form-label">
+                    <Tooltip Text="Identifikácia používateľom">Názov</Tooltip>
+                </label>
+                <InputText id="name" @bind-Value="StarDraftAdd.Name" class="form-control"></InputText>
+            </div>
+            <div class="my-3">
+                <label for="ra" class="form-label">
+                    <Tooltip Text="Right Ascension">Ra</Tooltip>
+                </label>
+                <InputText id="ra" @bind-Value="StarDraftAdd.Ra" class="form-control"></InputText>
+            </div>
+            <div class="my-3">
+                <label for="dec" class="form-label">
+                    <Tooltip Text="Declination">DEC</Tooltip>
+                </label>
+                <InputText id="dec" @bind-Value="StarDraftAdd.Dec" class="form-control"></InputText>
+            </div>
+            <ValidationSummary/>
+            <button type="submit" class="btn btn-primary btn-lg">Pridať používateľskú hviezdu</button>
+        </EditForm>
+    </section>
 }
 else
 {
-    @if (_response.Success)
+    @if (_response is not null)
     {
-        <Alert>
-            @_response.Message <br/>
-            <a href="@Endpoints.ClientStarDraftSingle/@_response.Data">Zobraziť</a>
-        </Alert>
-    }
-    else
-    {
-        <Alert type="danger">
+        <Alert type="@_messageType">
             @_response.Message
+            @if (_response.Success)
+            {
+                <br/>
+                <a href="@Endpoints.ClientStarDraftSingle/@_response.Data">Zobraziť</a>
+            }
         </Alert>
     }
 }
 
 @code {
     private StarDraftAdd StarDraftAdd { get; set; } = new();
-    private ServiceResponse<int>? _response = null;
+    private ServiceResponse<int>? _response { get; set; }
+    private string? _message { get; set; }
+    private string? _messageType { get; set; }
 
     private async Task HandleSubmit()
     {
-        _response = await StarService.CreateDraft(StarDraftAdd);
+        _response = await StarDraftService.DraftPost(StarDraftAdd);
+        SetMessage(_response.Message, _response.Success ? Keywords.AlertSuccess : Keywords.AlertDanger);
+    }
+
+    private void SetMessage(string? message = null, string type = "success")
+    {
+        _message = message;
+        _messageType = type;
     }
 
 }

@@ -1,5 +1,5 @@
 ﻿@page "/Stars/Drafts/{Id:int}"
-@inject IStarService StarService
+@inject IStarDraftService StarDraftService
 <h3>Používateľská hviezda</h3>
 
 @if (StarDraft is null)
@@ -22,7 +22,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await StarService.GetDraft(Id);
+        var response = await StarDraftService.DraftSingleGet(Id);
         if (response.Success)
         {
             StarDraft = response.Data;

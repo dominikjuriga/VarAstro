@@ -47,7 +47,7 @@ else
 
     private async Task HandleSubmit()
     {
-        var result = await ObservatoryService.AddObservatory(_observatoryAdd);
+        var result = await ObservatoryService.ObservatoryPost(_observatoryAdd);
         if (result.Data)
         {
             succeeded = true;

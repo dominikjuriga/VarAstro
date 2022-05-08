@@ -9,7 +9,7 @@ public class DeviceService : IDeviceService
         _http = http;
     }
 
-    public async Task<bool> AddDevice(DeviceAdd deviceAdd)
+    public async Task<bool> DevicePost(DeviceAdd deviceAdd)
     {
         var response =
             await _http.PostAsJsonAsync(
@@ -17,19 +17,19 @@ public class DeviceService : IDeviceService
         return response != null;
     }
 
-    public async Task<List<DeviceDTO>> GetMyDevices()
+    public async Task<List<DeviceDTO>> DevicesFromTokenGet()
     {
         var response = await _http.GetFromJsonAsync<ServiceResponse<List<DeviceDTO>>>(Endpoints.ApiDeviceMyDevicesGet);
         return response.Data;
     }
 
-    public async Task<bool> DeleteDevice(int deviceId)
+    public async Task<bool> DeviceDelete(int deviceId)
     {
         await _http.DeleteAsync($"{Endpoints.ApiDeviceDelete}/{deviceId}");
         return true;
     }
 
-    public async Task<DeviceDTO> EditDevice(DeviceEdit device)
+    public async Task<DeviceDTO> DeviceEdit(DeviceEdit device)
     {
         var response = await _http.PutAsJsonAsync(Endpoints.ApiDeviceEdit, device);
         var data = await response.Content.ReadFromJsonAsync<ServiceResponse<DeviceDTO>>();

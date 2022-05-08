@@ -67,7 +67,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _devices = await DeviceService.GetMyDevices();
+        _devices = await DeviceService.DevicesFromTokenGet();
     }
 
     private void CancelEdit()
@@ -78,7 +78,7 @@ else
 
     private async Task DeleteDevice(int deviceId)
     {
-        var result = await DeviceService.DeleteDevice(deviceId);
+        var result = await DeviceService.DeviceDelete(deviceId);
         if (result && _devices is not null)
         {
             _devices = _devices.Where(d => d.Id != deviceId).ToList();
@@ -108,7 +108,7 @@ else
 
     private async Task HandleSubmit()
     {
-        var result = await DeviceService.EditDevice(_deviceEdit);
+        var result = await DeviceService.DeviceEdit(_deviceEdit);
         if (result is not null && _devices is not null)
         {
             var dev = _devices.Where(d => d.Id == result.Id).First();

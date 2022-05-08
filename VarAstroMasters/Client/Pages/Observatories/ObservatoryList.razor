@@ -82,12 +82,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _observatories = await ObservatoryService.GetMyObservatories();
+        _observatories = await ObservatoryService.ObservatoryListFromTokenGet();
     }
 
     private async Task DeleteModel(int modelId)
     {
-        var result = await ObservatoryService.DeleteObservatory(modelId);
+        var result = await ObservatoryService.ObservatoryDelete(modelId);
         if (result.Data)
         {
             _observatories = _observatories.Where(o => o.Id != modelId).ToList();
@@ -118,7 +118,7 @@ else
 
     private async Task HandleSubmit()
     {
-        var result = await ObservatoryService.EditObservatory(_observatoryEdit);
+        var result = await ObservatoryService.ObservatoryEdit(_observatoryEdit);
         if (result is not null && _observatories is not null)
         {
             var observatory = _observatories.Where(d => d.Id == result.Data.Id).First();

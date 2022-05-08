@@ -39,10 +39,14 @@ public static class Endpoints
     public static readonly string ApiStarAllGet = $"{ApiStarBasePath}";
     public static readonly string ApiStarSingleGet = $"{ApiStarBasePath}";
     public static readonly string ApiStarSearch = $"{ApiStarBasePath}/search";
-    public static readonly string ApiStarDraftSingleGet = $"{ApiStarBasePath}/draft";
-    public static readonly string ApiStarDraftListGet = $"{ApiStarBasePath}/draft";
-    public static readonly string ApiStarDraftPost = $"{ApiStarBasePath}/draft";
     public static readonly string ApiStarPublicationGet = $"{ApiStarBasePath}/publication";
+
+    // Star Drafts
+    public static readonly string ApiStarDraftBasePath = "api/stardraft";
+
+    public static readonly string ApiStarDraftSingleGet = $"{ApiStarDraftBasePath}/draft";
+    public static readonly string ApiStarDraftListGet = $"{ApiStarDraftBasePath}/draft";
+    public static readonly string ApiStarDraftPost = $"{ApiStarDraftBasePath}/draft";
 
     // Catalogs
     public static readonly string ApiCatalogsListGet = $"{ApiStarBasePath}/catalogs";

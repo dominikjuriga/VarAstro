@@ -1,5 +1,5 @@
 ﻿@page "/Stars/Drafts"
-@inject IStarService StarService
+@inject IStarDraftService StarDraftService
 <h3>Moje hviezdy</h3>
 
 @if (Drafts is null)
@@ -8,21 +8,23 @@
 }
 else
 {
-    if (Drafts.Count == 0)
-    {
-        <h4>Nemáte žiadne hviezdy. <a href="@Endpoints.ClientStarDraftPost">Vytvoriť hviezdu.</a></h4>
-    }
-    else
-    {
-        <ul>
-            @foreach (var draft in Drafts)
-            {
-                <li>
-                    <a href="@Endpoints.ClientStarDraftSingle/@draft.Id">@draft.Name</a>
-                </li>
-            }
-        </ul>
-    }
+    <section>
+        @if (Drafts.Count == 0)
+        {
+            <h4>Nemáte žiadne hviezdy. <a href="@Endpoints.ClientStarDraftPost">Vytvoriť hviezdu.</a></h4>
+        }
+        else
+        {
+            <ul>
+                @foreach (var draft in Drafts)
+                {
+                    <li>
+                        <a href="@Endpoints.ClientStarDraftSingle/@draft.Id">@draft.Name</a>
+                    </li>
+                }
+            </ul>
+        }
+    </section>
 }
 
 @code {
@@ -30,7 +32,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await StarService.GetDraftList();
+        var response = await StarDraftService.DraftListGet();
         if (response.Success)
         {
             Drafts = response.Data;

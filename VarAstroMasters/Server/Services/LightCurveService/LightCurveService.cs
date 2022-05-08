@@ -20,18 +20,46 @@ public class LightCurveService : ILightCurveService
     {
         var data = await _context.LightCurves
             .Include(lc => lc.Star)
+            .Include(lc => lc.User)
+            .Include(lc => lc.Device)
+            .Include(lc => lc.Observatory)
             .ToListAsync();
-        var response = new List<LightCurveDTO>();
+        if (data.Count == 0)
+            return new ServiceResponse<List<LightCurveDTO>>
+            {
+                Data = new List<LightCurveDTO>()
+            };
+        List<LightCurveDTO> response = new();
         foreach (var curve in data)
-            response.Add(new LightCurveDTO
+        {
+            var currentDTO = new LightCurveDTO
             {
                 Star = new StarDTO
                 {
                     Name = curve.Star.Name,
                     Id = curve.Star.Id
                 },
-                Id = curve.Id
-            });
+                User = new UserDTO
+                {
+                    Id = curve.User.Id,
+                    Name = $"{curve.User.FirstName} {curve.User.LastName}"
+                },
+                Id = curve.Id,
+                DateCreated = curve.DateCreated
+            };
+            if (curve.Device is not null)
+                currentDTO.Device = new DeviceDTO
+                {
+                    Name = curve.Device.Name
+                };
+            if (curve.Observatory is not null)
+                currentDTO.Observatory = new ObservatoryDTO
+                {
+                    Address = curve.Observatory.Address
+                };
+            response.Add(currentDTO);
+        }
+
 
         return new ServiceResponse<List<LightCurveDTO>>
         {

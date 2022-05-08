@@ -8,21 +8,23 @@
 }
 else
 {
-    @if (_stars.Count == 0)
-    {
-        <h4>Neexistujú žiadne hviezdy.</h4>
-    }
-    else
-    {
-        <ul>
-            @foreach (var star in _stars)
-            {
-                <li>
-                    <a href="@Endpoints.ClientStarSingleGet/@star.Id">@star.Name</a>
-                </li>
-            }
-        </ul>
-    }
+    <section>
+        @if (_stars.Count == 0)
+        {
+            <h4>Neexistujú žiadne hviezdy.</h4>
+        }
+        else
+        {
+            <ul>
+                @foreach (var star in _stars)
+                {
+                    <li>
+                        <a href="@Endpoints.ClientStarSingleGet/@star.Id">@star.Name</a>
+                    </li>
+                }
+            </ul>
+        }
+    </section>
 }
 
 @code {

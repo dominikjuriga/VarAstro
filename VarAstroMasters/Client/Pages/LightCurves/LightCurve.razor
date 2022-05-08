@@ -76,7 +76,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _curve = await LightCurveService.GetLightCurve(LightCurveId);
+        _curve = await LightCurveService.LightCurveSingleGet(LightCurveId);
         var sc = _curve.Star.StarCatalogs.Where(c => c.Primary).FirstOrDefault();
         if (sc is not null)
         {
@@ -96,7 +96,7 @@ else
 
     private async Task GetValuesForCurve()
     {
-        var response = await LightCurveService.GetLightCurveValues(LightCurveId);
+        var response = await LightCurveService.LightCurveSingleValuesGet(LightCurveId);
         if (response.Success)
         {
             _curve.Values = response.Data;

@@ -146,13 +146,13 @@ else
     {
         var response = await StarService.GetStarAsync(StarId);
         _star = response.Data;
-        _devices = await UserService.GetMyDevices();
+        _devices = await UserService.UserMyDevicesGet();
         _lightCurveAdd.StarId = _star.Id;
     }
 
     private async Task HandleSubmit()
     {
-        var result = await LightCurveService.AddLightCurve(_lightCurveAdd);
+        var result = await LightCurveService.LightCurvePost(_lightCurveAdd);
         if (result.Success)
         {
             succeeded = true;
