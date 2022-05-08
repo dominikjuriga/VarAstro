@@ -7,14 +7,10 @@ namespace VarAstroMasters.Server.Services.StarService;
 public class StarService : IStarService
 {
     private readonly DataContext _context;
-    private readonly IAuthService _authService;
-    private readonly ILightCurveService _lightCurveService;
 
-    public StarService(DataContext context, IAuthService authService, ILightCurveService lightCurveService)
+    public StarService(DataContext context)
     {
         _context = context;
-        _authService = authService;
-        _lightCurveService = lightCurveService;
     }
 
     public async Task<ServiceResponse<List<StarDTO>>> StarListGet()
@@ -277,6 +273,9 @@ public class StarService : IStarService
                     Success = false,
                     Message = "Záznam pre tento katalóg už existuje"
                 };
+            if (!_context.StarCatalog.Any(sc =>
+                    sc.StarId == starCatalog.StarId))
+                starCatalog.Primary = true;
             _context.StarCatalog.Add(starCatalog);
         }
         else
@@ -347,5 +346,66 @@ public class StarService : IStarService
         {
             Data = data
         };
+    }
+
+    public async Task<ServiceResponse<bool>> CatalogDelete(string catalogName)
+    {
+        var catalog = await _context.Catalogs.Where(c => c.Name == catalogName).FirstOrDefaultAsync();
+        if (catalog is null)
+            return new ServiceResponse<bool>
+            {
+                Success = false,
+                Message = "Katalóg nebol nájdený."
+            };
+
+        _context.Catalogs.Remove(catalog);
+        await _context.SaveChangesAsync();
+
+        return new ServiceResponse<bool>
+        {
+            Success = true,
+            Message = $"Katalóg {catalogName} a pridružené záznamy zmazané."
+        };
+    }
+
+    public async Task<ServiceResponse<Catalog>> CatalogPost(CatalogEdit catalog)
+    {
+        if (catalog.New)
+        {
+            var catalogDb = await _context.Catalogs.Where(c => c.Name == catalog.Name).FirstOrDefaultAsync();
+            if (catalogDb is not null)
+                return new ServiceResponse<Catalog>
+                {
+                    Success = false,
+                    Message = "Tento katalóg už existuje."
+                };
+            var res = _context.Catalogs.Add(new Catalog
+            {
+                Name = catalog.Name
+            });
+            await _context.SaveChangesAsync();
+            return new ServiceResponse<Catalog>
+            {
+                Data = res.Entity,
+                Message = "Katalóg vytvorený."
+            };
+        }
+        else
+        {
+            var catalogDb = await _context.Catalogs.Where(c => c.Name == catalog.OriginalName).FirstOrDefaultAsync();
+            if (catalogDb is null)
+                return new ServiceResponse<Catalog>
+                {
+                    Success = false,
+                    Message = "Tento katalóg už existuje."
+                };
+            catalogDb.Name = catalog.Name;
+            await _context.SaveChangesAsync();
+            return new ServiceResponse<Catalog>
+            {
+                Data = catalogDb,
+                Message = "Katalóg upravený."
+            };
+        }
     }
 }

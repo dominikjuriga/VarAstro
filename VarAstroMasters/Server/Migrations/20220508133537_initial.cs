@@ -39,6 +39,10 @@ namespace VarAstroMasters.Server.Migrations
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Registered = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    FirstName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LastName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     NormalizedUserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
@@ -318,6 +322,12 @@ namespace VarAstroMasters.Server.Migrations
                 {
                     table.PrimaryKey("PK_StarCatalog", x => new { x.CatalogId, x.StarId });
                     table.ForeignKey(
+                        name: "FK_StarCatalog_Catalogs_CatalogId",
+                        column: x => x.CatalogId,
+                        principalTable: "Catalogs",
+                        principalColumn: "Name",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_StarCatalog_Stars_StarId",
                         column: x => x.StarId,
                         principalTable: "Stars",
@@ -391,6 +401,8 @@ namespace VarAstroMasters.Server.Migrations
                     ImageFileName = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DeviceId = table.Column<int>(type: "int", nullable: true),
+                    Comment = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     ObservatoryId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -554,9 +566,6 @@ namespace VarAstroMasters.Server.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Catalogs");
-
-            migrationBuilder.DropTable(
                 name: "LightCurves");
 
             migrationBuilder.DropTable(
@@ -579,6 +588,9 @@ namespace VarAstroMasters.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Observatories");
+
+            migrationBuilder.DropTable(
+                name: "Catalogs");
 
             migrationBuilder.DropTable(
                 name: "Stars");

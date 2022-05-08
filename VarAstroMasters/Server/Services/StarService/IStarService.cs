@@ -17,4 +17,9 @@ public interface IStarService
     Task<ServiceResponse<StarCatalog>> StarCatalogPost(StarCatalog starCatalog);
     Task<ServiceResponse<bool>> StarCatalogDelete(int starId, string catalogId);
     Task<ServiceResponse<List<Catalog>>> CatalogListGet();
+
+    Task<ServiceResponse<bool>> CatalogDelete(string catalogName);
+
+    //////////////////////////
+    Task<ServiceResponse<Catalog>> CatalogPost(CatalogEdit catalog);
 }

@@ -80,12 +80,18 @@ public class StarService : IStarService
         return await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
     }
 
-    public async Task<ServiceResponse<List<Catalog>>> GetCatalogs()
+    public async Task<ServiceResponse<List<Catalog>>> CatalogListGet()
     {
         var response =
             await _httpClient.GetFromJsonAsync<ServiceResponse<List<Catalog>>>(
                 $"{Endpoints.ApiCatalogsListGet}");
         return response;
+    }
+
+    public async Task<ServiceResponse<bool>> CatalogDelete(string catalogName)
+    {
+        var response = await _httpClient.DeleteAsync($"{Endpoints.ApiCatalogDelete}/{catalogName}");
+        return await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
     }
 
     public async Task<ServiceResponse<bool>> SetStarCatalogPrimary(StarCatalogCK identification)
@@ -114,5 +120,11 @@ public class StarService : IStarService
             await _httpClient.GetFromJsonAsync<ServiceResponse<ObservationLogDetailDTO>>(
                 $"{Endpoints.ApiStarObservationLogSingleGet}/{id}");
         return response;
+    }
+
+    public async Task<ServiceResponse<Catalog>> CatalogPost(CatalogEdit catalog)
+    {
+        var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiCatalogPost, catalog);
+        return await response.Content.ReadFromJsonAsync<ServiceResponse<Catalog>>();
     }
 }

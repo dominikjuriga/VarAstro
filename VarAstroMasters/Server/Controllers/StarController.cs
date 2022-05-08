@@ -97,4 +97,18 @@ public class StarController : ControllerBase
         var response = await _starService.CatalogListGet();
         return Ok(response);
     }
+
+    [HttpDelete("catalog/{catalogName}")]
+    public async Task<ActionResult<ServiceResponse<bool>>> CatalogDelete(string catalogName)
+    {
+        var response = await _starService.CatalogDelete(catalogName);
+        return Ok(response);
+    }
+
+    [HttpPost("catalog")]
+    public async Task<ActionResult<ServiceResponse<Catalog>>> CatalogPost(CatalogEdit catalog)
+    {
+        var response = await _starService.CatalogPost(catalog);
+        return Ok(response);
+    }
 }

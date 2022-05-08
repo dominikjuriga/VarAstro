@@ -11,8 +11,8 @@ using VarAstroMasters.Server.Data;
 namespace VarAstroMasters.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220507163233_userDataAndLightCurveComment")]
-    partial class userDataAndLightCurveComment
+    [Migration("20220508133537_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -614,6 +614,12 @@ namespace VarAstroMasters.Server.Migrations
 
             modelBuilder.Entity("VarAstroMasters.Shared.Models.StarCatalog", b =>
                 {
+                    b.HasOne("VarAstroMasters.Shared.Models.Catalog", null)
+                        .WithMany()
+                        .HasForeignKey("CatalogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("VarAstroMasters.Shared.Models.Star", null)
                         .WithMany("StarCatalogs")
                         .HasForeignKey("StarId")

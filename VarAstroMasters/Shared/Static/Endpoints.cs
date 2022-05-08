@@ -5,7 +5,7 @@ public static class Endpoints
     // Naming scheme: 
     // [API/Client]
     // [Domain Model e.g. Star]
-    // [Multiplier e.g. List, Single]
+    // [Multiplier? e.g. List, Single]
     // [Method e.g. GET, POST]
 
     //      ---     API     ---
@@ -48,7 +48,9 @@ public static class Endpoints
     public static readonly string ApiCatalogsListGet = $"{ApiStarBasePath}/catalogs";
     public static readonly string ApiStarSingleCatalogsGet = $"{ApiStarBasePath}/catalogs";
     public static readonly string ApiCatalogPrimaryPost = $"{ApiStarBasePath}/starcatalog/primary";
+    public static readonly string ApiCatalogPost = $"{ApiStarBasePath}/catalog";
     public static readonly string ApiStarStarCatalogDelete = $"api/star/starcatalog";
+    public static readonly string ApiCatalogDelete = $"api/star/catalog";
     public static readonly string ApiStarStarCatalogPost = $"{ApiStarBasePath}/starcatalog";
 
     // Publications
@@ -97,4 +99,5 @@ public static class Endpoints
     public static readonly string ClientSearch = "/Search";
     public static readonly string ClientAdminBase = "/Admin";
     public static readonly string ClientAdminStars = $"{ClientAdminBase}/Stars";
+    public static readonly string ClientAdminCatalogs = $"{ClientAdminBase}/Catalogs";
 }

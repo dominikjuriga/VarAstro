@@ -14,6 +14,10 @@ public class DataContext : IdentityDbContext<User>
         builder.Entity<StarCatalog>()
             .HasKey(sc => new { sc.CatalogId, sc.StarId });
 
+        // When Catalog is deleted, remove all entries of stars associated with the catalog
+        builder.Entity<Catalog>()
+            .HasMany<StarCatalog>();
+
         builder.Entity<Star>().HasData(
             new Star
             {

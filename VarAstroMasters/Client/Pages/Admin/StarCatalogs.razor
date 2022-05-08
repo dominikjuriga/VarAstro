@@ -68,7 +68,7 @@ else
         }
         else
         {
-            <EditForm Model="_editSC">
+            <EditForm Model="_editSC" OnValidSubmit="SaveEdit">
                 <DataAnnotationsValidator/>
                 <div class="my-3">
                     <label for="catalog" class="form-label">
@@ -116,7 +116,7 @@ else
                     <ValidationMessage For="@(() => _editSC.Mag)"/>
                 </div>
 
-                <button type="button" class="btn btn-primary btn-lg" @onclick="SaveEdit">Uložiť zmenu</button>
+                <button type="submit" class="btn btn-primary btn-lg">Uložiť zmenu</button>
                 <button type="button" class="btn btn-secondary btn-lg" @onclick="CancelEdit">Späť na prehľad</button>
             </EditForm>
         }
@@ -141,7 +141,7 @@ else
         {
             _StarCatalogs = responseSC.Data;
         }
-        var responseC = await StarService.GetCatalogs();
+        var responseC = await StarService.CatalogListGet();
         if (responseC.Success)
         {
             Catalogs = responseC.Data;

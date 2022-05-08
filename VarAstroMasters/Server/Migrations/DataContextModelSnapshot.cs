@@ -612,6 +612,12 @@ namespace VarAstroMasters.Server.Migrations
 
             modelBuilder.Entity("VarAstroMasters.Shared.Models.StarCatalog", b =>
                 {
+                    b.HasOne("VarAstroMasters.Shared.Models.Catalog", null)
+                        .WithMany()
+                        .HasForeignKey("CatalogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("VarAstroMasters.Shared.Models.Star", null)
                         .WithMany("StarCatalogs")
                         .HasForeignKey("StarId")
