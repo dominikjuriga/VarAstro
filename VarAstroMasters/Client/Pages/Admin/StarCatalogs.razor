@@ -1,0 +1,231 @@
+﻿@page "/Admin/Stars/{StarId:int}/Catalogs"
+@inject NavigationManager NavigationManager
+@inject IStarService StarService
+<div class="d-flex justify-content-between">
+    <h3>
+        Identifikácia v katalógoch
+    </h3>
+    <div>
+        <button class="btn btn-primary" @onclick="NewSC">Pridať záznam</button>
+        <button class="btn btn-primary" @onclick="GoBack">Späť na prehľad</button>
+    </div>
+</div>
+@if (_StarCatalogs is null)
+{
+    <Loader/>
+}
+else
+{
+    @if (_message is not null)
+    {
+        <Alert type="@_messageType">
+            @_message
+        </Alert>
+    }
+
+    @if (_StarCatalogs is not null)
+    {
+        @if (_editSC is null)
+        {
+            <ResponsiveTable>
+                <thead>
+                <tr>
+                    <th>ID Katalógu</th>
+                    <th>Cross ID</th>
+                    <th>RA</th>
+                    <th>DEC</th>
+                    <th>MAG</th>
+                    <th>Primárny katalóg</th>
+                    <th>Akcie</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var sc in _StarCatalogs)
+                {
+                    <tr>
+                        <td>
+                            @sc.CatalogId
+                        </td>
+                        <td>
+                            @sc.CrossId
+                        </td>
+                        <td>@sc.Ra</td>
+                        <td>@sc.Dec</td>
+                        <td>@sc.Mag</td>
+                        <td>@(sc.Primary ? "Áno" : "Nie")</td>
+                        <td>
+                            <button @onclick="() => EditSC(sc)" class="btn btn-primary">Upraviť</button>
+                            <button @onclick="() => DeleteSC(sc)" class="btn btn-primary">Zmazať</button>
+                            @if (!sc.Primary)
+                            {
+                                <button @onclick="() => MakeSCPrimary(sc)" class="btn btn-primary">Nastaviť ako primárny</button>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </ResponsiveTable>
+        }
+        else
+        {
+            <EditForm Model="_editSC">
+                <DataAnnotationsValidator/>
+                <div class="my-3">
+                    <label for="catalog" class="form-label">
+                        ID Katalógu
+                    </label>
+                    <InputSelect class="form-select" id="catalog" @bind-Value="_editSC.CatalogId">
+                        <option value="null">Vyberte katalóg</option>
+                        @foreach (var catalog in Catalogs)
+                        {
+                            <option value="@catalog.Name">@catalog.Name</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="@(() => _editSC.CatalogId)"/>
+                </div>
+
+                <div class="my-3">
+                    <label for="crossid" class="form-label">
+                        Cross ID
+                    </label>
+                    <InputText id="crossid" @bind-Value="_editSC.CrossId" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => _editSC.CrossId)"/>
+                </div>
+
+                <div class="my-3">
+                    <label for="ra" class="form-label">
+                        RA
+                    </label>
+                    <InputText id="ra" @bind-Value="_editSC.Ra" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => _editSC.Ra)"/>
+                </div>
+
+                <div class="my-3">
+                    <label for="dec" class="form-label">
+                        DEC
+                    </label>
+                    <InputText id="dec" @bind-Value="_editSC.Dec" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => _editSC.Dec)"/>
+                </div>
+
+                <div class="my-3">
+                    <label for="mag" class="form-label">
+                        MAG
+                    </label>
+                    <InputNumber id="mag" @bind-Value="_editSC.Mag" class="form-control"></InputNumber>
+                    <ValidationMessage For="@(() => _editSC.Mag)"/>
+                </div>
+
+                <button type="button" class="btn btn-primary btn-lg" @onclick="SaveEdit">Uložiť zmenu</button>
+                <button type="button" class="btn btn-secondary btn-lg" @onclick="CancelEdit">Späť na prehľad</button>
+            </EditForm>
+        }
+    }
+}
+
+@code {
+
+    [Parameter]
+    public int StarId { get; set; }
+
+    private List<StarCatalog> _StarCatalogs { get; set; }
+    private List<Catalog> Catalogs { get; set; }
+    private StarCatalog? _editSC { get; set; }
+    private string? _message { get; set; }
+    private string? _messageType { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var responseSC = await StarService.GetStarCatalogs(StarId);
+        if (responseSC.Success)
+        {
+            _StarCatalogs = responseSC.Data;
+        }
+        var responseC = await StarService.GetCatalogs();
+        if (responseC.Success)
+        {
+            Catalogs = responseC.Data;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+    // if (_starPublication.StarId is -1)
+    // {
+    //     _starPublication.StarId = StarId;
+    // }
+    // var response = await StarService.SavePublication(_starPublication);
+    // _message = response.Message;
+    // _messageType = response.Success ? "success" : "danger";
+    }
+
+    private void CancelEdit()
+    {
+        _editSC = null;
+    }
+
+    private async Task SaveEdit()
+    {
+        var response = await StarService.SaveStarCatalog(_editSC);
+        SetMessage(response.Message, response.Success ? Keywords.AlertSuccess : Keywords.AlertDanger);
+    }
+
+    private void NewSC()
+    {
+        _editSC = new StarCatalog();
+        _editSC.StarId = StarId;
+    }
+
+    private void EditSC(StarCatalog sc)
+    {
+        sc.New = false;
+        _editSC = sc;
+    }
+
+    private async Task DeleteSC(StarCatalog sc)
+    {
+        if (sc.Primary)
+        {
+            SetMessage("Nemožno zmazať primárny katalóg.", "danger");
+            return;
+        }
+        var response = await StarService.DeleteStarCatalog(sc.StarId, sc.CatalogId);
+        SetMessage(response.Message, response.Success ? Keywords.AlertSuccess : Keywords.AlertDanger);
+        if (response.Success)
+        {
+            _StarCatalogs = _StarCatalogs.Where(catalog => catalog.CatalogId != sc.CatalogId).ToList();
+        }
+    }
+
+    private async Task MakeSCPrimary(StarCatalog sc)
+    {
+        var identification = new StarCatalogCK
+        {
+            StarId = sc.StarId,
+            CatalogId = sc.CatalogId
+        };
+        var response = await StarService.SetStarCatalogPrimary(identification);
+        SetMessage(response.Message, response.Success ? Keywords.AlertSuccess : Keywords.AlertDanger);
+        if (response.Success)
+        {
+            foreach (var catalog in _StarCatalogs)
+            {
+                catalog.Primary = false;
+            }
+            var c = _StarCatalogs.Where(sc => sc.CatalogId == identification.CatalogId).FirstOrDefault();
+            if (c is not null) c.Primary = true;
+        }
+    }
+
+    private void SetMessage(string? message, string type = "success")
+    {
+        _message = message;
+        _messageType = type;
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo($"{Endpoints.ClientStarGetSingle}/{StarId}");
+    }
+
+}

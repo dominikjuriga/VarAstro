@@ -18,4 +18,6 @@ public static class Keywords
     public static readonly string LcPhotometricStandard = "standard";
     public static readonly string DefaultPageTitle = "Var Astro";
     public static readonly string DefaultDateTimeFormat = "dd.MM.yyyy HH:mm";
+    public static readonly string AlertSuccess = "success";
+    public static readonly string AlertDanger = "danger";
 }

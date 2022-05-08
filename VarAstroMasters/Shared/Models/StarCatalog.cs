@@ -19,4 +19,5 @@ public class StarCatalog
 
     [Required] public string CrossId { get; set; }
     public bool Primary { get; set; } = false;
+    [NotMapped] public bool New { get; set; } = true;
 }

@@ -56,7 +56,7 @@ else
         };
         var dataset = new LineDataset<Point>
         {
-            Label = "Mag"
+            Label = $"Mag"
         };
         var valDictionary = JsonSerializer.Deserialize<Dictionary<string, List<decimal>>>(Values);
         if (valDictionary != null)

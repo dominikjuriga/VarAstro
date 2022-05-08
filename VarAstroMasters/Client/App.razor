@@ -10,7 +10,8 @@
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
                     <h3>K tejto stránke nemáte prístup!</h3>
-                    <h5>Prosím, <a href="/login">prihláste sa</a> alebo si <a href="/register">vytvorte účet</a>.</h5>
+                    <h5>Ak ste prihlásený, nemáte potrebné oprávenenia.</h5>
+                    <h5>Prosím, <a href="/login">prihláste sa</a> alebo si <a href="/register">vytvorte účet</a>. </h5>
                 </NotAuthorized>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
