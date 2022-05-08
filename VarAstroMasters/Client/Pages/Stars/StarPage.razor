@@ -13,7 +13,7 @@ else
 {
     <div class="d-flex justify-content-between">
         <h3>Hviezda <strong>@Star.Name</strong></h3>
-        <a class="btn btn-outline-primary" href="@Endpoints.ClientLightCurveAdd/@Star.Id">Pridať pozorovanie</a>
+        <a class="btn btn-outline-primary" href="@Endpoints.ClientLightCurvePost/@Star.Id">Pridať pozorovanie</a>
     </div>
 
     <AuthorizeView Roles="Administrator">
@@ -152,15 +152,24 @@ else
         else if (Star is {LightCurves.Count: > 0})
         {
             <ul>
-                @foreach (var curve in Star.LightCurves)
+                @if (loadingCurveValues)
                 {
                     <li>
-                        <a href="@Endpoints.ClientLightCurveGetSingle/@curve.Id"> @curve.Id (@curve.User.Name) </a>
-                        @if (curve.Values is not null)
-                        {
-                            <ScatterChart Values="@curve.Values"></ScatterChart>
-                        }
+                        <Loader/>
                     </li>
+                }
+                else
+                {
+                    @foreach (var curve in Star.LightCurves)
+                    {
+                        <li>
+                            <a href="@Endpoints.ClientLightCurveSingleGet/@curve.Id"> @curve.Id (@curve.User.Name) </a>
+                            @if (curve.Values is not null)
+                            {
+                                <ScatterChart Values="@curve.Values"></ScatterChart>
+                            }
+                        </li>
+                    }
                 }
             </ul>
         }
@@ -174,6 +183,7 @@ else
 
     private StarDTO? Star { get; set; }
     private StarCatalog? PrimaryStarCatalog { get; set; }
+    private bool loadingCurveValues { get; set; } = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -196,6 +206,7 @@ else
                 lc.Values = res.Data;
             }
         }
+        loadingCurveValues = false;
         StateHasChanged();
     }
 

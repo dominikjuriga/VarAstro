@@ -14,7 +14,7 @@ public class DeviceService : IDeviceService
         _authService = authService;
     }
 
-    public async Task<ServiceResponse<bool>> AddDeviceAsync(DeviceAdd deviceAdd)
+    public async Task<ServiceResponse<bool>> DevicePost(DeviceAdd deviceAdd)
     {
         var userId = _authService.GetUserId();
         var newDevice = new Device
@@ -30,7 +30,7 @@ public class DeviceService : IDeviceService
         };
     }
 
-    public async Task<ServiceResponse<List<DeviceDTO>>> GetMyDevices()
+    public async Task<ServiceResponse<List<DeviceDTO>>> UserFromTokenDevicesGet()
     {
         var userId = _authService.GetUserId();
         var devices = await _context.Devices
@@ -55,7 +55,7 @@ public class DeviceService : IDeviceService
         };
     }
 
-    public async Task<ServiceResponse<bool>> DeleteDevice(int deviceId)
+    public async Task<ServiceResponse<bool>> DeviceDelete(int deviceId)
     {
         var dbDevice = await _context.Devices.FindAsync(deviceId);
         if (dbDevice is null)
@@ -74,7 +74,7 @@ public class DeviceService : IDeviceService
         };
     }
 
-    public async Task<ServiceResponse<DeviceDTO>> EditDevice(DeviceEdit device)
+    public async Task<ServiceResponse<DeviceDTO>> DeviceEdit(DeviceEdit device)
     {
         var dbDevice = _context.Devices.Where(d => d.Id == device.Id).FirstOrDefaultAsync();
         dbDevice.Result.Name = device.Name;

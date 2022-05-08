@@ -7,7 +7,7 @@
     </h3>
     <div>
         <button class="btn btn-primary" @onclick="NewSC">Pridať záznam</button>
-        <button class="btn btn-primary" @onclick="GoBack">Späť na prehľad</button>
+        <button class="btn btn-primary" @onclick="GoBack">Späť na hviezdu</button>
     </div>
 </div>
 @if (_StarCatalogs is null)
@@ -225,7 +225,7 @@ else
 
     private void GoBack()
     {
-        NavigationManager.NavigateTo($"{Endpoints.ClientStarGetSingle}/{StarId}");
+        NavigationManager.NavigateTo($"{Endpoints.ClientStarSingleGet}/{StarId}");
     }
 
 }

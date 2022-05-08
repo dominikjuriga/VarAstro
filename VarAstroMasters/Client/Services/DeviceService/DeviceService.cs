@@ -13,13 +13,13 @@ public class DeviceService : IDeviceService
     {
         var response =
             await _http.PostAsJsonAsync(
-                Endpoints.ApiDeviceAdd, deviceAdd);
+                Endpoints.ApiDevicePost, deviceAdd);
         return response != null;
     }
 
     public async Task<List<DeviceDTO>> GetMyDevices()
     {
-        var response = await _http.GetFromJsonAsync<ServiceResponse<List<DeviceDTO>>>(Endpoints.ApiDeviceGetMyDevices);
+        var response = await _http.GetFromJsonAsync<ServiceResponse<List<DeviceDTO>>>(Endpoints.ApiDeviceMyDevicesGet);
         return response.Data;
     }
 

@@ -14,7 +14,7 @@ public class ObservatoryService : IObservatoryService
         _authService = authService;
     }
 
-    public async Task<ServiceResponse<List<ObservatoryDTO>>> GetMyObservatories()
+    public async Task<ServiceResponse<List<ObservatoryDTO>>> UserFromTokenObservatoriesGet()
     {
         var userId = _authService.GetUserId();
         var data = await _context.Users
@@ -36,7 +36,7 @@ public class ObservatoryService : IObservatoryService
         };
     }
 
-    public async Task<ServiceResponse<bool>> AddObservatory(ObservatoryAdd observatoryAdd)
+    public async Task<ServiceResponse<bool>> ObservatoryPost(ObservatoryAdd observatoryAdd)
     {
         var userId = _authService.GetUserId();
         var observatory = new Observatory
@@ -56,7 +56,7 @@ public class ObservatoryService : IObservatoryService
         };
     }
 
-    public async Task<ServiceResponse<bool>> DeleteObservatory(int observatoryId)
+    public async Task<ServiceResponse<bool>> ObservatoryDelete(int observatoryId)
     {
         var dbObservatory = await _context.Observatories.FindAsync(observatoryId);
         if (dbObservatory is null)
@@ -74,7 +74,7 @@ public class ObservatoryService : IObservatoryService
         };
     }
 
-    public async Task<ServiceResponse<ObservatoryDTO>> EditObservatory(ObservatoryEdit observatoryEdit)
+    public async Task<ServiceResponse<ObservatoryDTO>> ObservatoryEdit(ObservatoryEdit observatoryEdit)
     {
         var dbObservatory = await _context.Observatories.FindAsync(observatoryEdit.Id);
         if (dbObservatory is null)

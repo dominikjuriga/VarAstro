@@ -17,7 +17,7 @@ public class StarService : IStarService
         _lightCurveService = lightCurveService;
     }
 
-    public async Task<ServiceResponse<List<StarDTO>>> GetStarsAsync()
+    public async Task<ServiceResponse<List<StarDTO>>> StarListGet()
     {
         var data = await _context.Stars.ToListAsync();
         var stars = new List<StarDTO>();
@@ -33,7 +33,7 @@ public class StarService : IStarService
         };
     }
 
-    public async Task<ServiceResponse<StarDTO>> GetStarAsync(int starId)
+    public async Task<ServiceResponse<StarDTO>> StarSingleGet(int starId)
     {
         var star = await _context.Stars
             .Include(s => s.LightCurves)
@@ -101,39 +101,8 @@ public class StarService : IStarService
         return response;
     }
 
-    public async Task<ServiceResponse<int>> CreateDraft(StarDraftAdd starDraftAdd)
-    {
-        var userId = _authService.GetUserId();
-        var starDraft = new StarDraft
-        {
-            Name = starDraftAdd.Name,
-            Ra = starDraftAdd.Ra,
-            Dec = starDraftAdd.Dec,
-            UserId = userId
-        };
-        _context.StarsDrafts.Add(starDraft);
 
-        await _context.SaveChangesAsync();
-        return new ServiceResponse<int>
-        {
-            Data = starDraft.Id,
-            Message = "Používateľská hviezda vytvorená"
-        };
-    }
-
-    public async Task<ServiceResponse<StarDraft>> GetDraft(int id)
-    {
-        var sd = await _context.StarsDrafts
-            .Where(sd => sd.Id == id)
-            .FirstOrDefaultAsync();
-
-        return new ServiceResponse<StarDraft>
-        {
-            Data = sd
-        };
-    }
-
-    public async Task<ServiceResponse<StarPublish>> GetPublication(int starId)
+    public async Task<ServiceResponse<StarPublish>> PublicationSingleGet(int starId)
     {
         var star = await _context.Stars
             .Where(s => s.Id == starId)
@@ -145,7 +114,7 @@ public class StarService : IStarService
         };
     }
 
-    public async Task<ServiceResponse<bool>> SavePublication(StarPublish starPublish)
+    public async Task<ServiceResponse<bool>> PublicationPost(StarPublish starPublish)
     {
         var star = await _context.Stars
             .Where(s => s.Id == starPublish.StarId)
@@ -167,20 +136,8 @@ public class StarService : IStarService
         };
     }
 
-    public async Task<ServiceResponse<List<StarDraft>>> GetDraftList()
-    {
-        var userId = _authService.GetUserId();
-        var sd = await _context.StarsDrafts
-            .Where(sd => sd.UserId == userId)
-            .ToListAsync();
 
-        return new ServiceResponse<List<StarDraft>>
-        {
-            Data = sd
-        };
-    }
-
-    public async Task<ServiceResponse<bool>> SetStarCatalogPrimary(StarCatalogCK identification)
+    public async Task<ServiceResponse<bool>> StarCatalogSetAsPrimaryPost(StarCatalogCK identification)
     {
         var sc = await _context.StarCatalog
             .Where(sc => sc.StarId == identification.StarId && sc.CatalogId == identification.CatalogId)
@@ -208,7 +165,7 @@ public class StarService : IStarService
         };
     }
 
-    public async Task<ServiceResponse<List<ObservationLogDTO>>> GetObservationLogList()
+    public async Task<ServiceResponse<List<ObservationLogDTO>>> ObservationLogListGet()
     {
         var q = from lc in _context.Set<LightCurve>()
             orderby lc.DateCreated
@@ -240,7 +197,7 @@ public class StarService : IStarService
         };
     }
 
-    public async Task<ServiceResponse<ObservationLogDetailDTO>> GetObservationLog(string id)
+    public async Task<ServiceResponse<ObservationLogDetailDTO>> ObservationLogSingleGet(string id)
     {
         var data = await _context.LightCurves
             .Where(lc => lc.UserId == id)
@@ -289,7 +246,7 @@ public class StarService : IStarService
         };
     }
 
-    public async Task<ServiceResponse<List<StarCatalog>>> GetStarCatalogs(int starId)
+    public async Task<ServiceResponse<List<StarCatalog>>> StarCatalogListForStarSingleGet(int starId)
     {
         var star = await _context.Stars
             .Where(s => s.Id == starId)
@@ -309,7 +266,7 @@ public class StarService : IStarService
         };
     }
 
-    public async Task<ServiceResponse<StarCatalog>> SaveStarCatalog(StarCatalog starCatalog)
+    public async Task<ServiceResponse<StarCatalog>> StarCatalogPost(StarCatalog starCatalog)
     {
         if (starCatalog.New)
         {
@@ -355,7 +312,7 @@ public class StarService : IStarService
         };
     }
 
-    public async Task<ServiceResponse<bool>> DeleteStarCatalog(int starId, string catalogId)
+    public async Task<ServiceResponse<bool>> StarCatalogDelete(int starId, string catalogId)
     {
         var sc = await _context.StarCatalog
             .Where(sc => sc.StarId == starId && sc.CatalogId == catalogId)
@@ -383,7 +340,7 @@ public class StarService : IStarService
         };
     }
 
-    public async Task<ServiceResponse<List<Catalog>>> GetCatalogs()
+    public async Task<ServiceResponse<List<Catalog>>> CatalogListGet()
     {
         var data = await _context.Catalogs.ToListAsync();
         return new ServiceResponse<List<Catalog>>

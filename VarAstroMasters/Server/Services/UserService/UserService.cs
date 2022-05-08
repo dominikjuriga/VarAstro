@@ -13,7 +13,7 @@ public class UserService : IUserService
         _authService = authService;
     }
 
-    public async Task<ServiceResponse<UserDTO>> GetUserAsync(string userId)
+    public async Task<ServiceResponse<UserDTO>> UserSingleGet(string userId)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         if (user is null)
@@ -31,7 +31,7 @@ public class UserService : IUserService
         };
     }
 
-    public async Task<ServiceResponse<UserDTO>> GetUserFromTokenAsync()
+    public async Task<ServiceResponse<UserDTO>> UserSingleFromTokenGet()
     {
         var userId = _authService.GetUserId();
         if (userId is null)
@@ -76,7 +76,7 @@ public class UserService : IUserService
         return response;
     }
 
-    public async Task<ServiceResponse<List<DeviceDTO>>> GetUserDevices()
+    public async Task<ServiceResponse<List<DeviceDTO>>> UserDeviceListGet()
     {
         var userId = _authService.GetUserId();
         if (userId is null)

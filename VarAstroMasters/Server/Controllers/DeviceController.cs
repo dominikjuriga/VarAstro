@@ -14,30 +14,30 @@ public class DeviceController : ControllerBase
     }
 
     [HttpPost("Add")]
-    public async Task<ActionResult<ServiceResponse<bool>>> AddDeviceAsync(DeviceAdd deviceAdd)
+    public async Task<ActionResult<ServiceResponse<bool>>> DevicePost(DeviceAdd deviceAdd)
     {
-        var sr = await _deviceService.AddDeviceAsync(deviceAdd);
+        var sr = await _deviceService.DevicePost(deviceAdd);
         return Ok(sr);
     }
 
     [HttpGet("list")]
-    public async Task<ActionResult<ServiceResponse<List<DeviceDTO>>>> GetMyDevices()
+    public async Task<ActionResult<ServiceResponse<List<DeviceDTO>>>> UserFromTokenDevicesGet()
     {
-        var sr = await _deviceService.GetMyDevices();
+        var sr = await _deviceService.UserFromTokenDevicesGet();
         return Ok(sr);
     }
 
     [HttpDelete("{deviceId}")]
-    public async Task<ActionResult<ServiceResponse<bool>>> DeleteDevice(int deviceId)
+    public async Task<ActionResult<ServiceResponse<bool>>> DeviceDelete(int deviceId)
     {
-        var sr = await _deviceService.DeleteDevice(deviceId);
+        var sr = await _deviceService.DeviceDelete(deviceId);
         return Ok(sr);
     }
 
     [HttpPut]
-    public async Task<ActionResult<ServiceResponse<bool>>> EditDevice(DeviceEdit device)
+    public async Task<ActionResult<ServiceResponse<bool>>> DeviceEdit(DeviceEdit device)
     {
-        var sr = await _deviceService.EditDevice(device);
+        var sr = await _deviceService.DeviceEdit(device);
         return Ok(sr);
     }
 }

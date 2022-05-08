@@ -16,7 +16,7 @@ public class LightCurveService : ILightCurveService
         _authService = authService;
     }
 
-    public async Task<ServiceResponse<List<LightCurveDTO>>> GetLightCurvesAsync()
+    public async Task<ServiceResponse<List<LightCurveDTO>>> LightCurveListGet()
     {
         var data = await _context.LightCurves
             .Include(lc => lc.Star)
@@ -39,7 +39,7 @@ public class LightCurveService : ILightCurveService
         };
     }
 
-    public async Task<ServiceResponse<LightCurveDTO>> GetLightCurveAsync(int curveId)
+    public async Task<ServiceResponse<LightCurveDTO>> LightCurveSingleGet(int curveId)
     {
         var data = await _context.LightCurves
             .Where(lc => lc.Id == curveId)
@@ -75,17 +75,17 @@ public class LightCurveService : ILightCurveService
             Comment = data.Comment
         };
 
-        var linePattern = @"\#\sVAR\s(.*)";
-        var regRes = Regex.Matches(data.DataFileContent, linePattern);
-        var metaLine = regRes.Count > 0 ? regRes[0].Groups[1].Value : null;
-        if (metaLine is { Length: > 0 })
-        {
-            var metaPattern = @"\s*(\S+):\s(\S+)";
-            var metaMatches = Regex.Matches(metaLine, metaPattern);
-            Dictionary<string, string> meta = new();
-            foreach (Match match in metaMatches) meta.Add(match.Groups[1].Value.ToUpper(), match.Groups[2].Value);
-            resData.Meta = meta;
-        }
+        // var linePattern = @"\#\sVAR\s(.*)";
+        // var regRes = Regex.Matches(data.DataFileContent, linePattern);
+        // var metaLine = regRes.Count > 0 ? regRes[0].Groups[1].Value : null;
+        // if (metaLine is { Length: > 0 })
+        // {
+        //     var metaPattern = @"\s*(\S+):\s(\S+)";
+        //     var metaMatches = Regex.Matches(metaLine, metaPattern);
+        //     Dictionary<string, string> meta = new();
+        //     foreach (Match match in metaMatches) meta.Add(match.Groups[1].Value.ToUpper(), match.Groups[2].Value);
+        //     resData.Meta = meta;
+        // }
 
 
         if (data.Device is not null)
@@ -109,7 +109,7 @@ public class LightCurveService : ILightCurveService
         };
     }
 
-    public async Task<ServiceResponse<int>> AddLightCurveAsync(LightCurveAdd lightCurveAdd)
+    public async Task<ServiceResponse<int>> LightCurvePost(LightCurveAdd lightCurveAdd)
     {
         var userId = _authService.GetUserId();
         var lightCurve = new LightCurve
@@ -131,7 +131,7 @@ public class LightCurveService : ILightCurveService
         };
     }
 
-    public async Task<ServiceResponse<string>> GetValuesFromCurveAsync(int curveId)
+    public async Task<ServiceResponse<string>> LightCurveSingleValuesGet(int curveId)
     {
         var curve = await _context.LightCurves.Where(c => c.Id == curveId).FirstOrDefaultAsync();
         if (curve is null)

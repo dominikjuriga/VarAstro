@@ -11,7 +11,7 @@ else
     <h3>
         Detail krivky (hviezda
         <strong>
-            <a href="@Endpoints.ClientStarGetSingle/@_curve.Star.Id">@_curve.Star.Name</a>
+            <a href="@Endpoints.ClientStarSingleGet/@_curve.Star.Id">@_curve.Star.Name</a>
         </strong>)
     </h3>
 
@@ -51,12 +51,17 @@ else
     </section>
 
 
-    @if (_values is not null)
-    {
-        <section>
-            <ScatterChart Values="@_values"></ScatterChart>
-        </section>
-    }
+    <section>
+        <h4>Priebeh krivky</h4>
+        @if (_curve.Values is not null)
+        {
+            <ScatterChart Values="@_curve.Values"></ScatterChart>
+        }
+        else
+        {
+            <Loader/>
+        }
+    </section>
 }
 
 @code {
@@ -65,7 +70,6 @@ else
     public int LightCurveId { get; set; }
 
     private LightCurveDTO? _curve { get; set; }
-    private string? _values { get; set; }
     private string _starRa = "-";
     private string _starDec = "-";
     private Dictionary<string, string>? _meta = null;
@@ -87,11 +91,17 @@ else
                 _starDec = $"{_curve.Meta.GetValueOrDefault("DEC", "-")} (fotometria)";
             }
         }
-        var res = await LightCurveService.GetLightCurveValues(LightCurveId);
-        if (res.Success)
+        GetValuesForCurve();
+    }
+
+    private async Task GetValuesForCurve()
+    {
+        var response = await LightCurveService.GetLightCurveValues(LightCurveId);
+        if (response.Success)
         {
-            _values = res.Data;
+            _curve.Values = response.Data;
         }
+        StateHasChanged();
     }
 
 }

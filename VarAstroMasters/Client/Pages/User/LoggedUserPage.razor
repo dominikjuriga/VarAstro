@@ -15,7 +15,7 @@ else
         @if (_user.Devices.Count == 0)
         {
             <span>Nemáte žiadne registrované zariadenia.</span>
-            <a href="@Endpoints.ClientDeviceAdd">Pridať zariadenie</a>
+            <a href="@Endpoints.ClientDevicePost">Pridať zariadenie</a>
         }
         else
         {
@@ -35,7 +35,7 @@ else
         @if (_user.Observatories.Count == 0)
         {
             <span>Nemáte žiadne registrované hvezdárne.</span>
-            <a href="@Endpoints.ClientObservatoriesAdd">Pridať hvezdáreň</a>
+            <a href="@Endpoints.ClientObservatoriesPost">Pridať hvezdáreň</a>
         }
         else
         {

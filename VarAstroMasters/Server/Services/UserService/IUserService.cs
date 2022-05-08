@@ -2,7 +2,7 @@
 
 public interface IUserService
 {
-    Task<ServiceResponse<UserDTO>> GetUserAsync(string userId);
-    Task<ServiceResponse<UserDTO>> GetUserFromTokenAsync();
-    Task<ServiceResponse<List<DeviceDTO>>> GetUserDevices();
+    Task<ServiceResponse<UserDTO>> UserSingleGet(string userId);
+    Task<ServiceResponse<UserDTO>> UserSingleFromTokenGet();
+    Task<ServiceResponse<List<DeviceDTO>>> UserDeviceListGet();
 }

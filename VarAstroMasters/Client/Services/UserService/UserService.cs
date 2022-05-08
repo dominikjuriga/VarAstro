@@ -12,21 +12,21 @@ public class UserService : IUserService
     public async Task<UserDTO> GetUserAsync(string userId)
     {
         var response =
-            await _httpClient.GetFromJsonAsync<ServiceResponse<UserDTO>>($"{Endpoints.ApiUserGetSingle}/{userId}");
+            await _httpClient.GetFromJsonAsync<ServiceResponse<UserDTO>>($"{Endpoints.ApiUserSingleGet}/{userId}");
         return response.Data;
     }
 
     public async Task<UserDTO> GetUserFromTokenAsync()
     {
         var response =
-            await _httpClient.GetFromJsonAsync<ServiceResponse<UserDTO>>(Endpoints.ApiUserGetFromToken);
+            await _httpClient.GetFromJsonAsync<ServiceResponse<UserDTO>>(Endpoints.ApiUserFromTokenGet);
         return response.Data;
     }
 
     public async Task<List<DeviceDTO>> GetMyDevices()
     {
         var response =
-            await _httpClient.GetFromJsonAsync<ServiceResponse<List<DeviceDTO>>>(Endpoints.ApiUserGetMyDevices);
+            await _httpClient.GetFromJsonAsync<ServiceResponse<List<DeviceDTO>>>(Endpoints.ApiUserMyDevicesGet);
         return response.Data;
     }
 }

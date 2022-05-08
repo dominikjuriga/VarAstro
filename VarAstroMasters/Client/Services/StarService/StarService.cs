@@ -11,7 +11,7 @@ public class StarService : IStarService
 
     public async Task<List<StarDTO>> GetStarsAsync()
     {
-        var response = await _httpClient.GetFromJsonAsync<ServiceResponse<List<StarDTO>>>(Endpoints.ApiStarGetAll);
+        var response = await _httpClient.GetFromJsonAsync<ServiceResponse<List<StarDTO>>>(Endpoints.ApiStarAllGet);
         if (response is { Data: not null }) return response.Data;
 
         return new List<StarDTO>();
@@ -20,7 +20,7 @@ public class StarService : IStarService
     public async Task<ServiceResponse<StarDTO>> GetStarAsync(int starId)
     {
         var response =
-            await _httpClient.GetFromJsonAsync<ServiceResponse<StarDTO>>($"{Endpoints.ApiStarGetSingle}/{starId}");
+            await _httpClient.GetFromJsonAsync<ServiceResponse<StarDTO>>($"{Endpoints.ApiStarSingleGet}/{starId}");
         return response;
     }
 
@@ -34,14 +34,14 @@ public class StarService : IStarService
 
     public async Task<ServiceResponse<int>> CreateDraft(StarDraftAdd starDraftAdd)
     {
-        var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiStarCreateDraft, starDraftAdd);
+        var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiStarDraftPost, starDraftAdd);
         return await response.Content.ReadFromJsonAsync<ServiceResponse<int>>();
     }
 
     public async Task<ServiceResponse<StarDraft>> GetDraft(int id)
     {
         var response =
-            await _httpClient.GetFromJsonAsync<ServiceResponse<StarDraft>>($"{Endpoints.ApiStarGetDraft}/{id}");
+            await _httpClient.GetFromJsonAsync<ServiceResponse<StarDraft>>($"{Endpoints.ApiStarDraftSingleGet}/{id}");
         return response;
     }
 
@@ -49,14 +49,14 @@ public class StarService : IStarService
     {
         var response =
             await _httpClient.GetFromJsonAsync<ServiceResponse<StarPublish>>(
-                $"{Endpoints.ApiStarGetPublication}/{starId}");
+                $"{Endpoints.ApiStarPublicationGet}/{starId}");
         return response;
     }
 
     public async Task<ServiceResponse<List<StarDraft>>> GetDraftList()
     {
         var response =
-            await _httpClient.GetFromJsonAsync<ServiceResponse<List<StarDraft>>>(Endpoints.ApiStarGetDraftList);
+            await _httpClient.GetFromJsonAsync<ServiceResponse<List<StarDraft>>>(Endpoints.ApiStarDraftListGet);
         return response;
     }
 
@@ -64,19 +64,19 @@ public class StarService : IStarService
     {
         var response =
             await _httpClient.GetFromJsonAsync<ServiceResponse<List<StarCatalog>>>(
-                $"{Endpoints.ApiStarGetCatalogs}/{starId}");
+                $"{Endpoints.ApiStarSingleCatalogsGet}/{starId}");
         return response;
     }
 
     public async Task<ServiceResponse<StarCatalog>> SaveStarCatalog(StarCatalog starCatalog)
     {
-        var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiStarPostStarCatalog, starCatalog);
+        var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiStarStarCatalogPost, starCatalog);
         return await response.Content.ReadFromJsonAsync<ServiceResponse<StarCatalog>>();
     }
 
     public async Task<ServiceResponse<bool>> DeleteStarCatalog(int starId, string catalogId)
     {
-        var response = await _httpClient.DeleteAsync($"{Endpoints.ApiStarDeleteStarCatalog}/{starId}/{catalogId}");
+        var response = await _httpClient.DeleteAsync($"{Endpoints.ApiStarStarCatalogDelete}/{starId}/{catalogId}");
         return await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
     }
 
@@ -84,19 +84,19 @@ public class StarService : IStarService
     {
         var response =
             await _httpClient.GetFromJsonAsync<ServiceResponse<List<Catalog>>>(
-                $"{Endpoints.ApiCatalogsGetCatalogs}");
+                $"{Endpoints.ApiCatalogsListGet}");
         return response;
     }
 
     public async Task<ServiceResponse<bool>> SetStarCatalogPrimary(StarCatalogCK identification)
     {
-        var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiStarSetStarCatalogPrimary, identification);
+        var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiCatalogPrimaryPost, identification);
         return await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
     }
 
     public async Task<ServiceResponse<bool>> SavePublication(StarPublish starPublish)
     {
-        var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiStarPostPublication, starPublish);
+        var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiStarPublicationPost, starPublish);
         return await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
     }
 
@@ -104,7 +104,7 @@ public class StarService : IStarService
     {
         var response =
             await _httpClient.GetFromJsonAsync<ServiceResponse<List<ObservationLogDTO>>>(Endpoints
-                .ApiStarGetObservationLogList);
+                .ApiStarObservationLogListGet);
         return response;
     }
 
@@ -112,7 +112,7 @@ public class StarService : IStarService
     {
         var response =
             await _httpClient.GetFromJsonAsync<ServiceResponse<ObservationLogDetailDTO>>(
-                $"{Endpoints.ApiStarGetObservationLog}/{id}");
+                $"{Endpoints.ApiStarObservationLogSingleGet}/{id}");
         return response;
     }
 }

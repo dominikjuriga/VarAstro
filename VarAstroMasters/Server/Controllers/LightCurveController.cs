@@ -16,30 +16,30 @@ public class LightCurveController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ServiceResponse<List<LightCurveDTO>>>> GetLightCurvesAsync()
+    public async Task<ActionResult<ServiceResponse<List<LightCurveDTO>>>> LightCurveListGet()
     {
-        var sr = await _lightCurveService.GetLightCurvesAsync();
+        var sr = await _lightCurveService.LightCurveListGet();
         return Ok(sr);
     }
 
     [HttpGet("{lightCurveId}")]
-    public async Task<ActionResult<ServiceResponse<LightCurveDTO>>> GetLightCurveAsync(int lightCurveId)
+    public async Task<ActionResult<ServiceResponse<LightCurveDTO>>> LightCurveSingleGet(int lightCurveId)
     {
-        var sr = await _lightCurveService.GetLightCurveAsync(lightCurveId);
+        var sr = await _lightCurveService.LightCurveSingleGet(lightCurveId);
         return Ok(sr);
     }
 
     [HttpGet("{lightCurveId}/values")]
-    public async Task<ActionResult<ServiceResponse<string>>> GetLightCurveValuesAsync(int lightCurveId)
+    public async Task<ActionResult<ServiceResponse<string>>> LightCurveSingleValuesGet(int lightCurveId)
     {
-        var sr = await _lightCurveService.GetValuesFromCurveAsync(lightCurveId);
+        var sr = await _lightCurveService.LightCurveSingleValuesGet(lightCurveId);
         return Ok(sr);
     }
 
     [HttpPost("Add")]
-    public async Task<ActionResult<ServiceResponse<int>>> AddLightCurveAsync(LightCurveAdd lightCurveAdd)
+    public async Task<ActionResult<ServiceResponse<int>>> LightCurvePost(LightCurveAdd lightCurveAdd)
     {
-        var sr = await _lightCurveService.AddLightCurveAsync(lightCurveAdd);
+        var sr = await _lightCurveService.LightCurvePost(lightCurveAdd);
         return Ok(sr);
     }
 }

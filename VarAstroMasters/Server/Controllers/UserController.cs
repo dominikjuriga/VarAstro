@@ -12,23 +12,23 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{userId}")]
-    public async Task<ActionResult<ServiceResponse<UserDTO>>> GetUserAsync(string userId)
+    public async Task<ActionResult<ServiceResponse<UserDTO>>> UserSingleGet(string userId)
     {
-        var sr = await _userService.GetUserAsync(userId);
+        var sr = await _userService.UserSingleGet(userId);
         return Ok(sr);
     }
 
     [HttpGet("token")]
-    public async Task<ActionResult<ServiceResponse<UserDTO>>> GetUserFromTokenAsync()
+    public async Task<ActionResult<ServiceResponse<UserDTO>>> UserSingleFromTokenGet()
     {
-        var sr = await _userService.GetUserFromTokenAsync();
+        var sr = await _userService.UserSingleFromTokenGet();
         return Ok(sr);
     }
 
     [HttpGet("devices")]
-    public async Task<ActionResult<ServiceResponse<UserDTO>>> GetUserDevices()
+    public async Task<ActionResult<ServiceResponse<UserDTO>>> UserDeviceListGet()
     {
-        var sr = await _userService.GetUserDevices();
+        var sr = await _userService.UserDeviceListGet();
         return Ok(sr);
     }
 }

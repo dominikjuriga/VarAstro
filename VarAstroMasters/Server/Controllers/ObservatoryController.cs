@@ -19,30 +19,30 @@ public class ObservatoryController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ServiceResponse<List<ObservatoryDTO>>>> GetMyObservatories()
+    public async Task<ActionResult<ServiceResponse<List<ObservatoryDTO>>>> UserFromTokenObservatoriesGet()
     {
-        var sr = await _observatoryService.GetMyObservatories();
+        var sr = await _observatoryService.UserFromTokenObservatoriesGet();
         return Ok(sr);
     }
 
     [HttpPost]
-    public async Task<ActionResult<ServiceResponse<bool>>> AddObservatory(ObservatoryAdd observatoryAdd)
+    public async Task<ActionResult<ServiceResponse<bool>>> ObservatoryPost(ObservatoryAdd observatoryAdd)
     {
-        var sr = await _observatoryService.AddObservatory(observatoryAdd);
+        var sr = await _observatoryService.ObservatoryPost(observatoryAdd);
         return Ok(sr);
     }
 
     [HttpDelete("{observatoryId}")]
-    public async Task<ActionResult<ServiceResponse<bool>>> DeleteObservatory(int observatoryId)
+    public async Task<ActionResult<ServiceResponse<bool>>> ObservatoryDelete(int observatoryId)
     {
-        var sr = await _observatoryService.DeleteObservatory(observatoryId);
+        var sr = await _observatoryService.ObservatoryDelete(observatoryId);
         return Ok(sr);
     }
 
     [HttpPut]
-    public async Task<ActionResult<ServiceResponse<ObservatoryDTO>>> EditObservatory(ObservatoryEdit observatoryEdit)
+    public async Task<ActionResult<ServiceResponse<ObservatoryDTO>>> ObservatoryEdit(ObservatoryEdit observatoryEdit)
     {
-        var sr = await _observatoryService.EditObservatory(observatoryEdit);
+        var sr = await _observatoryService.ObservatoryEdit(observatoryEdit);
         return Ok(sr);
     }
 }

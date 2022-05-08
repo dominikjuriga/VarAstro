@@ -2,8 +2,8 @@
 
 public interface IDeviceService
 {
-    Task<ServiceResponse<bool>> AddDeviceAsync(DeviceAdd deviceAdd);
-    Task<ServiceResponse<List<DeviceDTO>>> GetMyDevices();
-    Task<ServiceResponse<bool>> DeleteDevice(int deviceId);
-    Task<ServiceResponse<DeviceDTO>> EditDevice(DeviceEdit device);
+    Task<ServiceResponse<bool>> DevicePost(DeviceAdd deviceAdd);
+    Task<ServiceResponse<List<DeviceDTO>>> UserFromTokenDevicesGet();
+    Task<ServiceResponse<bool>> DeviceDelete(int deviceId);
+    Task<ServiceResponse<DeviceDTO>> DeviceEdit(DeviceEdit device);
 }

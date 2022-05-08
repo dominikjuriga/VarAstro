@@ -21,7 +21,7 @@
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="@Endpoints.ClientObservationLogList">
+            <NavLink class="nav-link" href="@Endpoints.ClientObservationLogListGet">
                 <span class="oi oi-home" aria-hidden="true"></span> Pozorovacie denníky
             </NavLink>
         </div>
@@ -33,19 +33,19 @@
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="@Endpoints.ClientStarGetAll">
+            <NavLink class="nav-link" href="@Endpoints.ClientStarListGet">
                 <span class="oi oi-list" aria-hidden="true"></span> Hviezdy
             </NavLink>
         </div>
 
         <NavDropdown Title="Moje Hviezdy" Icon="star">
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="@Endpoints.ClientStarGetDrafts">
+                <NavLink class="nav-link" href="@Endpoints.ClientStarDraftListGet">
                     <span class="oi oi-list" aria-hidden="true"></span> Zoznam mojich hviezd
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="@Endpoints.ClientStarCreateDraft">
+                <NavLink class="nav-link" href="@Endpoints.ClientStarDraftPost">
                     <span class="oi oi-plus" aria-hidden="true"></span> Pridať novú hviezdu
                 </NavLink>
             </div>
@@ -53,7 +53,7 @@
 
         <NavDropdown Title="Krivky" Icon="bar-chart">
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="@Endpoints.ClientLightCurveGetAll">
+                <NavLink class="nav-link" href="@Endpoints.ClientLightCurveListGet">
                     <span class="oi oi-list" aria-hidden="true"></span> Zoznam kriviek
                 </NavLink>
             </div>
@@ -75,24 +75,24 @@
             <Authorized>
                 <NavDropdown Title="Zariadenia" Icon="aperture">
                     <div class="nav-item px-3">
-                        <NavLink class="nav-link" href="@Endpoints.ClientDeviceList">
+                        <NavLink class="nav-link" href="@Endpoints.ClientDeviceListGet">
                             <span class="oi oi-list" aria-hidden="true"></span> Zoznam zariadení
                         </NavLink>
                     </div>
                     <div class="nav-item px-3">
-                        <NavLink class="nav-link" href="@Endpoints.ClientDeviceAdd">
+                        <NavLink class="nav-link" href="@Endpoints.ClientDevicePost">
                             <span class="oi oi-plus" aria-hidden="true"></span> Pridať zariadenie
                         </NavLink>
                     </div>
                 </NavDropdown>
                 <NavDropdown Title="Hvezdárne" Icon="home">
                     <div class="nav-item px-3">
-                        <NavLink class="nav-link" href="@Endpoints.ClientObservatoriesList">
+                        <NavLink class="nav-link" href="@Endpoints.ClientObservatoriesListGet">
                             <span class="oi oi-list" aria-hidden="true"></span> Zoznam hvezdární
                         </NavLink>
                     </div>
                     <div class="nav-item px-3">
-                        <NavLink class="nav-link" href="@Endpoints.ClientObservatoriesAdd">
+                        <NavLink class="nav-link" href="@Endpoints.ClientObservatoriesPost">
                             <span class="oi oi-plus" aria-hidden="true"></span> Pridať hvezdáreň
                         </NavLink>
                     </div>

@@ -15,13 +15,13 @@ public class ObservatoryService : IObservatoryService
     {
         var response =
             await _http.GetFromJsonAsync<ServiceResponse<List<ObservatoryDTO>>>(
-                Endpoints.ApiObservatoryGetObservatories);
+                Endpoints.ApiObservatoryListGet);
         return response.Data;
     }
 
     public async Task<ServiceResponse<bool>> AddObservatory(ObservatoryAdd observatoryAdd)
     {
-        var response = await _http.PostAsJsonAsync(Endpoints.ApiObservatoryAdd, observatoryAdd);
+        var response = await _http.PostAsJsonAsync(Endpoints.ApiObservatoryPost, observatoryAdd);
         return await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
     }
 

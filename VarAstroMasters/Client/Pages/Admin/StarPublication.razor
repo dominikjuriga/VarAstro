@@ -47,7 +47,7 @@ else
         </div>
 
         <button type="submit" class="btn btn-primary btn-lg">Uložiť publikáciu</button>
-        <button type="button" class="btn btn-secondary btn-lg" @onclick="GoBack">Späť na prehľad</button>
+        <button type="button" class="btn btn-secondary btn-lg" @onclick="GoBack">Späť na hviezdu</button>
     </EditForm>
 }
 
@@ -89,7 +89,7 @@ else
 
     private void GoBack()
     {
-        NavigationManager.NavigateTo($"{Endpoints.ClientStarGetSingle}/{StarId}");
+        NavigationManager.NavigateTo($"{Endpoints.ClientStarSingleGet}/{StarId}");
     }
 
 }

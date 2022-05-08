@@ -7,6 +7,7 @@ global using VarAstroMasters.Server.Services.AuthService;
 global using VarAstroMasters.Server.Services.StarService;
 global using VarAstroMasters.Server.Services.UserService;
 global using VarAstroMasters.Server.Services.DeviceService;
+global using VarAstroMasters.Server.Services.StarDraftService;
 global using VarAstroMasters.Server.Services.ObservatoryService;
 global using VarAstroMasters.Server.Services.LightCurveService;
 global using VarAstroMasters.Shared.DTO;
@@ -36,6 +37,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IStarService, StarService>();
+builder.Services.AddScoped<IStarDraftService, StarDraftService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDeviceService, DeviceService>();
 builder.Services.AddScoped<IObservatoryService, ObservatoryService>();

@@ -7,60 +7,37 @@ namespace VarAstroMasters.Server.Controllers;
 public class StarController : ControllerBase
 {
     private readonly IStarService _starService;
-    private readonly IWebHostEnvironment _env;
 
-    public StarController(IStarService starService, IWebHostEnvironment env)
+    public StarController(IStarService starService)
     {
         _starService = starService;
-        _env = env;
     }
 
     [HttpGet]
-    public async Task<ActionResult<ServiceResponse<List<StarDTO>>>> GetStarsAsync()
+    public async Task<ActionResult<ServiceResponse<List<StarDTO>>>> StarListGet()
     {
-        var response = await _starService.GetStarsAsync();
+        var response = await _starService.StarListGet();
         return Ok(response);
     }
 
     [HttpGet("{starId}")]
-    public async Task<ActionResult<ServiceResponse<StarDTO>>> GetStarAsync(int starId)
+    public async Task<ActionResult<ServiceResponse<StarDTO>>> StarSingleGet(int starId)
     {
-        var response = await _starService.GetStarAsync(starId);
-        return Ok(response);
-    }
-
-    [HttpPost("draft")]
-    public async Task<ActionResult<ServiceResponse<int>>> CreateDraft(StarDraftAdd starDraftAdd)
-    {
-        var response = await _starService.CreateDraft(starDraftAdd);
-        return Ok(response);
-    }
-
-    [HttpGet("draft/{id:int}")]
-    public async Task<ActionResult<ServiceResponse<int>>> GetDraft(int id)
-    {
-        var response = await _starService.GetDraft(id);
-        return Ok(response);
-    }
-
-    [HttpGet("draft")]
-    public async Task<ActionResult<ServiceResponse<StarDraft>>> GetDraftList()
-    {
-        var response = await _starService.GetDraftList();
+        var response = await _starService.StarSingleGet(starId);
         return Ok(response);
     }
 
     [HttpGet("logs")]
-    public async Task<ActionResult<ServiceResponse<List<ObservationLogDTO>>>> GetObservationLogList()
+    public async Task<ActionResult<ServiceResponse<List<ObservationLogDTO>>>> ObservationLogListGet()
     {
-        var response = await _starService.GetObservationLogList();
+        var response = await _starService.ObservationLogListGet();
         return Ok(response);
     }
 
     [HttpGet("logs/{id}")]
-    public async Task<ActionResult<ServiceResponse<ObservationLogDetailDTO>>> GetObservationLog(string id)
+    public async Task<ActionResult<ServiceResponse<ObservationLogDetailDTO>>> ObservationLogSingleGet(string id)
     {
-        var response = await _starService.GetObservationLog(id);
+        var response = await _starService.ObservationLogSingleGet(id);
         return Ok(response);
     }
 
@@ -72,51 +49,52 @@ public class StarController : ControllerBase
     }
 
     [HttpGet("publication/{starId:int}")]
-    public async Task<ActionResult<ServiceResponse<StarPublish>>> GetPublication(int starId)
+    public async Task<ActionResult<ServiceResponse<StarPublish>>> PublicationSingleGet(int starId)
     {
-        var response = await _starService.GetPublication(starId);
+        var response = await _starService.PublicationSingleGet(starId);
         return Ok(response);
     }
 
     [HttpPost("publication")]
-    public async Task<ActionResult<ServiceResponse<bool>>> SavePublication(StarPublish starPublish)
+    public async Task<ActionResult<ServiceResponse<bool>>> PublicationPost(StarPublish starPublish)
     {
-        var response = await _starService.SavePublication(starPublish);
+        var response = await _starService.PublicationPost(starPublish);
         return Ok(response);
     }
 
     [HttpGet("catalogs/{starId:int}")]
-    public async Task<ActionResult<ServiceResponse<List<StarCatalog>>>> GetStarCatalogs(int starId)
+    public async Task<ActionResult<ServiceResponse<List<StarCatalog>>>> StarCatalogListForStarSingleGet(int starId)
     {
-        var response = await _starService.GetStarCatalogs(starId);
+        var response = await _starService.StarCatalogListForStarSingleGet(starId);
         return Ok(response);
     }
 
     [HttpDelete("starcatalog/{starId:int}/{catalogId}")]
-    public async Task<ActionResult<ServiceResponse<bool>>> DeleteStarCatalog(int starId, string catalogId)
+    public async Task<ActionResult<ServiceResponse<bool>>> StarCatalogDelete(int starId, string catalogId)
     {
-        var response = await _starService.DeleteStarCatalog(starId, catalogId);
+        var response = await _starService.StarCatalogDelete(starId, catalogId);
         return Ok(response);
     }
 
     [HttpPost("starcatalog")]
-    public async Task<ActionResult<ServiceResponse<StarCatalog>>> SaveStarCatalog(StarCatalog starCatalog)
+    public async Task<ActionResult<ServiceResponse<StarCatalog>>> StarCatalogPost(StarCatalog starCatalog)
     {
-        var response = await _starService.SaveStarCatalog(starCatalog);
+        var response = await _starService.StarCatalogPost(starCatalog);
         return Ok(response);
     }
 
     [HttpPost("starcatalog/primary")]
-    public async Task<ActionResult<ServiceResponse<StarCatalog>>> SetStarCatalogPrimary(StarCatalogCK identification)
+    public async Task<ActionResult<ServiceResponse<StarCatalog>>> StarCatalogSetAsPrimaryPost(
+        StarCatalogCK identification)
     {
-        var response = await _starService.SetStarCatalogPrimary(identification);
+        var response = await _starService.StarCatalogSetAsPrimaryPost(identification);
         return Ok(response);
     }
 
     [HttpGet("catalogs")]
-    public async Task<ActionResult<ServiceResponse<List<Catalog>>>> GetCatalogs()
+    public async Task<ActionResult<ServiceResponse<List<Catalog>>>> CatalogListGet()
     {
-        var response = await _starService.GetCatalogs();
+        var response = await _starService.CatalogListGet();
         return Ok(response);
     }
 }
