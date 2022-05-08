@@ -47,8 +47,6 @@ public class StarService : IStarService
             var curves = new List<LightCurveDTO>();
 
             foreach (var curve in star.LightCurves)
-            {
-                var values = await _lightCurveService.GetValuesFromCurveAsync(curve.Id);
                 curves.Add(new LightCurveDTO
                 {
                     Id = curve.Id,
@@ -57,10 +55,8 @@ public class StarService : IStarService
                         Id = curve.User.Id,
                         Name = curve.User.UserName
                     },
-                    DateCreated = curve.DateCreated,
-                    Values = values.Success ? values.Data : null
+                    DateCreated = curve.DateCreated
                 });
-            }
 
             return new ServiceResponse<StarDTO>
             {

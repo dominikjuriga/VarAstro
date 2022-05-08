@@ -28,14 +28,12 @@ public class LightCurveService : ILightCurveService
         return new LightCurveDTO();
     }
 
-    public async Task<string> GetLightCurveValues(int lightCurveId)
+    public async Task<ServiceResponse<string>> GetLightCurveValues(int lightCurveId)
     {
         var response =
             await _http.GetFromJsonAsync<ServiceResponse<string>>(
                 $"{Endpoints.ApiLightCurveGetValues}/{lightCurveId}/values");
-        if (response is { Data: not null }) return response.Data;
-
-        return "chyba";
+        return response;
     }
 
     public async Task<ServiceResponse<int>> AddLightCurve(LightCurveAdd lightCurveAdd)

@@ -87,7 +87,11 @@ else
                 _starDec = $"{_curve.Meta.GetValueOrDefault("DEC", "-")} (fotometria)";
             }
         }
-        _values = await LightCurveService.GetLightCurveValues(LightCurveId);
+        var res = await LightCurveService.GetLightCurveValues(LightCurveId);
+        if (res.Success)
+        {
+            _values = res.Data;
+        }
     }
 
 }

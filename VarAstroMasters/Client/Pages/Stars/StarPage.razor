@@ -1,6 +1,7 @@
 ﻿@page "/Stars/{StarId:int}"
 
 @inject IStarService StarService
+@inject ILightCurveService LightCurveService
 
 <PageTitle>@(Star is null ? "" : Star.Name) | @Keywords.DefaultPageTitle</PageTitle>
 
@@ -155,7 +156,10 @@ else
                 {
                     <li>
                         <a href="@Endpoints.ClientLightCurveGetSingle/@curve.Id"> @curve.Id (@curve.User.Name) </a>
-                        <ScatterChart Values="@curve.Values"></ScatterChart>
+                        @if (curve.Values is not null)
+                        {
+                            <ScatterChart Values="@curve.Values"></ScatterChart>
+                        }
                     </li>
                 }
             </ul>
@@ -178,7 +182,21 @@ else
         {
             Star = response.Data;
             PrimaryStarCatalog = Star?.StarCatalogs?.FirstOrDefault(sc => sc.Primary);
+            GetCurveValues();
         }
+    }
+
+    private async Task GetCurveValues()
+    {
+        foreach (var lc in Star.LightCurves)
+        {
+            var res = await LightCurveService.GetLightCurveValues(lc.Id);
+            if (res.Success)
+            {
+                lc.Values = res.Data;
+            }
+        }
+        StateHasChanged();
     }
 
 }
