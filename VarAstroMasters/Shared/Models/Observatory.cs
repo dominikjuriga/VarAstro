@@ -16,5 +16,6 @@ public class Observatory
     public decimal Latitude { get; set; } = 49.195061m;
 
     public string Address { get; set; }
-    public string UserId { get; set; }
+    public string UserId { get; set; } = string.Empty;
+    [NotMapped] public bool New { get; set; } = true;
 }

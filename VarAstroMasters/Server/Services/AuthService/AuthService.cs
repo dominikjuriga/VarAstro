@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using VarAstroMasters.Server.Data;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
@@ -28,67 +29,49 @@ public class AuthService : IAuthService
 
     public async Task<ServiceResponse<string>> Register([FromBody] UserRegister userRegister)
     {
-        string username = userRegister.EmailAddress;
-        string password = userRegister.Password;
-
         User identityUser = new()
         {
-            UserName = username,
-            Email = username
+            Email = userRegister.EmailAddress,
+            UserName = userRegister.EmailAddress,
+            FirstName = userRegister.FirstName,
+            LastName = userRegister.LastName
         };
 
-        IdentityResult userIdentityResult = await _userManager.CreateAsync(identityUser, password);
+        var userIdentityResult = await _userManager.CreateAsync(identityUser, userRegister.Password);
         if (!userIdentityResult.Succeeded)
-        {
-            return new ServiceResponse<string>
-            {
-                Success = false,
-                Message = "Could not create"
-            };
-        }
+            return ResponseHelper.FailResponse<string>(
+                $"{Keywords.RegisterFailed}:\n{ErrorsToString(userIdentityResult.Errors)}");
 
-        IdentityResult roleIdentityResult = await _userManager.AddToRoleAsync(identityUser, Keywords.Role_User);
+        var roleIdentityResult = await _userManager.AddToRoleAsync(identityUser, Keywords.Role_User);
 
         if (userIdentityResult.Succeeded && roleIdentityResult.Succeeded)
         {
             var response = new ServiceResponse<string>
             {
                 Data = identityUser.Id,
-                Success = true,
-                Message = "Registration Successful."
+                Message = Keywords.RegisterSucceeded
             };
             return response;
         }
 
-
-        return new ServiceResponse<string>
-        {
-            Success = false,
-            Message = "Registration failed."
-        };
+        return ResponseHelper.FailResponse<string>(Keywords.RegisterFailed);
     }
 
     public async Task<ServiceResponse<string>> LogIn([FromBody] UserLogin userLogin)
     {
-        string username = userLogin.EmailAddress;
-        string password = userLogin.Password;
-
-        SignInResult signInResult = await _signInManager.PasswordSignInAsync(username, password, false, false);
+        var signInResult =
+            await _signInManager.PasswordSignInAsync(userLogin.EmailAddress, userLogin.Password, false, false);
         if (signInResult.Succeeded)
         {
-            User identityUser = await _userManager.FindByNameAsync(username);
-            string jwtString = await GenerateJsonWebToken(identityUser);
+            var identityUser = await _userManager.FindByNameAsync(userLogin.EmailAddress);
+            var jwtString = await GenerateJsonWebToken(identityUser);
             return new ServiceResponse<string>
             {
                 Data = jwtString
             };
         }
 
-        return new ServiceResponse<string>
-        {
-            Success = false,
-            Message = "Invalid Credentials."
-        };
+        return ResponseHelper.FailResponse<string>(Keywords.InvalidCredentials);
     }
 
     private async Task<string> GenerateJsonWebToken(User identityUser)
@@ -106,17 +89,28 @@ public class AuthService : IAuthService
         IList<string> roleNames = await _userManager.GetRolesAsync(identityUser);
         claims.AddRange(roleNames.Select(r => new Claim(ClaimsIdentity.DefaultRoleClaimType, r)));
 
-        JwtSecurityToken token = new JwtSecurityToken(
+        var token = new JwtSecurityToken(
             _configuration[Keywords.JWT_Issuer],
             _configuration[Keywords.JWT_Issuer],
             claims,
             null,
-            expires: DateTime.Now.AddDays(1),
-            signingCredentials: signingCredentials
+            DateTime.Now.AddDays(1),
+            signingCredentials
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    
-    public string GetUserId() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    public string? GetUserId()
+    {
+        return _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+    }
+
+    private string ErrorsToString(IEnumerable<IdentityError> errors)
+    {
+        var result = string.Empty;
+        foreach (var error in errors) result += $"[{error.Code}]: {error.Description}\n";
+
+        return result;
+    }
 }

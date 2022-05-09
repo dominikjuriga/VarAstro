@@ -11,18 +11,18 @@ public class ObservatoryService : IObservatoryService
         _http = http;
     }
 
-    public async Task<List<ObservatoryDTO>> ObservatoryListFromTokenGet()
+    public async Task<ServiceResponse<List<Observatory>>> ObservatoryListFromTokenGet()
     {
         var response =
-            await _http.GetFromJsonAsync<ServiceResponse<List<ObservatoryDTO>>>(
+            await _http.GetFromJsonAsync<ServiceResponse<List<Observatory>>>(
                 Endpoints.ApiObservatoryListGet);
-        return response.Data;
+        return response;
     }
 
-    public async Task<ServiceResponse<bool>> ObservatoryPost(ObservatoryAdd observatoryAdd)
+    public async Task<ServiceResponse<Observatory>> ObservatoryPost(Observatory observatory)
     {
-        var response = await _http.PostAsJsonAsync(Endpoints.ApiObservatoryPost, observatoryAdd);
-        return await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
+        var response = await _http.PostAsJsonAsync(Endpoints.ApiObservatoryPost, observatory);
+        return await response.Content.ReadFromJsonAsync<ServiceResponse<Observatory>>();
     }
 
     public async Task<ServiceResponse<bool>> ObservatoryDelete(int modelId)
@@ -31,9 +31,9 @@ public class ObservatoryService : IObservatoryService
         return await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
     }
 
-    public async Task<ServiceResponse<ObservatoryDTO>> ObservatoryEdit(ObservatoryEdit observatoryEdit)
+    public async Task<ServiceResponse<Observatory>> ObservatoryPut(Observatory observatory)
     {
-        var response = await _http.PutAsJsonAsync(Endpoints.ApiObservatoryEdit, observatoryEdit);
-        return await response.Content.ReadFromJsonAsync<ServiceResponse<ObservatoryDTO>>();
+        var response = await _http.PutAsJsonAsync(Endpoints.ApiObservatoryPut, observatory);
+        return await response.Content.ReadFromJsonAsync<ServiceResponse<Observatory>>();
     }
 }

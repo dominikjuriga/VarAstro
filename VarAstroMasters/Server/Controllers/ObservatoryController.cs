@@ -19,16 +19,16 @@ public class ObservatoryController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ServiceResponse<List<ObservatoryDTO>>>> UserFromTokenObservatoriesGet()
+    public async Task<ActionResult<ServiceResponse<List<Observatory>>>> UserFromTokenObservatoriesGet()
     {
         var sr = await _observatoryService.UserFromTokenObservatoriesGet();
         return Ok(sr);
     }
 
     [HttpPost]
-    public async Task<ActionResult<ServiceResponse<bool>>> ObservatoryPost(ObservatoryAdd observatoryAdd)
+    public async Task<ActionResult<ServiceResponse<Observatory>>> ObservatoryPost(Observatory observatory)
     {
-        var sr = await _observatoryService.ObservatoryPost(observatoryAdd);
+        var sr = await _observatoryService.ObservatoryPost(observatory);
         return Ok(sr);
     }
 
@@ -40,9 +40,9 @@ public class ObservatoryController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult<ServiceResponse<ObservatoryDTO>>> ObservatoryEdit(ObservatoryEdit observatoryEdit)
+    public async Task<ActionResult<ServiceResponse<Observatory>>> ObservatoryEdit(Observatory observatory)
     {
-        var sr = await _observatoryService.ObservatoryEdit(observatoryEdit);
+        var sr = await _observatoryService.ObservatoryPut(observatory);
         return Ok(sr);
     }
 }

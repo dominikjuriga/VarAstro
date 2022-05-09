@@ -137,7 +137,7 @@ else
             GetValuesForCurve();
         }
         _message = response.Message;
-        _messageType = response.Success ? Keywords.AlertSuccess : Keywords.AlertDanger;
+        _messageType = MessageHelper.GetAlertType(response.Success);
     }
 
     private async Task GetValuesForCurve()

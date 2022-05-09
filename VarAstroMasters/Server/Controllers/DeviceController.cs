@@ -14,14 +14,14 @@ public class DeviceController : ControllerBase
     }
 
     [HttpPost("Add")]
-    public async Task<ActionResult<ServiceResponse<bool>>> DevicePost(DeviceAdd deviceAdd)
+    public async Task<ActionResult<ServiceResponse<Device>>> DevicePost(Device device)
     {
-        var sr = await _deviceService.DevicePost(deviceAdd);
+        var sr = await _deviceService.DevicePost(device);
         return Ok(sr);
     }
 
     [HttpGet("list")]
-    public async Task<ActionResult<ServiceResponse<List<DeviceDTO>>>> UserFromTokenDevicesGet()
+    public async Task<ActionResult<ServiceResponse<List<Device>>>> UserFromTokenDevicesGet()
     {
         var sr = await _deviceService.UserFromTokenDevicesGet();
         return Ok(sr);
@@ -35,9 +35,9 @@ public class DeviceController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult<ServiceResponse<bool>>> DeviceEdit(DeviceEdit device)
+    public async Task<ActionResult<ServiceResponse<Device>>> DevicePut(Device device)
     {
-        var sr = await _deviceService.DeviceEdit(device);
+        var sr = await _deviceService.DevicePut(device);
         return Ok(sr);
     }
 }

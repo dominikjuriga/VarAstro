@@ -26,4 +26,15 @@ public static class Keywords
     public static readonly string NotPublished = "Tento záznam nie je verejný.";
     public static readonly string CurveNotPublished = "Toto pozorovanie nemá zverejnenú krivku.";
     public static readonly string MapNotPublished = "Toto pozorovanie nemá zverejnenú mapu.";
+    public static readonly string RegisterFailed = "Registrácia zlyhala.";
+    public static readonly string RegisterSucceeded = "Registrácia úspešná.";
+    public static readonly string InvalidCredentials = "Nesprávne údaje.";
+    public static readonly string InvalidToken = "Vaša požiadavka neobsahuje autentifikačný token. Ste prihlásený?";
+    public static readonly string PostSucceeded = "Záznam bol vytvorený.";
+    public static readonly string DeleteSucceeded = "Záznam bol odstránený.";
+    public static readonly string PutSucceeded = "Záznam bol upravený.";
+    public static readonly string PutFailed = "Úprava záznamu bola neúspešná.";
+    public static readonly string PostFailed = "Vytvorenie záznamu bolo neúspešné.";
+    public static readonly string DeleteFailed = "Odstránenie záznamu bolo neúspešné.";
+    public const string StringLength = "Pole musí obsahovať {2} až {1} znakov.";
 }

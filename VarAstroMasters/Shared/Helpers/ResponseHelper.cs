@@ -2,7 +2,7 @@
 
 namespace VarAstroMasters.Shared.Helpers;
 
-public class ResponseHelper
+public static class ResponseHelper
 {
     public static ServiceResponse<T> FailResponse<T>(string message)
     {

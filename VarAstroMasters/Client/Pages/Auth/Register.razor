@@ -5,12 +5,29 @@
 
 <h3>Registrácia</h3>
 
+@if (Message is not null)
+{
+    <Alert type="@_messageType">
+        @Message
+    </Alert>
+}
+
 <EditForm Model="_userRegister" OnValidSubmit="HandleRegister">
     <DataAnnotationsValidator/>
     <div class="mb-3">
         <label for="email">Email</label>
         <InputText id="email" @bind-Value="_userRegister.EmailAddress" class="form-control"/>
         <ValidationMessage For="@(() => _userRegister.EmailAddress)"/>
+    </div>
+    <div class="mb-3">
+        <label for="firstname">Meno</label>
+        <InputText id="firstname" @bind-Value="_userRegister.FirstName" class="form-control"/>
+        <ValidationMessage For="@(() => _userRegister.FirstName)"/>
+    </div>
+    <div class="mb-3">
+        <label for="lastname">Priezvisko</label>
+        <InputText id="lastname" @bind-Value="_userRegister.LastName" class="form-control"/>
+        <ValidationMessage For="@(() => _userRegister.LastName)"/>
     </div>
     <div class="mb-3">
         <label for="password">Heslo</label>
@@ -25,28 +42,19 @@
     <ValidationSummary/>
 
     <button type="submit" class="btn btn-primary  btn-lg">Zaregistrovať</button>
-    <div class="@_messageCssClass">
-        <span>@_message</span>
-    </div>
 </EditForm>
 
 @code {
-    private UserRegister _userRegister = new();
-    private string _message = string.Empty;
-    private string _messageCssClass = string.Empty;
+    private UserRegister _userRegister { get; set; } = new();
+    private string? Message { get; set; }
+    private string _messageType = string.Empty;
 
     private async Task HandleRegister()
     {
         var response = await AuthService.Register(_userRegister);
-        if (response == null)
-        {
-            _message = "Chyba pri spojení so serverom.";
-        }
-        else
-        {
-            _message = response.Message;
-            _messageCssClass = response.Success ? "text-success" : "text-danger";
-        }
+
+        Message = response.Message;
+        _messageType = response.Success ? Keywords.AlertSuccess : Keywords.AlertDanger;
     }
 
 }

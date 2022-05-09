@@ -1,0 +1,177 @@
+﻿@page "/Observatory/List"
+@using VarAstroMasters.Shared.Helpers
+@inject IObservatoryService ObservatoryService
+
+@if (Observatories is null)
+{
+    <Loader/>
+}
+else
+{
+    @if (ObservatoryEdit is not null)
+    {
+        <div class="d-flex justify-content-between">
+            <h3>Úprava hvezdárne</h3>
+            <div>
+                <a class="btn btn-primary" href="@Endpoints.ClientObservatoryListGet">Zoznam hvezdární</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="d-flex justify-content-between">
+
+            <h3>Vaše hvezdárne</h3>
+            <div>
+                <button class="btn btn-primary" @onclick="NewItem">Pridať hvezdáreň</button>
+            </div>
+        </div>
+    }
+
+    @if (Message is not null)
+    {
+        <Alert type="@MessageType">
+            @Message
+        </Alert>
+    }
+    <section>
+        @if (ObservatoryEdit is not null)
+        {
+            <EditForm Model="ObservatoryEdit" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator/>
+                <div class="my-3">
+                    <label for="address" class="form-label">
+                        Adresa
+                    </label>
+                    <InputText id="address" @bind-Value="ObservatoryEdit.Address" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => ObservatoryEdit.Address)"/>
+                </div>
+
+                <div class="my-3">
+                    <label for="longitude" class="form-label">
+                        Zemepisná dĺžka
+                    </label>
+                    <InputNumber id="longitude" @bind-Value="ObservatoryEdit.Longitude" class="form-control"></InputNumber>
+                    <ValidationMessage For="@(() => ObservatoryEdit.Longitude)"/>
+                </div>
+
+                <div class="my-3">
+                    <label for="latitude" class="form-label">
+                        Zemepisná šírka
+                    </label>
+                    <InputNumber id="latitude" @bind-Value="ObservatoryEdit.Latitude" class="form-control"></InputNumber>
+                    <ValidationMessage For="@(() => ObservatoryEdit.Latitude)"/>
+                </div>
+                <ValidationSummary></ValidationSummary>
+
+                <button type="submit" class="btn btn-primary">Uložiť</button>
+                <button type="button" @onclick="CancelEdit" class="btn btn-secondary">Zrušiť</button>
+            </EditForm>
+        }
+        else
+        {
+            @if (Observatories.Count == 0)
+            {
+                <Alert type="@Keywords.AlertInfo">
+                    <span>Nemáte žiadne registrované hvezdárne.</span>
+                </Alert>
+            }
+            else
+            {
+                <ResponsiveTable>
+                    <thead>
+                    <tr>
+                        <th>Adresa</th>
+                        <th>Zem. dĺžka</th>
+                        <th>Zem. šírka</th>
+                        <th>Akcie</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var observatory in Observatories)
+                    {
+                        <tr>
+                            <td>@observatory.Address</td>
+                            <td>@observatory.Longitude</td>
+                            <td>@observatory.Latitude</td>
+                            <td>
+                                <button class="btn btn-outline-info" @onclick="() => DeleteObservatory(observatory.Id)">Zmazať</button>
+                                <button class="btn btn-outline-success" @onclick="() => OpenEditObservatory(observatory)">Upraviť</button>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </ResponsiveTable>
+            }
+        }
+    </section>
+}
+
+@code {
+    private List<Observatory>? Observatories { get; set; }
+    private Observatory? ObservatoryEdit { get; set; }
+    private string? Message { get; set; }
+    private string? MessageType { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await ObservatoryService.ObservatoryListFromTokenGet();
+        if (response is {Success: true})
+        {
+            Observatories = response.Data;
+        }
+    }
+
+    private void CancelEdit()
+    {
+        Message = null;
+        ObservatoryEdit = null;
+    }
+
+    private async Task DeleteObservatory(int observatoryId)
+    {
+        var response = await ObservatoryService.ObservatoryDelete(observatoryId);
+        if (response is {Success: true} && Observatories is not null)
+        {
+            Observatories = Observatories.Where(d => d.Id != observatoryId).ToList();
+        }
+        Message = response?.Message;
+        MessageType = MessageHelper.GetAlertType(response?.Success);
+    }
+
+    private void OpenEditObservatory(Observatory observatory)
+    {
+        ObservatoryEdit = observatory;
+        ObservatoryEdit.New = false;
+    }
+
+    private void NewItem()
+    {
+        ObservatoryEdit = new Observatory();
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (ObservatoryEdit is null) return;
+        ServiceResponse<Observatory>? response;
+        if (ObservatoryEdit.New)
+        {
+            response = await ObservatoryService.ObservatoryPost(ObservatoryEdit);
+        }
+        else
+        {
+            response = await ObservatoryService.ObservatoryPut(ObservatoryEdit);
+        }
+
+        if (response is {Success: true, Data: not null} && Observatories is not null)
+        {
+            var observatory = Observatories.FirstOrDefault(d => d.Id == response.Data.Id);
+            if (observatory is not null) Observatories.Remove(observatory);
+            Observatories.Add(response.Data);
+            CancelEdit();
+        }
+        Message = response.Message;
+        MessageType = MessageHelper.GetAlertType(response.Success);
+    }
+
+}

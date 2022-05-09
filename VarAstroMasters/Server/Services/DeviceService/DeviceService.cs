@@ -1,5 +1,6 @@
 ﻿using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace VarAstroMasters.Server.Services.DeviceService;
 
@@ -7,51 +8,43 @@ public class DeviceService : IDeviceService
 {
     private readonly DataContext _context;
     private readonly IAuthService _authService;
+    private readonly IMapper _mapper;
 
-    public DeviceService(DataContext context, IAuthService authService)
+    public DeviceService(DataContext context, IAuthService authService, IMapper mapper)
     {
         _context = context;
         _authService = authService;
+        _mapper = mapper;
     }
 
-    public async Task<ServiceResponse<bool>> DevicePost(DeviceAdd deviceAdd)
+    public async Task<ServiceResponse<Device>> DevicePost(Device device)
     {
         var userId = _authService.GetUserId();
-        var newDevice = new Device
-        {
-            Name = deviceAdd.Name,
-            UserId = userId
-        };
-        var result = _context.Devices.Add(newDevice);
+        if (userId is null) return ResponseHelper.FailResponse<Device>(Keywords.InvalidToken);
+
+        device.UserId = userId;
+        _context.Devices.Add(device);
         await _context.SaveChangesAsync();
 
-        return new ServiceResponse<bool>
+        return new ServiceResponse<Device>
         {
+            Data = device,
+            Message = Keywords.PostSucceeded
         };
     }
 
-    public async Task<ServiceResponse<List<DeviceDTO>>> UserFromTokenDevicesGet()
+    public async Task<ServiceResponse<List<Device>>> UserFromTokenDevicesGet()
     {
         var userId = _authService.GetUserId();
+        if (userId is null) return ResponseHelper.FailResponse<List<Device>>(Keywords.InvalidToken);
+
         var devices = await _context.Devices
             .Where(d => d.UserId == userId)
             .ToListAsync();
 
-        var response = new List<DeviceDTO>
+        return new ServiceResponse<List<Device>>
         {
-        };
-
-        foreach (var device in devices)
-            response.Add(new DeviceDTO
-            {
-                Id = device.Id,
-                Name = device.Name,
-                UserId = device.UserId
-            });
-
-        return new ServiceResponse<List<DeviceDTO>>
-        {
-            Data = response
+            Data = devices
         };
     }
 
@@ -59,33 +52,30 @@ public class DeviceService : IDeviceService
     {
         var dbDevice = await _context.Devices.FindAsync(deviceId);
         if (dbDevice is null)
-            return new ServiceResponse<bool>
-            {
-                Success = false,
-                Message = "Not Found"
-            };
+            return ResponseHelper.FailResponse<bool>(Keywords.NotFoundMessage);
 
         _context.Devices.Remove(dbDevice);
         await _context.SaveChangesAsync();
 
         return new ServiceResponse<bool>
         {
-            Data = true
+            Message = Keywords.DeleteSucceeded
         };
     }
 
-    public async Task<ServiceResponse<DeviceDTO>> DeviceEdit(DeviceEdit device)
+    public async Task<ServiceResponse<Device>> DevicePut(Device device)
     {
-        var dbDevice = _context.Devices.Where(d => d.Id == device.Id).FirstOrDefaultAsync();
-        dbDevice.Result.Name = device.Name;
-        await _context.SaveChangesAsync();
-        return new ServiceResponse<DeviceDTO>
+        var dbDevice = _context.Devices.Any(d => d.Id == device.Id);
+        if (!dbDevice) return ResponseHelper.FailResponse<Device>(Keywords.NotFoundMessage);
+
+        _context.Devices.Update(device);
+        var result = await _context.SaveChangesAsync();
+        if (result == 0)
+            ResponseHelper.FailResponse<DeviceDTO>(Keywords.PutFailed);
+        return new ServiceResponse<Device>
         {
-            Data = new DeviceDTO
-            {
-                Id = dbDevice.Result.Id,
-                Name = dbDevice.Result.Name
-            }
+            Data = device,
+            Message = Keywords.PutSucceeded
         };
     }
 }

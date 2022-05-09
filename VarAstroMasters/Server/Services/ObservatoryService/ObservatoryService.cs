@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using VarAstroMasters.Client.Pages.Observatories;
 
 namespace VarAstroMasters.Server.Services.ObservatoryService;
@@ -14,45 +15,36 @@ public class ObservatoryService : IObservatoryService
         _authService = authService;
     }
 
-    public async Task<ServiceResponse<List<ObservatoryDTO>>> UserFromTokenObservatoriesGet()
+    public async Task<ServiceResponse<List<Observatory>>> UserFromTokenObservatoriesGet()
     {
         var userId = _authService.GetUserId();
-        var data = await _context.Users
-            .Where(u => u.Id == userId)
-            .Include(u => u.Observatories)
-            .FirstOrDefaultAsync();
-        List<ObservatoryDTO> observatories = new();
-        foreach (var observatory in data.Observatories)
-            observatories.Add(new ObservatoryDTO
-            {
-                Address = observatory.Address,
-                Longitude = observatory.Longitude,
-                Latitude = observatory.Latitude,
-                Id = observatory.Id
-            });
-        return new ServiceResponse<List<ObservatoryDTO>>
+        if (userId is null) return ResponseHelper.FailResponse<List<Observatory>>(Keywords.InvalidToken);
+
+        var data = await _context.Observatories
+            .Where(o => o.UserId == userId)
+            .ToListAsync();
+
+        return new ServiceResponse<List<Observatory>>
         {
-            Data = observatories
+            Data = data
         };
     }
 
-    public async Task<ServiceResponse<bool>> ObservatoryPost(ObservatoryAdd observatoryAdd)
+    public async Task<ServiceResponse<Observatory>> ObservatoryPost(Observatory observatory)
     {
         var userId = _authService.GetUserId();
-        var observatory = new Observatory
-        {
-            Address = observatoryAdd.Address,
-            Longitude = observatoryAdd.Longitude,
-            Latitude = observatoryAdd.Latitude,
-            UserId = userId
-        };
+        if (userId is null) return ResponseHelper.FailResponse<Observatory>(Keywords.InvalidToken);
+        observatory.UserId = userId;
 
         _context.Observatories.Add(observatory);
-        await _context.SaveChangesAsync();
+        var result = await _context.SaveChangesAsync();
+        if (result == 0) return ResponseHelper.FailResponse<Observatory>(Keywords.PostFailed);
 
-        return new ServiceResponse<bool>
+
+        return new ServiceResponse<Observatory>
         {
-            Data = true
+            Data = observatory,
+            Message = Keywords.PostSucceeded
         };
     }
 
@@ -60,44 +52,33 @@ public class ObservatoryService : IObservatoryService
     {
         var dbObservatory = await _context.Observatories.FindAsync(observatoryId);
         if (dbObservatory is null)
-            return new ServiceResponse<bool>
-            {
-                Success = false
-            };
+            return ResponseHelper.FailResponse<bool>(Keywords.NotFoundMessage);
 
         _context.Observatories.Remove(dbObservatory);
-        await _context.SaveChangesAsync();
+        var result = await _context.SaveChangesAsync();
+        if (result == 0) return ResponseHelper.FailResponse<bool>(Keywords.DeleteFailed);
 
         return new ServiceResponse<bool>
         {
-            Data = true
+            Data = true,
+            Message = Keywords.DeleteSucceeded
         };
     }
 
-    public async Task<ServiceResponse<ObservatoryDTO>> ObservatoryEdit(ObservatoryEdit observatoryEdit)
+    public async Task<ServiceResponse<Observatory>> ObservatoryPut(Observatory observatory)
     {
-        var dbObservatory = await _context.Observatories.FindAsync(observatoryEdit.Id);
-        if (dbObservatory is null)
-            return new ServiceResponse<ObservatoryDTO>
-            {
-                Success = false
-            };
+        var dbObservatory = _context.Observatories.Any(o => o.Id == observatory.Id);
+        if (!dbObservatory)
+            return ResponseHelper.FailResponse<Observatory>(Keywords.NotFoundMessage);
 
-        dbObservatory.Address = observatoryEdit.Address;
-        dbObservatory.Longitude = observatoryEdit.Longitude;
-        dbObservatory.Latitude = observatoryEdit.Latitude;
+        _context.Observatories.Update(observatory);
+        var result = await _context.SaveChangesAsync();
+        if (result == 0) return ResponseHelper.FailResponse<Observatory>(Keywords.PutFailed);
 
-        await _context.SaveChangesAsync();
-
-        return new ServiceResponse<ObservatoryDTO>
+        return new ServiceResponse<Observatory>
         {
-            Data = new ObservatoryDTO
-            {
-                Address = dbObservatory.Address,
-                Longitude = dbObservatory.Longitude,
-                Latitude = dbObservatory.Latitude,
-                Id = dbObservatory.Id
-            }
+            Data = observatory,
+            Message = Keywords.PutSucceeded
         };
     }
 }
