@@ -11,7 +11,8 @@ public class LightCurveDTO
     public UserDTO User { get; set; }
     public DeviceDTO? Device { get; set; }
     public ObservatoryDTO Observatory { get; set; }
-    public Dictionary<string, string>? Meta { get; set; }
+    public string? DataFileLink { get; set; }
     public string? Values { get; set; }
     public string? Comment { get; set; }
+    public List<Image> Images { get; set; }
 }

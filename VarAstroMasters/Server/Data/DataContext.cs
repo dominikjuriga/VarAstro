@@ -74,4 +74,5 @@ public class DataContext : IdentityDbContext<User>
     public DbSet<StarCatalog> StarCatalog { get; set; }
     public DbSet<StarCatalog> StarVariability { get; set; }
     public DbSet<StarPublish> StarPublish { get; set; }
+    public DbSet<Image> Images { get; set; }
 }

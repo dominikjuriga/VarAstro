@@ -1,7 +1,9 @@
 ﻿using System.Globalization;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
+using VarAstroMasters.Shared;
 
 namespace VarAstroMasters.Server.Services.LightCurveService;
 
@@ -19,6 +21,7 @@ public class LightCurveService : ILightCurveService
     public async Task<ServiceResponse<List<LightCurveDTO>>> LightCurveListGet()
     {
         var data = await _context.LightCurves
+            .Where(lc => lc.PublishVariant != PublishVariant.None)
             .Include(lc => lc.Star)
             .Include(lc => lc.User)
             .Include(lc => lc.Device)
@@ -44,6 +47,7 @@ public class LightCurveService : ILightCurveService
             .Include(lc => lc.Star)
             .ThenInclude(s => s.StarCatalogs)
             .Include(lc => lc.User)
+            .Include(lc => lc.Images)
             .Include(lc => lc.Device)
             .Include(lc => lc.Observatory)
             .FirstOrDefaultAsync();
@@ -51,9 +55,16 @@ public class LightCurveService : ILightCurveService
         if (data is null)
             return new ServiceResponse<LightCurveDTO>
             {
-                Success = false
+                Success = false,
+                Message = Keywords.NotFoundMessage
             };
 
+        if (!IsPublic(data.PublishVariant))
+            return new ServiceResponse<LightCurveDTO>
+            {
+                Success = false,
+                Message = Keywords.NotPublished
+            };
 
         var resData = new LightCurveDTO
         {
@@ -73,18 +84,12 @@ public class LightCurveService : ILightCurveService
             Comment = data.Comment
         };
 
-        // var linePattern = @"\#\sVAR\s(.*)";
-        // var regRes = Regex.Matches(data.DataFileContent, linePattern);
-        // var metaLine = regRes.Count > 0 ? regRes[0].Groups[1].Value : null;
-        // if (metaLine is { Length: > 0 })
-        // {
-        //     var metaPattern = @"\s*(\S+):\s(\S+)";
-        //     var metaMatches = Regex.Matches(metaLine, metaPattern);
-        //     Dictionary<string, string> meta = new();
-        //     foreach (Match match in metaMatches) meta.Add(match.Groups[1].Value.ToUpper(), match.Groups[2].Value);
-        //     resData.Meta = meta;
-        // }
+        if (CanShareMap(data.PublishVariant))
+            resData.Images = data.Images;
 
+        // Include file content when
+        if (CanShareFile(data.PublishVariant))
+            resData.DataFileLink = $"{Endpoints.ApiLightCurveBasePath}/{data.Id}/file";
 
         if (data.Device is not null)
             resData.Device = new DeviceDTO
@@ -107,6 +112,19 @@ public class LightCurveService : ILightCurveService
         };
     }
 
+    public async Task<FileContentResult?> LightCurveDataFileGet(int id)
+    {
+        var lc = await _context.LightCurves.Where(lc => lc.Id == id).Include(lc => lc.Star).FirstOrDefaultAsync();
+        if (lc is null)
+            return null;
+        if (!CanShareFile(lc.PublishVariant))
+            return null;
+        var fileData = Encoding.ASCII.GetBytes(lc.DataFileContent);
+        var fileResult = new FileContentResult(fileData, "text/plain");
+        fileResult.FileDownloadName = $"{lc.Star.Name}_{lc.DateCreated}.txt";
+        return fileResult;
+    }
+
     public async Task<ServiceResponse<int>> LightCurvePost(LightCurveAdd lightCurveAdd)
     {
         var userId = _authService.GetUserId();
@@ -116,8 +134,8 @@ public class LightCurveService : ILightCurveService
             PublishVariant = lightCurveAdd.PublishVariant,
             StarId = lightCurveAdd.StarId,
             DataFileContent = lightCurveAdd.DataFileContent,
-            ImageFileName = "TODO",
-            DeviceId = lightCurveAdd.DeviceId
+            DeviceId = lightCurveAdd.DeviceId,
+            Images = lightCurveAdd.Images
         };
 
         var savedCurve = _context.LightCurves.Add(lightCurve);
@@ -135,8 +153,14 @@ public class LightCurveService : ILightCurveService
         if (curve is null)
             return new ServiceResponse<string>
             {
-                Data = "Not Found",
+                Data = Keywords.NotFoundMessage,
                 Success = false
+            };
+
+        if (!CanShareCurve(curve.PublishVariant))
+            return new ServiceResponse<string>
+            {
+                Message = "Táto krivka nie je zverejnená."
             };
 
         char[] delimiters = { '\r', '\n' };
@@ -279,5 +303,34 @@ public class LightCurveService : ILightCurveService
         }
 
         return response;
+    }
+
+    private List<PublishVariant> MapPermissions = new()
+        { PublishVariant.All, PublishVariant.OnlyMap, PublishVariant.OnlyMapAndCurve };
+
+    private List<PublishVariant> CurvePermissions = new()
+        { PublishVariant.All, PublishVariant.OnlyMapAndCurve };
+
+    private List<PublishVariant> FilePermissions = new()
+        { PublishVariant.All };
+
+    private bool IsPublic(PublishVariant variant)
+    {
+        return variant != PublishVariant.None;
+    }
+
+    private bool CanShareMap(PublishVariant variant)
+    {
+        return MapPermissions.Contains(variant);
+    }
+
+    private bool CanShareCurve(PublishVariant variant)
+    {
+        return CurvePermissions.Contains(variant);
+    }
+
+    private bool CanShareFile(PublishVariant variant)
+    {
+        return FilePermissions.Contains(variant);
     }
 }

@@ -2,6 +2,7 @@
 @using System.Text.RegularExpressions
 @using Microsoft.Extensions.Options
 @using VarAstroMasters.Shared
+@using VarAstroMasters.Shared.Helpers
 @inject ILightCurveService LightCurveService
 @inject IStarService StarService
 @inject IUserService UserService
@@ -24,98 +25,106 @@ else
 {
 @if (!succeeded)
 {
-    <EditForm Model="_lightCurveAdd" OnValidSubmit="HandleSubmit">
-        <DataAnnotationsValidator/>
+    <section>
+        <EditForm Model="_lightCurveAdd" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator/>
 
-        <div class="my-3">
-            <label for="data_file" class="form-label">
-                <Tooltip Text="@dataFileMsg">Dátový súbor</Tooltip>
-            </label>
-            <InputFile id="data_file" OnChange="HandleDataFileOnChange" class="form-control"></InputFile>
-        </div>
+            <div class="my-3">
+                <label for="data_file" class="form-label">
+                    <Tooltip Text="Pokiaľ súbor obsahuje metadáta v správnom formáte, môže byť formulár doplnený automaticky. Maximálna veľkosť v KiB je" Appendix="@maxFileSizeKiB.ToString()">Dátový súbor</Tooltip>
+                </label>
+                <InputFile id="data_file" OnChange="HandleDataFileOnChange" class="form-control"></InputFile>
+            </div>
 
-        <div class="my-3">
-            <label for="image_file" class="form-label">
-                <Tooltip Text="@maxFileSizeMsg">Mapka</Tooltip>
-            </label>
-            <InputFile id="image_file" OnChange="HandleImageFileOnChange" class="form-control"></InputFile>
-        </div>
+            <div class="my-3">
+                <label for="images" class="form-label">
+                    <Tooltip Text="Obrázok vo formáte" Appendix="@Keywords.AcceptedImageFormats">Mapka</Tooltip>
+                </label>
+                <InputFile id="images" OnChange="OnImageChange" accept="@Keywords.AcceptedImageFormats" class="form-control"></InputFile>
+            </div>
 
-        <div class="my-3">
-            <label for="jd" class="form-label">
-                <Tooltip Text="Formát Juliánskeho dáta (geocentrický alebo heliocentrický)">Formát JD</Tooltip>
-            </label>
-            <InputSelect id="jd" class="form-select" @bind-Value="_lightCurveAdd.JD">
-                <option value="null">Vyberte formát</option>
-                <option value="@Keywords.LcJdFormatHeliocentric">Heliocentrický</option>
-                <option value="@Keywords.LcJdFormatGeocentric">Geocentrický</option>
-            </InputSelect>
-            <ValidationMessage For="@(() => _lightCurveAdd.JD)"/>
-        </div>
-
-        <div class="my-3">
-            <label for="photometric" class="form-label">
-                Fotometrický systém
-            </label>
-            <InputSelect id="photometric" class="form-select" @bind-Value="_lightCurveAdd.PhotometricSystem">
-                <option value="null">Vyberte systém</option>
-                <option value="@Keywords.LcPhotometricInstrumental">Inštrumentálny</option>
-                <option value="@Keywords.LcPhotometricStandard">Štandardný</option>
-            </InputSelect>
-            <ValidationMessage For="@(() => _lightCurveAdd.PhotometricSystem)"/>
-        </div>
-
-        <div class="my-3">
-            <label for="filter" class="form-label">
-                Typ filtra
-            </label>
-            <InputSelect id="filter" class="form-select" @bind-Value="_lightCurveAdd.Filter">
-                <option value="null">Vyberte typ filtra</option>
-                <option value="@Keywords.LcFilterNoFilter">Bez filtra</option>
-                <option value="@Keywords.LcFilterU">U</option>
-            </InputSelect>
-            <ValidationMessage For="@(() => _lightCurveAdd.Filter)"/>
-        </div>
-
-        <div class="my-3">
-            <label class="form-label" for="publish">
-                Zverejniť pozorovanie
-            </label>
-            <InputSelect @bind-Value="_lightCurveAdd.PublishVariant" id="publish" class="form-select">
-                <option value="@PublishVariant.All">Zverejniť mapku, krivku a dátový súbor</option>
-                <option value="@PublishVariant.None">Nezverejňovať</option>
-                <option value="@PublishVariant.OnlyMap">Zverejniť mapku</option>
-                <option value="@PublishVariant.OnlyMapAndCurve">Zverejniť mapku a krivku</option>
-            </InputSelect>
-            <ValidationMessage For="@(() => _lightCurveAdd.PublishVariant)"/>
-        </div>
-
-        <div class="my-3">
-            <label class="form-label" for="deviceId">
-                Zariadenie
-            </label>
-            <InputSelect @bind-Value="_lightCurveAdd.DeviceId" id="deviceId" class="form-select">
-                <option value="null">Vyberte zariadenie</option>
-                @foreach (var device in _devices)
+            <div class="my-3 d-flex justify-content-center flex-wrap">
+                @foreach (var image in _lightCurveAdd.Images)
                 {
-                    <option value="@device.Id">@device.Name</option>
+                    <img src="@image.Data"/>
                 }
-            </InputSelect>
-            <ValidationMessage For="@(() => _lightCurveAdd.PublishVariant)"/>
-        </div>
+            </div>
+            <div class="my-3">
+                <label for="jd" class="form-label">
+                    <Tooltip Text="Formát Juliánskeho dáta (geocentrický alebo heliocentrický)">Formát JD</Tooltip>
+                </label>
+                <InputSelect id="jd" class="form-select" @bind-Value="_lightCurveAdd.JD">
+                    <option value="null">Vyberte formát</option>
+                    <option value="@Keywords.LcJdFormatHeliocentric">Heliocentrický</option>
+                    <option value="@Keywords.LcJdFormatGeocentric">Geocentrický</option>
+                </InputSelect>
+                <ValidationMessage For="@(() => _lightCurveAdd.JD)"/>
+            </div>
 
-        <div class="my-3">
-            <label class="form-check-label" for="publish">
-                Poznámky
-            </label>
-            <InputTextArea @bind-Value="_lightCurveAdd.Comment" class="form-control"></InputTextArea>
-        </div>
+            <div class="my-3">
+                <label for="photometric" class="form-label">
+                    Fotometrický systém
+                </label>
+                <InputSelect id="photometric" class="form-select" @bind-Value="_lightCurveAdd.PhotometricSystem">
+                    <option value="null">Vyberte systém</option>
+                    <option value="@Keywords.LcPhotometricInstrumental">Inštrumentálny</option>
+                    <option value="@Keywords.LcPhotometricStandard">Štandardný</option>
+                </InputSelect>
+                <ValidationMessage For="@(() => _lightCurveAdd.PhotometricSystem)"/>
+            </div>
 
-        <ValidationSummary></ValidationSummary>
+            <div class="my-3">
+                <label for="filter" class="form-label">
+                    Typ filtra
+                </label>
+                <InputSelect id="filter" class="form-select" @bind-Value="_lightCurveAdd.Filter">
+                    <option value="null">Vyberte typ filtra</option>
+                    <option value="@Keywords.LcFilterNoFilter">Bez filtra</option>
+                    <option value="@Keywords.LcFilterU">U</option>
+                </InputSelect>
+                <ValidationMessage For="@(() => _lightCurveAdd.Filter)"/>
+            </div>
 
-        <button type="submit" class="btn btn-primary btn-lg">Pridať pozorovanie</button>
+            <div class="my-3">
+                <label class="form-label" for="publish">
+                    Zverejniť pozorovanie
+                </label>
+                <InputSelect @bind-Value="_lightCurveAdd.PublishVariant" id="publish" class="form-select">
+                    <option value="@PublishVariant.All">Zverejniť mapku, krivku a dátový súbor</option>
+                    <option value="@PublishVariant.None">Nezverejňovať</option>
+                    <option value="@PublishVariant.OnlyMap">Zverejniť mapku</option>
+                    <option value="@PublishVariant.OnlyMapAndCurve">Zverejniť mapku a krivku</option>
+                </InputSelect>
+                <ValidationMessage For="@(() => _lightCurveAdd.PublishVariant)"/>
+            </div>
 
-    </EditForm>
+            <div class="my-3">
+                <label class="form-label" for="deviceId">
+                    Zariadenie
+                </label>
+                <InputSelect @bind-Value="_lightCurveAdd.DeviceId" id="deviceId" class="form-select">
+                    <option value="null">Vyberte zariadenie</option>
+                    @foreach (var device in _devices)
+                    {
+                        <option value="@device.Id">@device.Name</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => _lightCurveAdd.PublishVariant)"/>
+            </div>
+
+            <div class="my-3">
+                <label class="form-check-label" for="publish">
+                    Poznámky
+                </label>
+                <InputTextArea @bind-Value="_lightCurveAdd.Comment" class="form-control"></InputTextArea>
+            </div>
+
+            <ValidationSummary></ValidationSummary>
+
+            <button type="submit" class="btn btn-primary btn-lg">Pridať pozorovanie</button>
+
+        </EditForm>
+    </section>
 }
 else
 {
@@ -133,8 +142,6 @@ else
     private LightCurveAdd _lightCurveAdd { get; set; } = new();
     private static int maxFileSizeKiB { get; set; } = 64;
     private static long maxFileSize { get; set; } = 1024 * 1000 * maxFileSizeKiB;
-    private static string dataFileMsg { get; set; } = $"Maximálna veľkosť súboru je {maxFileSizeKiB}KiB. Pokiaľ súbor obsahuje metadáta v správnom formáte, môže byť formulár doplnený automaticky.";
-    private static string maxFileSizeMsg { get; set; } = $"Maximálna veľkosť súboru je {maxFileSizeKiB}KiB. Podporované formáty .jpg.";
     private StarDTO? _star { get; set; }
     private MatchCollection? _matches { get; set; }
     private bool succeeded { get; set; }
@@ -150,6 +157,19 @@ else
         _lightCurveAdd.StarId = _star.Id;
     }
 
+    private async Task OnImageChange(InputFileChangeEventArgs e)
+    {
+        var maxImageCount = 1;
+        foreach (var image in e.GetMultipleFiles(maxImageCount))
+        {
+            _lightCurveAdd.Images.Add(new Image
+            {
+                Data = await Base64Helper.ImageToB64(image)
+            });
+        }
+    }
+
+
     private async Task HandleSubmit()
     {
         var result = await LightCurveService.LightCurvePost(_lightCurveAdd);
@@ -158,11 +178,6 @@ else
             succeeded = true;
             savedId = result.Data;
         }
-    }
-
-    private async Task HandleImageFileOnChange(InputFileChangeEventArgs e)
-    {
-        _lightCurveAdd.Map = e.File;
     }
 
     private async Task HandleDataFileOnChange(InputFileChangeEventArgs e)
@@ -175,29 +190,10 @@ else
             var fileContent = await fileStream.ReadAsStringAsync();
             ParseDataFile(fileContent);
             _lightCurveAdd.DataFileContent = fileContent;
-
-            List<string> metaLines = new();
-            List<string> dataLines = new();
-            char[] delimiters = { '\r', '\n' };
-            var lines = fileContent.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (var line in lines)
-            {
-                if (line.StartsWith("#"))
-                {
-                    metaLines.Add(line);
-                }
-                else
-                {
-                    dataLines.Add(line);
-                }
-            }
-
-            var kappa = "kappa";
         }
         catch (Exception ex)
         {
-            Console.WriteLine("CHJYBA");
+            Console.WriteLine(ex.Message);
         }
     }
 
