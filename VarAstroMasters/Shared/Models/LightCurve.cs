@@ -17,7 +17,7 @@ public class LightCurve
     [Required] public string ImageFileName { get; set; } = string.Empty;
     public int? DeviceId { get; set; }
     public Device? Device { get; set; }
-    public string Comment { get; set; } = string.Empty;
+    public string? Comment { get; set; }
     public int? ObservatoryId { get; set; }
     public Observatory? Observatory { get; set; }
 }

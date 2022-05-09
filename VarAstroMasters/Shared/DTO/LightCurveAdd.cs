@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http;
 
 namespace VarAstroMasters.Shared.Models;
@@ -25,4 +26,5 @@ public class LightCurveAdd
 
     public string Comment { get; set; } = string.Empty;
     public int? DeviceId { get; set; } = null;
+    public IBrowserFile Map { get; set; }
 }

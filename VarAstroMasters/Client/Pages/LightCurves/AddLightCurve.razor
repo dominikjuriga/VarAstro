@@ -162,7 +162,7 @@ else
 
     private async Task HandleImageFileOnChange(InputFileChangeEventArgs e)
     {
-        Console.WriteLine("image");
+        _lightCurveAdd.Map = e.File;
     }
 
     private async Task HandleDataFileOnChange(InputFileChangeEventArgs e)
