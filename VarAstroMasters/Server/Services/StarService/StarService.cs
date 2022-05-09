@@ -42,17 +42,17 @@ public class StarService : IStarService
         {
             var curves = new List<LightCurveDTO>();
 
-            foreach (var curve in star.LightCurves)
-                curves.Add(new LightCurveDTO
-                {
-                    Id = curve.Id,
-                    User = new UserDTO
-                    {
-                        Id = curve.User.Id,
-                        Name = curve.User.UserName
-                    },
-                    DateCreated = curve.DateCreated
-                });
+            // foreach (var curve in star.LightCurves)
+            //     curves.Add(new LightCurveDTO
+            //     {
+            //         Id = curve.Id,
+            //         User = new UserDTO
+            //         {
+            //             Id = curve.User.Id,
+            //             Name = curve.User.UserName
+            //         },
+            //         DateCreated = curve.DateCreated
+            //     });
 
             return new ServiceResponse<StarDTO>
             {

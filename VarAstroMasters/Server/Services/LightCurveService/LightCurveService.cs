@@ -11,11 +11,13 @@ public class LightCurveService : ILightCurveService
 {
     private readonly DataContext _context;
     private readonly IAuthService _authService;
+    private readonly IMapper _mapper;
 
-    public LightCurveService(DataContext context, IAuthService authService)
+    public LightCurveService(DataContext context, IAuthService authService, IMapper mapper)
     {
         _context = context;
         _authService = authService;
+        _mapper = mapper;
     }
 
     public async Task<ServiceResponse<List<LightCurveDTO>>> LightCurveListGet()
@@ -27,16 +29,10 @@ public class LightCurveService : ILightCurveService
             .Include(lc => lc.Device)
             .Include(lc => lc.Observatory)
             .ToListAsync();
-        if (data.Count == 0)
-            return new ServiceResponse<List<LightCurveDTO>>
-            {
-                Data = new List<LightCurveDTO>()
-            };
-        var response = MapCurversToList(data);
 
         return new ServiceResponse<List<LightCurveDTO>>
         {
-            Data = response
+            Data = MapCurvesToList(data)
         };
     }
 
@@ -53,62 +49,14 @@ public class LightCurveService : ILightCurveService
             .FirstOrDefaultAsync();
 
         if (data is null)
-            return new ServiceResponse<LightCurveDTO>
-            {
-                Success = false,
-                Message = Keywords.NotFoundMessage
-            };
+            return ResponseHelper.FailResponse<LightCurveDTO>(Keywords.NotFoundMessage);
 
         if (!IsPublic(data.PublishVariant))
-            return new ServiceResponse<LightCurveDTO>
-            {
-                Success = false,
-                Message = Keywords.NotPublished
-            };
+            return ResponseHelper.FailResponse<LightCurveDTO>(Keywords.NotPublished);
 
-        var resData = new LightCurveDTO
-        {
-            Id = data.Id,
-            Star = new StarDTO
-            {
-                Name = data.Star.Name,
-                Id = data.Star.Id,
-                StarCatalogs = data.Star.StarCatalogs
-            },
-            DateCreated = data.DateCreated,
-            User = new UserDTO
-            {
-                Id = data.User.Id,
-                Name = data.User.Email
-            },
-            Comment = data.Comment
-        };
-
-        if (CanShareMap(data.PublishVariant))
-            resData.Images = data.Images;
-
-        // Include file content when
-        if (CanShareFile(data.PublishVariant))
-            resData.DataFileLink = $"{Endpoints.ApiLightCurveBasePath}/{data.Id}/file";
-
-        if (data.Device is not null)
-            resData.Device = new DeviceDTO
-            {
-                Id = data.Device.Id,
-                Name = data.Device.Name
-            };
-
-        if (data.Observatory is not null)
-            resData.Observatory = new ObservatoryDTO
-            {
-                Address = data.Observatory.Address,
-                Longitude = data.Observatory.Longitude,
-                Latitude = data.Observatory.Latitude,
-                Id = data.Observatory.Id
-            };
         return new ServiceResponse<LightCurveDTO>
         {
-            Data = resData
+            Data = _mapper.Map<LightCurveDTO>(data)
         };
     }
 
@@ -128,15 +76,8 @@ public class LightCurveService : ILightCurveService
     public async Task<ServiceResponse<int>> LightCurvePost(LightCurveAdd lightCurveAdd)
     {
         var userId = _authService.GetUserId();
-        var lightCurve = new LightCurve
-        {
-            UserId = userId,
-            PublishVariant = lightCurveAdd.PublishVariant,
-            StarId = lightCurveAdd.StarId,
-            DataFileContent = lightCurveAdd.DataFileContent,
-            DeviceId = lightCurveAdd.DeviceId,
-            Images = lightCurveAdd.Images
-        };
+        var lightCurve = _mapper.Map<LightCurve>(lightCurveAdd);
+        lightCurve.UserId = userId;
 
         var savedCurve = _context.LightCurves.Add(lightCurve);
         await _context.SaveChangesAsync();
@@ -151,17 +92,10 @@ public class LightCurveService : ILightCurveService
     {
         var curve = await _context.LightCurves.Where(c => c.Id == curveId).FirstOrDefaultAsync();
         if (curve is null)
-            return new ServiceResponse<string>
-            {
-                Data = Keywords.NotFoundMessage,
-                Success = false
-            };
+            return ResponseHelper.FailResponse<string>(Keywords.NotFoundMessage);
 
         if (!CanShareCurve(curve.PublishVariant))
-            return new ServiceResponse<string>
-            {
-                Message = "Táto krivka nie je zverejnená."
-            };
+            return ResponseHelper.FailResponse<string>(Keywords.NotPublished);
 
         char[] delimiters = { '\r', '\n' };
         List<List<decimal>> valueHolder = new();
@@ -239,6 +173,7 @@ public class LightCurveService : ILightCurveService
                     Name = item.User.UserName
                 }
             });
+
         return new ServiceResponse<List<ObservationLogDTO>>
         {
             Data = data
@@ -255,7 +190,7 @@ public class LightCurveService : ILightCurveService
             .ToListAsync();
         var user = await _context.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
 
-        var response = MapCurversToList(data);
+        var response = MapCurvesToList(data);
 
         return new ServiceResponse<ObservationLogDetailDTO>
         {
@@ -270,38 +205,10 @@ public class LightCurveService : ILightCurveService
         };
     }
 
-    private List<LightCurveDTO> MapCurversToList(List<LightCurve> curves)
+    private List<LightCurveDTO> MapCurvesToList(List<LightCurve> curves)
     {
         List<LightCurveDTO> response = new();
-        foreach (var curve in curves)
-        {
-            var currentDTO = new LightCurveDTO
-            {
-                Star = new StarDTO
-                {
-                    Name = curve.Star.Name,
-                    Id = curve.Star.Id
-                },
-                User = new UserDTO
-                {
-                    Id = curve.User.Id,
-                    Name = $"{curve.User.FirstName} {curve.User.LastName}"
-                },
-                Id = curve.Id,
-                DateCreated = curve.DateCreated
-            };
-            if (curve.Device is not null)
-                currentDTO.Device = new DeviceDTO
-                {
-                    Name = curve.Device.Name
-                };
-            if (curve.Observatory is not null)
-                currentDTO.Observatory = new ObservatoryDTO
-                {
-                    Address = curve.Observatory.Address
-                };
-            response.Add(currentDTO);
-        }
+        foreach (var curve in curves) response.Add(_mapper.Map<LightCurveDTO>(curve));
 
         return response;
     }

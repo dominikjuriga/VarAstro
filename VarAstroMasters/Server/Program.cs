@@ -12,6 +12,8 @@ global using VarAstroMasters.Server.Services.ObservatoryService;
 global using VarAstroMasters.Server.Services.LightCurveService;
 global using VarAstroMasters.Shared.DTO;
 global using VarAstroMasters.Server.Data;
+global using VarAstroMasters.Shared.Helpers;
+global using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -35,6 +37,7 @@ builder.Services.AddDbContext<DataContext>(options =>
         .UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), dbVersion);
 });
 
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IStarService, StarService>();
 builder.Services.AddScoped<IStarDraftService, StarDraftService>();
