@@ -215,6 +215,7 @@ public class LightCurveService : ILightCurveService
     public async Task<ServiceResponse<List<ObservationLogDTO>>> ObservationLogListGet()
     {
         var q = from lc in _context.Set<LightCurve>()
+            where lc.PublishVariant != PublishVariant.None
             orderby lc.DateCreated
             group lc by lc.UserId
             into g
@@ -247,7 +248,7 @@ public class LightCurveService : ILightCurveService
     public async Task<ServiceResponse<ObservationLogDetailDTO>> ObservationLogSingleGet(string id)
     {
         var data = await _context.LightCurves
-            .Where(lc => lc.UserId == id)
+            .Where(lc => lc.UserId == id && lc.PublishVariant != PublishVariant.None)
             .Include(lc => lc.Device)
             .Include(lc => lc.Observatory)
             .Include(lc => lc.Star)

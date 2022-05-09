@@ -13,6 +13,7 @@ public class LightCurveDTO
     public ObservatoryDTO Observatory { get; set; }
     public string? DataFileLink { get; set; }
     public string? Values { get; set; }
+    public bool ValuesFinishedLoading { get; set; } = false;
     public string? Comment { get; set; }
     public List<Image> Images { get; set; }
 }

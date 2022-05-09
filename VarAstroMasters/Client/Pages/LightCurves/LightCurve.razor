@@ -70,12 +70,17 @@ else
         </ResponsiveTable>
     </section>
 
-    @if (_curve.Images.Count > 0)
-    {
-        <section>
-            <h4>Mapka</h4>
 
-
+    <section>
+        <h4>Mapka</h4>
+        @if (_curve is {Images: null})
+        {
+            <Alert type="@Keywords.AlertDanger">
+                @Keywords.MapNotPublished
+            </Alert>
+        }
+        else
+        {
             @foreach (var image in _curve.Images)
             {
                 <MudCard>
@@ -89,8 +94,8 @@ else
                     @* </MudCardActions> *@
                 </MudCard>
             }
-        </section>
-    }
+        }
+    </section>
 
     <section>
         <h4>Priebeh krivky</h4>

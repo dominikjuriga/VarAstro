@@ -24,4 +24,6 @@ public static class Keywords
     public static readonly string AcceptedImageFormats = "image/png, image/jpeg, image/gif";
     public static readonly string NotFoundMessage = "Objekt nenájdený.";
     public static readonly string NotPublished = "Tento záznam nie je verejný.";
+    public static readonly string CurveNotPublished = "Toto pozorovanie nemá zverejnenú krivku.";
+    public static readonly string MapNotPublished = "Toto pozorovanie nemá zverejnenú mapu.";
 }
