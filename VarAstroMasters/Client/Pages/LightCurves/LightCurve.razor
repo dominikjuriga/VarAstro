@@ -1,20 +1,28 @@
 ﻿@page "/LightCurves/{LightCurveId:int}"
-@using Newtonsoft.Json
 @inject ILightCurveService LightCurveService
 
-@if (_curve is null)
+<h3>
+    Detail krivky
+    @if (_curve is {Star: not null})
+    {
+        <span>
+            (hviezda
+            <strong>
+                <a href="@Endpoints.ClientStarSingleGet/@_curve.Star.Id">@_curve.Star.Name</a>
+            </strong>)
+        </span>
+    }
+</h3>
+@if (_curve is null && _message is null)
 {
-    <h3>Prebieha načítanie..</h3>
+    <Loader/>
+}
+else if (_curve is null && _message is not null)
+{
+    <Alert type="@_messageType">@_message</Alert>
 }
 else
 {
-    <h3>
-        Detail krivky (hviezda
-        <strong>
-            <a href="@Endpoints.ClientStarSingleGet/@_curve.Star.Id">@_curve.Star.Name</a>
-        </strong>)
-    </h3>
-
     <section>
         <ResponsiveTable>
             <tbody>
@@ -40,16 +48,54 @@ else
             </tr>
             <tr>
                 <th scope="row">Pridané</th>
-                <td>@_curve.DateCreated.ToString(@Keywords.DefaultDateTimeFormat)</td>
+                <td>@_curve.DateCreated.ToString(Keywords.DefaultDateTimeFormat)</td>
             </tr>
             <tr>
                 <th scope="row">Poznámky</th>
-                <td>@(_curve.Comment.Length == 0 ? "Nezadané" : @_curve.Comment)</td>
+                <td>
+                    @(_curve.Comment is null ||
+                      _curve.Comment.Length == 0 ? "Nezadané" : _curve.Comment)
+                </td>
             </tr>
+            @if (_curve.DataFileLink is not null)
+            {
+                <tr>
+                    <th scope="row">Odkaz na súbor</th>
+                    <td>
+                        <a href="@_curve.DataFileLink" target="_blank" rel="noopener noreferrer">Stiahnuť dátový súbor</a>
+                    </td>
+                </tr>
+            }
             </tbody>
         </ResponsiveTable>
     </section>
 
+
+    <section>
+        <h4>Mapka</h4>
+        @if (_curve is {Images: null})
+        {
+            <Alert type="@Keywords.AlertDanger">
+                @Keywords.MapNotPublished
+            </Alert>
+        }
+        else
+        {
+            @foreach (var image in _curve.Images)
+            {
+                <MudCard>
+                    <MudCardContent Style="display: flex; justify-content: center">
+                        <MudImage Src="@image.Data"/>
+                    </MudCardContent>
+                    @* <MudCardActions Style="justify-content: center"> *@
+                    @*     <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => RemoveImage(image.Id)"> *@
+                    @*         Remove Image *@
+                    @*     </MudButton> *@
+                    @* </MudCardActions> *@
+                </MudCard>
+            }
+        }
+    </section>
 
     <section>
         <h4>Priebeh krivky</h4>
@@ -72,26 +118,26 @@ else
     private LightCurveDTO? _curve { get; set; }
     private string _starRa = "-";
     private string _starDec = "-";
+    private string? _message { get; set; }
+    private string? _messageType { get; set; }
     private Dictionary<string, string>? _meta = null;
 
     protected override async Task OnInitializedAsync()
     {
-        _curve = await LightCurveService.LightCurveSingleGet(LightCurveId);
-        var sc = _curve.Star.StarCatalogs.Where(c => c.Primary).FirstOrDefault();
-        if (sc is not null)
+        var response = await LightCurveService.LightCurveSingleGet(LightCurveId);
+        if (response.Success)
         {
-            _starRa = $"{sc.Ra} ({sc.CatalogId})";
-            _starDec = $"{sc.Dec} ({sc.CatalogId})";
-        }
-        else
-        {
-            if (_curve.Meta is not null)
+            _curve = response.Data;
+            var sc = _curve.Star.StarCatalogs.Where(c => c.Primary).FirstOrDefault();
+            if (sc is not null)
             {
-                _starRa = $"{_curve.Meta.GetValueOrDefault("RA", "-")} (fotometria)";
-                _starDec = $"{_curve.Meta.GetValueOrDefault("DEC", "-")} (fotometria)";
+                _starRa = $"{sc.Ra} ({sc.CatalogId})";
+                _starDec = $"{sc.Dec} ({sc.CatalogId})";
             }
+            GetValuesForCurve();
         }
-        GetValuesForCurve();
+        _message = response.Message;
+        _messageType = response.Success ? Keywords.AlertSuccess : Keywords.AlertDanger;
     }
 
     private async Task GetValuesForCurve()

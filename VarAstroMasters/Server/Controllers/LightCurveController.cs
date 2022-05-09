@@ -36,6 +36,13 @@ public class LightCurveController : ControllerBase
         return Ok(sr);
     }
 
+    [HttpGet("{lightCurveId}/file")]
+    public async Task<IActionResult> LightCurveDataFileGet(int lightCurveId)
+    {
+        var sr = await _lightCurveService.LightCurveDataFileGet(lightCurveId);
+        return sr is null ? BadRequest(Keywords.NotPublished) : sr;
+    }
+
     [HttpPost("Add")]
     public async Task<ActionResult<ServiceResponse<int>>> LightCurvePost(LightCurveAdd lightCurveAdd)
     {

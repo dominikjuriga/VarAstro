@@ -29,9 +29,18 @@
                 </span>
                 <br/>
             }
-            @if (curve.Values is not null)
+            @if (curve.ValuesFinishedLoading)
             {
-                <ScatterChart Values="@curve.Values"/>
+                @if (curve.Values is not null)
+                {
+                    <ScatterChart Values="@curve.Values"/>
+                }
+                else
+                {
+                    <Alert type="@Keywords.AlertDanger">
+                        @Keywords.CurveNotPublished
+                    </Alert>
+                }
             }
             else
             {

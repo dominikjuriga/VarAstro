@@ -8,7 +8,7 @@ public static class Keywords
     public static readonly string JWT_Bearer_Token = "bearerToken";
     public static readonly string AuthType = "jwt";
     public static readonly string Role_User = "User";
-    public static readonly string Role_Admin = "Admin";
+    public static readonly string Role_Admin = "Administrator";
     public static readonly string Client_HTTP_Bearer_Header = "bearer";
     public static readonly string LcJdFormatHeliocentric = "heliocentric";
     public static readonly string LcJdFormatGeocentric = "geocentric";
@@ -21,4 +21,9 @@ public static class Keywords
     public static readonly string AlertSuccess = "success";
     public static readonly string AlertInfo = "info";
     public static readonly string AlertDanger = "danger";
+    public static readonly string AcceptedImageFormats = "image/png, image/jpeg, image/gif";
+    public static readonly string NotFoundMessage = "Objekt nenájdený.";
+    public static readonly string NotPublished = "Tento záznam nie je verejný.";
+    public static readonly string CurveNotPublished = "Toto pozorovanie nemá zverejnenú krivku.";
+    public static readonly string MapNotPublished = "Toto pozorovanie nemá zverejnenú mapu.";
 }

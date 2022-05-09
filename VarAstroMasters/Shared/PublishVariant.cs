@@ -2,8 +2,8 @@
 
 public enum PublishVariant
 {
-    All, // Publish Map, Curve and Data File
     None, // Do Not Publish
     OnlyMap, // Publish Map
-    OnlyMapAndCurve // Publish Map and Curve
+    OnlyMapAndCurve, // Publish Map and Curve
+    All // Publish Map, Curve and Data File
 }

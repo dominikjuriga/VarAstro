@@ -26,5 +26,5 @@ public class LightCurveAdd
 
     public string Comment { get; set; } = string.Empty;
     public int? DeviceId { get; set; } = null;
-    public IBrowserFile Map { get; set; }
+    public List<Image> Images { get; set; } = new();
 }

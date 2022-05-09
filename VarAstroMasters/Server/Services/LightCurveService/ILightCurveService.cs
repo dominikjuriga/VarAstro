@@ -9,4 +9,5 @@ public interface ILightCurveService
 
     Task<ServiceResponse<List<ObservationLogDTO>>> ObservationLogListGet();
     Task<ServiceResponse<ObservationLogDetailDTO>> ObservationLogSingleGet(string id);
+    Task<FileContentResult?> LightCurveDataFileGet(int id);
 }

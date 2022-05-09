@@ -53,6 +53,7 @@ else
         foreach (var curve in _lightCurves)
         {
             var response = await LightCurveService.LightCurveSingleValuesGet(curve.Id);
+            curve.ValuesFinishedLoading = true;
             if (response.Success)
             {
                 curve.Values = response.Data;
