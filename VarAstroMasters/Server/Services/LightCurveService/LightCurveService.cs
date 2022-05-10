@@ -62,9 +62,12 @@ public class LightCurveService : ILightCurveService
         if (!PublishHelper.IsPublic(data.PublishVariant))
             return ResponseHelper.FailResponse<LightCurveDTO>(Keywords.NotPublished);
 
+        var item = _mapper.Map<LightCurveDTO>(data);
+        if (PublishHelper.CanShareFile(item.PublishVariant))
+            item.DataFileLink = $"{Endpoints.ApiLightCurveBasePath}/{item.Id}/file";
         return new ServiceResponse<LightCurveDTO>
         {
-            Data = _mapper.Map<LightCurveDTO>(data)
+            Data = item
         };
     }
 
