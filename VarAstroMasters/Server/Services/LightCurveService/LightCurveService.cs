@@ -92,6 +92,10 @@ public class LightCurveService : ILightCurveService
         var lightCurve = _mapper.Map<LightCurve>(lightCurveAdd);
         lightCurve.UserId = userId;
 
+        // Mud Blazor crashes when select has [int?] value type, init to 0
+        if (lightCurve.DeviceId == 0)
+            lightCurve.DeviceId = null;
+
         var savedCurve = _context.LightCurves.Add(lightCurve);
         var result = await _context.SaveChangesAsync();
         if (result == 0) return ResponseHelper.FailResponse<int>(Keywords.PostFailed);

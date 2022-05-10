@@ -11,11 +11,10 @@ public class LightCurveAdd
     public string DataFileContent { get; set; }
 
     [Required(ErrorMessage = "Pole Formát JD je povinné.")]
-    public string? JD { get; set; } = null;
-
+    public string? JD { get; set; }
 
     [Required(ErrorMessage = "Pole filter je povinné.")]
-    public string? Filter { get; set; } = null;
+    public string? Filter { get; set; }
 
     [Required(ErrorMessage = "Pole fotometrický systém je povinné.")]
     public string? PhotometricSystem { get; set; } = null;
@@ -24,6 +23,6 @@ public class LightCurveAdd
     public PublishVariant PublishVariant { get; set; } = PublishVariant.All;
 
     public string Comment { get; set; } = string.Empty;
-    public int? DeviceId { get; set; } = null;
+    public int DeviceId { get; set; } = 0;
     public List<Image> Images { get; set; } = new();
 }
