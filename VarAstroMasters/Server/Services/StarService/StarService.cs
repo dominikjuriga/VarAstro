@@ -153,9 +153,9 @@ public class StarService : IStarService
 
     public async Task<ServiceResponse<StarCatalog>> StarCatalogPut(StarCatalog starCatalog)
     {
-        var sc = await _context.StarCatalog.Where(sc =>
-            sc.StarId == starCatalog.StarId && sc.CatalogId == starCatalog.CatalogId).FirstOrDefaultAsync();
-        if (sc is null)
+        var sc = _context.StarCatalog.Any(sc =>
+            sc.StarId == starCatalog.StarId && sc.CatalogId == starCatalog.CatalogId);
+        if (!sc)
             return ResponseHelper.FailResponse<StarCatalog>(Keywords.NotFoundMessage);
 
         _context.StarCatalog.Update(starCatalog);

@@ -42,7 +42,7 @@ public class StarController : ControllerBase
     }
 
     [HttpPost("publication")]
-    public async Task<ActionResult<ServiceResponse<bool>>> PublicationPost(StarPublish starPublish)
+    public async Task<ActionResult<ServiceResponse<StarPublish>>> PublicationPost(StarPublish starPublish)
     {
         var response = await _starService.PublicationPost(starPublish);
         return Ok(response);

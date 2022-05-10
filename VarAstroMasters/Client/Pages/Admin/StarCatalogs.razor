@@ -175,8 +175,21 @@ else
 
     private async Task SaveEdit()
     {
-        var response = await StarService.SaveStarCatalog(_editSC);
-        SetMessage(response.Message, response.Success ? Keywords.AlertSuccess : Keywords.AlertDanger);
+        ServiceResponse<StarCatalog> response;
+        if (_editSC.New)
+        {
+            response = await StarService.StarCatalogPost(_editSC);
+        }
+        else
+        {
+            response = await StarService.StarCatalogPut(_editSC);
+        }
+
+        if (response is { Message: not null})
+        {
+            _message = response.Message;
+            _messageType = MessageHelper.GetAlertType(response.Success);
+        }
     }
 
     private void NewSC()

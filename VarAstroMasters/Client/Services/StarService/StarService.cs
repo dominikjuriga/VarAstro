@@ -49,6 +49,18 @@ public class StarService : IStarService
         return response;
     }
 
+    public async Task<ServiceResponse<StarCatalog>> StarCatalogPost(StarCatalog starCatalog)
+    {
+        var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiStarStarCatalogPost, starCatalog);
+        return await response.Content.ReadFromJsonAsync<ServiceResponse<StarCatalog>>();
+    }
+
+    public async Task<ServiceResponse<StarCatalog>> StarCatalogPut(StarCatalog starCatalog)
+    {
+        var response = await _httpClient.PutAsJsonAsync(Endpoints.ApiStarStarCatalogPost, starCatalog);
+        return await response.Content.ReadFromJsonAsync<ServiceResponse<StarCatalog>>();
+    }
+
     public async Task<ServiceResponse<StarCatalog>> SaveStarCatalog(StarCatalog starCatalog)
     {
         var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiStarStarCatalogPost, starCatalog);
@@ -81,10 +93,10 @@ public class StarService : IStarService
         return await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
     }
 
-    public async Task<ServiceResponse<bool>> SavePublication(StarPublish starPublish)
+    public async Task<ServiceResponse<StarPublish>> SavePublication(StarPublish starPublish)
     {
         var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiStarPublicationPost, starPublish);
-        return await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
+        return await response.Content.ReadFromJsonAsync<ServiceResponse<StarPublish>>();
     }
 
 
