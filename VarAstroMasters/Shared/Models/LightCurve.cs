@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Identity;
 
 namespace VarAstroMasters.Shared.Models;
 
@@ -10,9 +9,10 @@ public class LightCurve
     [Required] public string UserId { get; set; }
     public User User { get; set; }
     [Required] public int StarId { get; set; }
+    public Star Star { get; set; }
     public DateTime DateCreated { get; set; } = DateTime.Now;
 
-    public Star Star { get; set; }
+
     [Required] public string DataFileContent { get; set; } = string.Empty;
     public List<Image> Images { get; set; } = new();
     public int? DeviceId { get; set; }

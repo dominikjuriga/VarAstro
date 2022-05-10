@@ -2,38 +2,38 @@
     <div class="card">
         <div class="card-body">
             <span>
-                Krivka pridaná
-                <a href="@Endpoints.ClientLightCurveSingleGet/@curve.Id">
-                    @curve.DateCreated.ToString(Keywords.DefaultDateTimeFormat)
+                Pozorovanie pridané
+                <a href="@Endpoints.ClientLightCurveSingleGet/@Curve.Id">
+                    @Curve.DateCreated.ToString(Keywords.DefaultDateTimeFormat)
                 </a>
             </span>
             <br/>
             <span>
                 Autor
-                <a href="@Endpoints.ClientObservationLogSingleGet/@curve.User.Id">@curve.User.Name</a>
+                <a href="@Endpoints.ClientObservationLogSingleGet/@Curve.User.Id">@Curve.User.Name</a>
             </span>
             <br/>
-            @if (curve.Device is not null)
+            @if (Curve.Device is not null)
             {
                 <span>
                     <span class="oi oi-aperture"></span>
-                    @curve.Device.Name
+                    @Curve.Device.Name
                 </span>
                 <br/>
             }
-            @if (curve.Observatory is not null)
+            @if (Curve.Observatory is not null)
             {
                 <span>
                     <span class="oi oi-aperture"></span>
-                    @curve.Observatory.Address
+                    @Curve.Observatory.Address
                 </span>
                 <br/>
             }
-            @if (curve.ValuesFinishedLoading)
+            @if (Curve.ValuesFinishedLoading)
             {
-                @if (curve.Values is not null)
+                @if (Curve.Values is not null)
                 {
-                    <ScatterChart Values="@curve.Values"/>
+                    <ScatterChart Values="@Curve.Values"/>
                 }
                 else
                 {
@@ -56,7 +56,7 @@
     public bool IsCard { get; set; }
 
     [Parameter]
-    public LightCurveDTO curve { get; set; }
+    public LightCurveDTO Curve { get; set; }
 
     [Parameter]
     public string CurveLayout { get; set; } = "col-lg-6 col-xl-4";

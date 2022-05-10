@@ -69,7 +69,7 @@ public static class Endpoints
     public static readonly string ApiObservatoryListGet = $"{ApiObservatoryBase}";
     public static readonly string ApiObservatoryPost = $"{ApiObservatoryBase}";
     public static readonly string ApiObservatoryDelete = $"{ApiObservatoryBase}";
-    public static readonly string ApiObservatoryEdit = $"{ApiObservatoryBase}";
+    public static readonly string ApiObservatoryPut = $"{ApiObservatoryBase}";
 
 
     //      ---     Client     ---
@@ -84,9 +84,10 @@ public static class Endpoints
     public static readonly string ClientObservationLogListGet = $"{ClientObservationLogBase}";
     public static readonly string ClientObservationLogSingleGet = $"{ClientObservationLogBase}";
 
-    public static readonly string ClientObservatoriesBase = "/Observatories";
-    public static readonly string ClientObservatoriesListGet = $"{ClientObservatoriesBase}";
-    public static readonly string ClientObservatoriesPost = $"{ClientObservatoriesBase}/Add";
+    public static readonly string ClientObservatoryBase = "/Observatory";
+
+    public static readonly string ClientObservatoryListGet = $"{ClientObservatoryBase}/List";
+    // public static readonly string ClientObservatoryPost = $"{ClientObservatoryBase}/Add";
 
     public static readonly string ClientLightCurveBase = "/LightCurves";
     public static readonly string ClientLightCurveListGet = $"{ClientLightCurveBase}";
@@ -94,7 +95,8 @@ public static class Endpoints
     public static readonly string ClientLightCurvePost = $"{ClientLightCurveBase}/Add";
 
     public static readonly string ClientDeviceBase = "/Device";
-    public static readonly string ClientDevicePost = $"{ClientDeviceBase}/Add";
+
+    // public static readonly string ClientDevicePost = $"{ClientDeviceBase}/Add";
     public static readonly string ClientDeviceListGet = $"{ClientDeviceBase}/List";
 
     public static readonly string ClientUserProfile = "/me";

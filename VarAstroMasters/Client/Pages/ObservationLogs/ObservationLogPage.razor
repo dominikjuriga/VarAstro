@@ -1,29 +1,29 @@
 ﻿@page "/ObservationLogs/{Id}"
 @inject ILightCurveService LightCurveService
 
-@if (log is null)
+@if (Log is null)
 {
     <Loader/>
 }
 else
 {
     <h3>
-        Pozorovací denník @log.User.Name
+        Pozorovací denník @Log.User.Name
     </h3>
     <section>
-        @if (_lightCurves is null)
+        @if (LightCurves is null)
         {
             <Loader/>
         }
         else
         {
-            if (log.Curves.Count == 0)
+            if (Log.Curves.Count == 0)
             {
                 <p>Tento denník nemá žiadne pozorovania.</p>
             }
             else
             {
-                <LightCurveListWithValues Curves="@_lightCurves"/>
+                <LightCurveListWithValues Curves="@LightCurves"/>
             }
         }
     </section>
@@ -34,24 +34,30 @@ else
     [Parameter]
     public string Id { get; set; }
 
-    private ObservationLogDetailDTO? log { get; set; }
-    private List<LightCurveDTO>? _lightCurves { get; set; }
+    private ObservationLogDetailDTO? Log { get; set; }
+    private List<LightCurveDTO>? LightCurves { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         var response = await LightCurveService.GetObservationLog(Id);
-        if (response.Success)
+        if (response is {Success: true, Data: not null})
         {
-            log = response.Data;
-            _lightCurves = response.Data.Curves;
+            Log = response.Data;
+            LightCurves = response.Data.Curves;
             GetValuesForCurves();
         }
     }
 
     private async Task GetValuesForCurves()
     {
-        foreach (var curve in _lightCurves)
+        if (LightCurves is null) return;
+        foreach (var curve in LightCurves)
         {
+            if (!PublishHelper.CanShareCurve(curve.PublishVariant))
+            {
+                curve.ValuesFinishedLoading = true;
+                continue;
+            }
             var response = await LightCurveService.LightCurveSingleValuesGet(curve.Id);
             curve.ValuesFinishedLoading = true;
             if (response.Success)

@@ -2,7 +2,7 @@
 
 public interface ILightCurveService
 {
-    Task<List<LightCurveDTO>> LightCurveListGet();
+    Task<ServiceResponse<List<LightCurveDTO>>> LightCurveListGet();
     Task<ServiceResponse<LightCurveDTO>> LightCurveSingleGet(int lightCurveId);
     Task<ServiceResponse<string>> LightCurveSingleValuesGet(int lightCurveId);
     Task<ServiceResponse<int>> LightCurvePost(LightCurveAdd lightCurveAdd);

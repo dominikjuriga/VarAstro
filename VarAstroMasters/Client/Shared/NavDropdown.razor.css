@@ -1,4 +1,8 @@
-﻿.nav-dropdown button {
+﻿.nav-dropdown {
+    margin-bottom: .5rem;
+}
+
+.nav-dropdown button {
     justify-content: space-between;
 }
 

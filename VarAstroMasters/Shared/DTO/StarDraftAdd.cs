@@ -1,4 +1,4 @@
-﻿namespace VarAstroMasters.Shared.Models;
+﻿namespace VarAstroMasters.Shared.DTO;
 
 public class StarDraftAdd
 {

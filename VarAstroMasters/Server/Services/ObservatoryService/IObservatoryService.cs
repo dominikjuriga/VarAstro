@@ -4,8 +4,8 @@ namespace VarAstroMasters.Server.Services.ObservatoryService;
 
 public interface IObservatoryService
 {
-    Task<ServiceResponse<List<ObservatoryDTO>>> UserFromTokenObservatoriesGet();
-    Task<ServiceResponse<bool>> ObservatoryPost(ObservatoryAdd observatoryAdd);
+    Task<ServiceResponse<List<Observatory>>> UserFromTokenObservatoriesGet();
+    Task<ServiceResponse<Observatory>> ObservatoryPost(Observatory observatory);
     Task<ServiceResponse<bool>> ObservatoryDelete(int observatoryId);
-    Task<ServiceResponse<ObservatoryDTO>> ObservatoryEdit(ObservatoryEdit observatoryEdit);
+    Task<ServiceResponse<Observatory>> ObservatoryPut(Observatory observatory);
 }

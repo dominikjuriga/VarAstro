@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using VarAstroMasters.Shared.CompositeKeys;
 
 namespace VarAstroMasters.Server.Services.StarService;
@@ -7,25 +6,21 @@ namespace VarAstroMasters.Server.Services.StarService;
 public class StarService : IStarService
 {
     private readonly DataContext _context;
+    private readonly IMapper _mapper;
 
-    public StarService(DataContext context)
+    public StarService(DataContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
-    public async Task<ServiceResponse<List<StarDTO>>> StarListGet()
+    public async Task<ServiceResponse<List<Star>>> StarListGet()
     {
         var data = await _context.Stars.ToListAsync();
-        var stars = new List<StarDTO>();
-        foreach (var star in data)
-            stars.Add(new StarDTO
-            {
-                Name = star.Name,
-                Id = star.Id
-            });
-        return new ServiceResponse<List<StarDTO>>
+
+        return new ServiceResponse<List<Star>>
         {
-            Data = stars
+            Data = data
         };
     }
 
@@ -38,63 +33,34 @@ public class StarService : IStarService
             .Include(s => s.StarPublish)
             .Include(s => s.StarVariability)
             .FirstOrDefaultAsync(s => s.Id == starId);
-        if (star is not null)
-        {
-            var curves = new List<LightCurveDTO>();
 
-            foreach (var curve in star.LightCurves)
-                curves.Add(new LightCurveDTO
-                {
-                    Id = curve.Id,
-                    User = new UserDTO
-                    {
-                        Id = curve.User.Id,
-                        Name = curve.User.UserName
-                    },
-                    DateCreated = curve.DateCreated
-                });
+        if (star is null) return ResponseHelper.FailResponse<StarDTO>(Keywords.NotFoundMessage);
 
-            return new ServiceResponse<StarDTO>
-            {
-                Data = new StarDTO
-                {
-                    Id = star.Id,
-                    LightCurves = curves,
-                    Name = star.Name,
-                    StarCatalogs = star.StarCatalogs,
-                    StarVariability = star.StarVariability,
-                    StarPublish = star.StarPublish
-                }
-            };
-        }
+        List<LightCurveDTO> curveDtos = new();
+        foreach (var curve in star.LightCurves)
+            curveDtos.Add(_mapper.Map<LightCurveDTO>(curve));
+        var item = _mapper.Map<StarDTO>(star);
+        item.LightCurves = curveDtos;
 
         return new ServiceResponse<StarDTO>
         {
-            Success = false
+            Data = item
         };
     }
 
-    public async Task<ServiceResponse<StarSearchDTO>> Search(string searchQuery)
+    public async Task<ServiceResponse<List<Star>>> Search(string searchQuery)
     {
         var data = await _context.Stars
             .Where(s => s.Name.ToLower().Contains(searchQuery.ToLower()))
             .ToListAsync();
-        List<StarDTO> dtos = new();
-        foreach (var star in data)
-            dtos.Add(new StarDTO
-            {
-                Id = star.Id,
-                Name = star.Name
-            });
-        var response = new ServiceResponse<StarSearchDTO>
-        {
-            Data = new StarSearchDTO
-            {
-                Data = dtos
-            }
-        };
 
-        return response;
+        var msg = data.Count == 0 ? Keywords.SearchFailed : $"{Keywords.SearchSucceeded} {data.Count} záznamov.";
+
+        return new ServiceResponse<List<Star>>
+        {
+            Data = data,
+            Message = msg
+        };
     }
 
 
@@ -102,15 +68,13 @@ public class StarService : IStarService
     {
         var star = await _context.Stars
             .Where(s => s.Id == starId)
-            .Include(s => s.StarPublish).FirstOrDefaultAsync();
-        if (star is null)
-            return new ServiceResponse<StarPublish>
-            {
-                Success = false,
-                Message = "Hviezda nenájdená."
-            };
+            .Include(s => s.StarPublish)
+            .FirstOrDefaultAsync();
 
-        if (star.StarPublish is null)
+        if (star is null)
+            return ResponseHelper.FailResponse<StarPublish>(Keywords.NotFoundMessage);
+
+        if (star is { StarPublish: null })
             return new ServiceResponse<StarPublish>
             {
                 Data = new StarPublish
@@ -126,25 +90,24 @@ public class StarService : IStarService
         };
     }
 
-    public async Task<ServiceResponse<bool>> PublicationPost(StarPublish starPublish)
+    public async Task<ServiceResponse<StarPublish>> PublicationPost(StarPublish starPublish)
     {
         var star = await _context.Stars
             .Where(s => s.Id == starPublish.StarId)
             .Include(s => s.StarPublish)
             .FirstOrDefaultAsync();
+
         if (star is null)
-            return new ServiceResponse<bool>
-            {
-                Success = false,
-                Message = "Hviezda nenájdená."
-            };
+            return ResponseHelper.FailResponse<StarPublish>(Keywords.NotFoundMessage);
 
         star.StarPublish = starPublish;
-        await _context.SaveChangesAsync();
-        return new ServiceResponse<bool>
+        var result = await _context.SaveChangesAsync();
+        if (result == 0) return ResponseHelper.FailResponse<StarPublish>(Keywords.PostFailed);
+
+        return new ServiceResponse<StarPublish>
         {
-            Data = true,
-            Message = "Publikácia uložená."
+            Data = starPublish,
+            Message = Keywords.PostSucceeded
         };
     }
 
@@ -156,24 +119,19 @@ public class StarService : IStarService
             .FirstOrDefaultAsync();
 
         if (sc is null)
-            return new ServiceResponse<bool>
-            {
-                Success = false,
-                Message = "Záznam nenájdený."
-            };
+            return ResponseHelper.FailResponse<bool>(Keywords.NotFoundMessage);
 
         var items = _context.StarCatalog
             .Where(sc => sc.StarId == identification.StarId);
 
         foreach (var item in items) item.Primary = false;
-
         sc.Primary = true;
-
-        await _context.SaveChangesAsync();
+        var result = await _context.SaveChangesAsync();
+        if (result == 0) return ResponseHelper.FailResponse<bool>(Keywords.PostFailed);
 
         return new ServiceResponse<bool>
         {
-            Message = "Zmena vykonaná."
+            Message = Keywords.PostSucceeded
         };
     }
 
@@ -185,11 +143,7 @@ public class StarService : IStarService
             .FirstOrDefaultAsync();
 
         if (star is null)
-            return new ServiceResponse<List<StarCatalog>>
-            {
-                Success = false,
-                Message = "Hviezda nenájdená"
-            };
+            return ResponseHelper.FailResponse<List<StarCatalog>>(Keywords.NotFoundMessage);
 
         return new ServiceResponse<List<StarCatalog>>
         {
@@ -197,52 +151,43 @@ public class StarService : IStarService
         };
     }
 
-    public async Task<ServiceResponse<StarCatalog>> StarCatalogPost(StarCatalog starCatalog)
+    public async Task<ServiceResponse<StarCatalog>> StarCatalogPut(StarCatalog starCatalog)
     {
-        if (starCatalog.New)
-        {
-            if (_context.StarCatalog.Any(sc =>
-                    sc.StarId == starCatalog.StarId && sc.CatalogId == starCatalog.CatalogId))
-                return new ServiceResponse<StarCatalog>
-                {
-                    Success = false,
-                    Message = "Záznam pre tento katalóg už existuje"
-                };
-            if (!_context.StarCatalog.Any(sc =>
-                    sc.StarId == starCatalog.StarId))
-                starCatalog.Primary = true;
-            _context.StarCatalog.Add(starCatalog);
-        }
-        else
-        {
-            var sc = await _context.StarCatalog.Where(sc =>
-                sc.StarId == starCatalog.StarId && sc.CatalogId == starCatalog.CatalogId).FirstOrDefaultAsync();
-            if (sc is null)
-                return new ServiceResponse<StarCatalog>
-                {
-                    Success = false,
-                    Message = "Záznam nenájdený"
-                };
+        var sc = _context.StarCatalog.Any(sc =>
+            sc.StarId == starCatalog.StarId && sc.CatalogId == starCatalog.CatalogId);
+        if (!sc)
+            return ResponseHelper.FailResponse<StarCatalog>(Keywords.NotFoundMessage);
 
-            sc.Ra = starCatalog.Ra;
-            sc.Dec = starCatalog.Dec;
-            sc.CatalogId = starCatalog.CatalogId;
-            sc.Mag = starCatalog.Mag;
-            sc.CrossId = starCatalog.CrossId;
+        _context.StarCatalog.Update(starCatalog);
 
-            await _context.SaveChangesAsync();
-            return new ServiceResponse<StarCatalog>
-            {
-                Data = sc,
-                Message = "Záznam upravený."
-            };
-        }
+        var result = await _context.SaveChangesAsync();
+        if (result == 0) return ResponseHelper.FailResponse<StarCatalog>(Keywords.PutFailed);
 
-        await _context.SaveChangesAsync();
         return new ServiceResponse<StarCatalog>
         {
             Data = starCatalog,
-            Message = "Záznam vytvorený."
+            Message = Keywords.PutSucceeded
+        };
+    }
+
+    public async Task<ServiceResponse<StarCatalog>> StarCatalogPost(StarCatalog starCatalog)
+    {
+        if (_context.StarCatalog.Any(sc =>
+                sc.StarId == starCatalog.StarId && sc.CatalogId == starCatalog.CatalogId))
+            return ResponseHelper.FailResponse<StarCatalog>(Keywords.AlreadyExists);
+
+        if (!_context.StarCatalog.Any(sc =>
+                sc.StarId == starCatalog.StarId))
+            starCatalog.Primary = true;
+
+        _context.StarCatalog.Add(starCatalog);
+        var result = await _context.SaveChangesAsync();
+        if (result == 0) return ResponseHelper.FailResponse<StarCatalog>(Keywords.PostFailed);
+
+        return new ServiceResponse<StarCatalog>
+        {
+            Data = starCatalog,
+            Message = Keywords.PostSucceeded
         };
     }
 
@@ -251,26 +196,21 @@ public class StarService : IStarService
         var sc = await _context.StarCatalog
             .Where(sc => sc.StarId == starId && sc.CatalogId == catalogId)
             .FirstOrDefaultAsync();
+
         if (sc is null)
-            return new ServiceResponse<bool>
-            {
-                Data = false,
-                Message = "Záznam neexistuje."
-            };
+            return ResponseHelper.FailResponse<bool>(Keywords.NotFoundMessage);
+
         if (sc is { Primary: true })
-            return new ServiceResponse<bool>
-            {
-                Data = false,
-                Message = "Primárny katalóg nie je možné zmazať."
-            };
+            return ResponseHelper.FailResponse<bool>(Keywords.CannotDeletePrimaryCat);
 
         _context.StarCatalog.Remove(sc);
-        await _context.SaveChangesAsync();
+        var result = await _context.SaveChangesAsync();
+        if (result == 0) return ResponseHelper.FailResponse<bool>(Keywords.DeleteFailed);
 
         return new ServiceResponse<bool>
         {
             Data = true,
-            Message = "Záznam zmazaný."
+            Message = Keywords.DeleteSucceeded
         };
     }
 
@@ -287,60 +227,37 @@ public class StarService : IStarService
     {
         var catalog = await _context.Catalogs.Where(c => c.Name == catalogName).FirstOrDefaultAsync();
         if (catalog is null)
-            return new ServiceResponse<bool>
-            {
-                Success = false,
-                Message = "Katalóg nebol nájdený."
-            };
+            return ResponseHelper.FailResponse<bool>(Keywords.NotFoundMessage);
 
         _context.Catalogs.Remove(catalog);
-        await _context.SaveChangesAsync();
+        var result = await _context.SaveChangesAsync();
+        if (result == 0)
+            return ResponseHelper.FailResponse<bool>(Keywords.DeleteFailed);
 
         return new ServiceResponse<bool>
         {
             Success = true,
-            Message = $"Katalóg {catalogName} a pridružené záznamy zmazané."
+            Message = Keywords.DeleteSucceeded
         };
     }
 
-    public async Task<ServiceResponse<Catalog>> CatalogPost(CatalogEdit catalog)
+    public async Task<ServiceResponse<Catalog>> CatalogPost(Catalog catalog)
     {
-        if (catalog.New)
+        var catalogDb = _context.Catalogs.Any(c => c.Name == catalog.Name);
+        if (catalogDb)
+            return ResponseHelper.FailResponse<Catalog>(Keywords.AlreadyExists);
+
+        var res = _context.Catalogs.Add(new Catalog
         {
-            var catalogDb = await _context.Catalogs.Where(c => c.Name == catalog.Name).FirstOrDefaultAsync();
-            if (catalogDb is not null)
-                return new ServiceResponse<Catalog>
-                {
-                    Success = false,
-                    Message = "Tento katalóg už existuje."
-                };
-            var res = _context.Catalogs.Add(new Catalog
-            {
-                Name = catalog.Name
-            });
-            await _context.SaveChangesAsync();
-            return new ServiceResponse<Catalog>
-            {
-                Data = res.Entity,
-                Message = "Katalóg vytvorený."
-            };
-        }
-        else
+            Name = catalog.Name
+        });
+        var result = await _context.SaveChangesAsync();
+        if (result == 0) return ResponseHelper.FailResponse<Catalog>(Keywords.PostFailed);
+
+        return new ServiceResponse<Catalog>
         {
-            var catalogDb = await _context.Catalogs.Where(c => c.Name == catalog.OriginalName).FirstOrDefaultAsync();
-            if (catalogDb is null)
-                return new ServiceResponse<Catalog>
-                {
-                    Success = false,
-                    Message = "Tento katalóg už existuje."
-                };
-            catalogDb.Name = catalog.Name;
-            await _context.SaveChangesAsync();
-            return new ServiceResponse<Catalog>
-            {
-                Data = catalogDb,
-                Message = "Katalóg upravený."
-            };
-        }
+            Data = catalog,
+            Message = Keywords.PostSucceeded
+        };
     }
 }

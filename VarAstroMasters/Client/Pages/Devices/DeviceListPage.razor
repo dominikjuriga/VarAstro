@@ -1,126 +1,156 @@
 ﻿@page "/Device/List"
+@using VarAstroMasters.Shared.Helpers
 @inject IDeviceService DeviceService
 
-@if (_devices is null)
+@if (Devices is null)
 {
     <Loader/>
 }
 else
 {
-    @if (_deviceEdit is not null)
+    @if (DeviceEdit is not null)
     {
-        <h3>Úprava zariadenia</h3>
-
-        <EditForm Model="_deviceEdit" OnValidSubmit="HandleSubmit">
-            <DataAnnotationsValidator/>
-
-            <div class="my-3">
-                <label for="name" class="form-label">
-                    Názov zariadenia
-                </label>
-                <InputText id="name" @bind-Value="_deviceEdit.Name" class="form-control"></InputText>
+        <div class="d-flex justify-content-between">
+            <h3>Úprava zariadenia</h3>
+            <div>
+                <a class="btn btn-primary" href="@Endpoints.ClientDeviceListGet">Zoznam zariadení</a>
             </div>
-            <ValidationSummary></ValidationSummary>
-
-            <button type="submit" class="btn btn-primary">Uložiť</button>
-            <button type="button" @onclick="CancelEdit" class="btn btn-secondary">Zrušiť</button>
-        </EditForm>
+        </div>
     }
     else
     {
-        <h3>Vaše zariadenia</h3>
+        <div class="d-flex justify-content-between">
 
-        @if (_message is not null)
-        {
-            <Alert type="@Keywords.AlertSuccess">
-                @_message
-            </Alert>
-        }
+            <h3>Vaše zariadenia</h3>
+            <div>
+                <button class="btn btn-primary" @onclick="NewItem">Pridať zariadenie</button>
+            </div>
+        </div>
+    }
 
-        @if (_devices.Count == 0)
+    @if (Message is not null)
+    {
+        <Alert type="@MessageType">
+            @Message
+        </Alert>
+    }
+    <section>
+        @if (DeviceEdit is not null)
         {
-            <span>Nemáte žiadne registrované zariadenia.</span>
-            <a href="@Endpoints.ClientDevicePost">Pridať zariadenie</a>
+            <EditForm Model="DeviceEdit" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator/>
+                <div class="my-3">
+                    <label for="name" class="form-label">
+                        Názov zariadenia
+                    </label>
+                    <InputText id="name" @bind-Value="DeviceEdit.Name" class="form-control"></InputText>
+                </div>
+                <ValidationSummary></ValidationSummary>
+
+                <button type="submit" class="btn btn-primary">Uložiť</button>
+                <button type="button" @onclick="CancelEdit" class="btn btn-secondary">Zrušiť</button>
+            </EditForm>
         }
         else
         {
-            <ul>
-                @foreach (var device in _devices)
-                {
-                    <li class="mb-3">
-                        <span class="oi oi-camera-slr"></span>
-                        @device.Name
-                        <button class="btn btn-outline-info" @onclick="() => DeleteDevice(device.Id)">Zmazať</button>
-                        <button class="btn btn-outline-success" @onclick="() => OpenEditDevice(device)">Upraviť</button>
-                    </li>
-                }
-            </ul>
+            @if (Devices.Count == 0)
+            {
+                <Alert type="@Keywords.AlertInfo">
+                    <span>Nemáte žiadne registrované zariadenia.</span>
+                </Alert>
+            }
+            else
+            {
+                <ResponsiveTable>
+                    <thead>
+                    <tr>
+                        <th>Názov</th>
+                        <th>Akcie</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var device in Devices)
+                    {
+                        <tr>
+                            <td>@device.Name</td>
+                            <td>
+                                <button class="btn btn-outline-info" @onclick="() => DeleteDevice(device.Id)">Zmazať</button>
+                                <button class="btn btn-outline-success" @onclick="() => OpenEditDevice(device)">Upraviť</button>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </ResponsiveTable>
+            }
         }
-    }
+    </section>
 }
 
 @code {
-    private List<DeviceDTO>? _devices { get; set; } = null;
-    private DeviceEdit? _deviceEdit { get; set; } = null;
-    private string? _message { get; set; } = null;
-    private string? _alertType { get; set; } = null;
+    private List<Device>? Devices { get; set; }
+    private Device? DeviceEdit { get; set; }
+    private string? Message { get; set; }
+    private string? MessageType { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        _devices = await DeviceService.DevicesFromTokenGet();
+        var response = await DeviceService.DevicesFromTokenGet();
+        if (response is {Success: true})
+        {
+            Devices = response.Data;
+        }
     }
 
     private void CancelEdit()
     {
-        _message = null;
-        _deviceEdit = null;
+        Message = null;
+        DeviceEdit = null;
     }
 
     private async Task DeleteDevice(int deviceId)
     {
-        var result = await DeviceService.DeviceDelete(deviceId);
-        if (result && _devices is not null)
+        var response = await DeviceService.DeviceDelete(deviceId);
+        if (response is {Success: true} && Devices is not null)
         {
-            _devices = _devices.Where(d => d.Id != deviceId).ToList();
-            SetMessage("Zariadenie zmazané.");
+            Devices = Devices.Where(d => d.Id != deviceId).ToList();
         }
-        else
-        {
-            SetMessage("Nastala chyba pri spracovaní.", "danger");
-        }
+        Message = response?.Message;
+        MessageType = MessageHelper.GetAlertType(response?.Success);
     }
 
-    private void OpenEditDevice(DeviceDTO device)
+    private void OpenEditDevice(Device device)
     {
-        _message = null;
-        _deviceEdit = new DeviceEdit
-        {
-            Id = device.Id,
-            Name = device.Name
-        };
+        DeviceEdit = device;
+        DeviceEdit.New = false;
     }
 
-    private void SetMessage(string? message = null, string type = "success")
+    private void NewItem()
     {
-        _message = message;
-        _alertType = type;
+        DeviceEdit = new Device();
     }
 
     private async Task HandleSubmit()
     {
-        var result = await DeviceService.DeviceEdit(_deviceEdit);
-        if (result is not null && _devices is not null)
+        if (DeviceEdit is null) return;
+        ServiceResponse<Device>? response;
+        if (DeviceEdit.New)
         {
-            var dev = _devices.Where(d => d.Id == result.Id).First();
-            _devices.Remove(dev);
-            _devices.Add(result);
-            CancelEdit();
-            SetMessage("Zmena uložená");
+            response = await DeviceService.DevicePost(DeviceEdit);
         }
         else
         {
-            SetMessage("Nastala chyba pri spracovaní.", "danger");
+            response = await DeviceService.DevicePut(DeviceEdit);
         }
+
+        if (response is {Success: true, Data: not null} && Devices is not null)
+        {
+            var dev = Devices.FirstOrDefault(d => d.Id == response.Data.Id);
+            if (dev is not null) Devices.Remove(dev);
+            Devices.Add(response.Data);
+            CancelEdit();
+        }
+        Message = response?.Message;
+        MessageType = MessageHelper.GetAlertType(response?.Success);
     }
 
 }

@@ -151,14 +151,7 @@ else
         }
         else if (Star is {LightCurves.Count: > 0})
         {
-            @if (loadingCurveValues)
-            {
-                <Loader/>
-            }
-            else
-            {
-                <LightCurveListWithValues Curves="@Star.LightCurves" CurveLayout="col-12"/>
-            }
+            <LightCurveListWithValues Curves="@Star.LightCurves" CurveLayout="col-12"/>
         }
     </section>
 }
@@ -170,15 +163,14 @@ else
 
     private StarDTO? Star { get; set; }
     private StarCatalog? PrimaryStarCatalog { get; set; }
-    private bool loadingCurveValues { get; set; } = true;
 
     protected override async Task OnInitializedAsync()
     {
         var response = await StarService.GetStarAsync(StarId);
-        if (response.Success)
+        if (response is {Success: true, Data: not null})
         {
             Star = response.Data;
-            PrimaryStarCatalog = Star?.StarCatalogs?.FirstOrDefault(sc => sc.Primary);
+            PrimaryStarCatalog = Star.StarCatalogs?.FirstOrDefault(sc => sc.Primary);
             GetCurveValues();
         }
     }
@@ -187,15 +179,14 @@ else
     {
         foreach (var lc in Star.LightCurves)
         {
-            var res = await LightCurveService.LightCurveSingleValuesGet(lc.Id);
-            if (res.Success)
+            var result = await LightCurveService.LightCurveSingleValuesGet(lc.Id);
+            if (result is {Success: true, Data: not null})
             {
-                lc.Values = res.Data;
+                lc.Values = result.Data;
             }
+            lc.ValuesFinishedLoading = true;
+            StateHasChanged();
         }
-        loadingCurveValues = false;
-        StateHasChanged();
     }
 
 }
-

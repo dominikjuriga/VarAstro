@@ -9,13 +9,11 @@ public class LightCurveService : ILightCurveService
         _http = http;
     }
 
-    public async Task<List<LightCurveDTO>> LightCurveListGet()
+    public async Task<ServiceResponse<List<LightCurveDTO>>> LightCurveListGet()
     {
         var response =
             await _http.GetFromJsonAsync<ServiceResponse<List<LightCurveDTO>>>(Endpoints.ApiLightCurveListGet);
-        if (response is { Data: not null }) return response.Data;
-
-        return new List<LightCurveDTO>();
+        return response;
     }
 
     public async Task<ServiceResponse<LightCurveDTO>> LightCurveSingleGet(int lightCurveId)
