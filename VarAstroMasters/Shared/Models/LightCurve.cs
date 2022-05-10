@@ -11,8 +11,6 @@ public class LightCurve
     [Required] public int StarId { get; set; }
     public Star Star { get; set; }
     public DateTime DateCreated { get; set; } = DateTime.Now;
-
-
     [Required] public string DataFileContent { get; set; } = string.Empty;
     public List<Image> Images { get; set; } = new();
     public int? DeviceId { get; set; }
