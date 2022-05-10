@@ -87,15 +87,19 @@ public class LightCurveService : ILightCurveService
     public async Task<ServiceResponse<int>> LightCurvePost(LightCurveAdd lightCurveAdd)
     {
         var userId = _authService.GetUserId();
+        if (userId is null) return ResponseHelper.FailResponse<int>(Keywords.InvalidToken);
+
         var lightCurve = _mapper.Map<LightCurve>(lightCurveAdd);
         lightCurve.UserId = userId;
 
         var savedCurve = _context.LightCurves.Add(lightCurve);
-        await _context.SaveChangesAsync();
+        var result = await _context.SaveChangesAsync();
+        if (result == 0) return ResponseHelper.FailResponse<int>(Keywords.PostFailed);
 
         return new ServiceResponse<int>
         {
-            Data = savedCurve.Entity.Id
+            Data = savedCurve.Entity.Id,
+            Message = Keywords.PostSucceeded
         };
     }
 
