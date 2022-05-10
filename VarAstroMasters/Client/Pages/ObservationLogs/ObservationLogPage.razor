@@ -23,7 +23,15 @@ else
             }
             else
             {
-                <LightCurveListWithValues Curves="@LightCurves"/>
+                // 
+                <MudSelect Class="mb-3" T="int" MultiSelection="false" SelectedValuesChanged="(e) => HandleFilter(e.First())" Label="Filtrovať podľa názvu hviezdy">
+                    <MudSelectItem T="int" value="@Keywords.DefaultFilter">Všetky</MudSelectItem>
+                    @foreach (var star in Log.DistinctStars)
+                    {
+                        <MudSelectItem T="int" value="@star.Id">@star.Name</MudSelectItem>
+                    }
+                </MudSelect>
+                <LightCurveListWithValues Curves="@FilteredCurves"/>
             }
         }
     </section>
@@ -36,6 +44,7 @@ else
 
     private ObservationLogDetailDTO? Log { get; set; }
     private List<LightCurveDTO>? LightCurves { get; set; }
+    private List<LightCurveDTO>? FilteredCurves { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -44,8 +53,28 @@ else
         {
             Log = response.Data;
             LightCurves = response.Data.Curves;
+            HandleFilter(Keywords.DefaultFilter);
             GetValuesForCurves();
         }
+    }
+
+    private void HandleChange(ChangeEventArgs e)
+    {
+        Console.WriteLine("chanmge");
+        HandleFilter(int.Parse(e.Value.ToString()));
+    }
+
+    private void HandleFilter(int starId)
+    {
+        if (starId == Keywords.DefaultFilter)
+        {
+            FilteredCurves = LightCurves;
+        }
+        else
+        {
+            FilteredCurves = LightCurves.Where(lc => lc.StarId == starId).ToList();
+        }
+        StateHasChanged();
     }
 
     private async Task GetValuesForCurves()

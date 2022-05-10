@@ -40,5 +40,6 @@ public static class Keywords
     public static readonly string CannotDeletePrimaryCat = "Primárny katalóg nie je možné odstrániť.";
     public static readonly string SearchSucceeded = "Pre zadaný výraz bolo nájdených";
     public static readonly string SearchFailed = "Pre zadaný výraz neboli nájdené žiadne výsledky.";
+    public static readonly int DefaultFilter = 0;
     public const string StringLength = "Pole musí obsahovať {2} až {1} znakov.";
 }

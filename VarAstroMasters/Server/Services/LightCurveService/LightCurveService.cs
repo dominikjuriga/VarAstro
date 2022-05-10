@@ -204,14 +204,20 @@ public class LightCurveService : ILightCurveService
         if (user is null) return ResponseHelper.FailResponse<ObservationLogDetailDTO>(Keywords.NotFoundMessage);
 
         List<LightCurveDTO> curveDtos = new();
-        foreach (var curve in data) curveDtos.Add(_mapper.Map<LightCurveDTO>(curve));
+
+        foreach (var curve in data)
+            curveDtos.Add(_mapper.Map<LightCurveDTO>(curve));
+        var stars = data.DistinctBy(lc => lc.StarId).Select(lc => lc.Star).ToList();
+        List<StarBasicDTO> starDtos = new();
+        foreach (var star in stars) starDtos.Add(_mapper.Map<StarBasicDTO>(star));
 
         return new ServiceResponse<ObservationLogDetailDTO>
         {
             Data = new ObservationLogDetailDTO
             {
                 Curves = curveDtos,
-                User = _mapper.Map<UserDTO>(user)
+                User = _mapper.Map<UserDTO>(user),
+                DistinctStars = starDtos
             }
         };
     }
