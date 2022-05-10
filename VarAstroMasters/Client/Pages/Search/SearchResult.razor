@@ -1,49 +1,57 @@
-﻿@page "/Search/{searchQuery}"
+﻿@page "/Search/{SearchQuery}"
 @inject IStarService StarService
 <h3>Výsledky vyhľadávania</h3>
 
-@if (_message is not null)
+@if (Message is not null)
 {
-    <Alert type="danger">
-        @_message
-        <a href="@Endpoints.ClientSearch">Späť na vyhľadávanie.</a>
+    <Alert type="@MessageType">
+        @Message
     </Alert>
 }
 
-@if (_results is {Data: not null})
+@if (Results is not null)
 {
-    @if (_results.Data.Count == 0)
-    {
-        <h4>Nenašli sa žiadne výsledky pre dotaz <strong>@searchQuery</strong>.</h4>
-        <a href="@Endpoints.ClientSearch">Späť na vyhľadávanie.</a>
-    }
-    else
-    {
-        foreach (var result in _results.Data)
-        {
-            <a href="@Endpoints.ClientStarSingleGet/@result.Id">@result.Name</a>
-        }
-    }
+    <section>
+        <ResponsiveTable>
+            <tbody>
+            @foreach (var result in Results)
+            {
+                <tr>
+                    <td>
+                        <a href="@Endpoints.ClientStarSingleGet/@result.Id">@result.Name</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </ResponsiveTable>
+    </section>
 }
 
 @code {
 
     [Parameter]
-    public string searchQuery { get; set; } = string.Empty;
+    public string SearchQuery { get; set; } = string.Empty;
 
-    private string? _message { get; set; }
-    private StarSearchDTO? _results { get; set; }
+    private string? Message { get; set; }
+    private List<Star>? Results { get; set; }
+
+    private string? MessageType { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
-        if (searchQuery.Length < 3)
+        if (SearchQuery.Length < 3)
         {
-            _message = "Dĺžka dotazu musí byť aspoň 3 znaky.";
+            Message = "Dĺžka dotazu musí byť aspoň 3 znaky.";
         }
         else
         {
-            var response = await StarService.Search(searchQuery);
-            _results = response.Data;
+            var response = await StarService.Search(SearchQuery);
+            if (response.Success)
+            {
+                Results = response.Data;
+            }
+            Message = response.Message;
+            MessageType = MessageHelper.GetAlertType(response.Success);
         }
     }
 

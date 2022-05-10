@@ -54,6 +54,10 @@ public class ObservatoryService : IObservatoryService
         if (dbObservatory is null)
             return ResponseHelper.FailResponse<bool>(Keywords.NotFoundMessage);
 
+        if (_context.LightCurves.Any(lc => lc.ObservatoryId == observatoryId))
+            return ResponseHelper.FailResponse<bool>(
+                $"{Keywords.DeleteFailed} Táto hvezdáreň je naviazaná na niektoré vaše pozorovania.");
+
         _context.Observatories.Remove(dbObservatory);
         var result = await _context.SaveChangesAsync();
         if (result == 0) return ResponseHelper.FailResponse<bool>(Keywords.DeleteFailed);

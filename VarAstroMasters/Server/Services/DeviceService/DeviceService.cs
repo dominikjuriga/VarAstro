@@ -54,6 +54,10 @@ public class DeviceService : IDeviceService
         if (dbDevice is null)
             return ResponseHelper.FailResponse<bool>(Keywords.NotFoundMessage);
 
+        if (_context.LightCurves.Any(lc => lc.DeviceId == deviceId))
+            return ResponseHelper.FailResponse<bool>(
+                $"{Keywords.DeleteFailed} Toto zariadenie je naviazané na niektoré vaše pozorovania.");
+
         _context.Devices.Remove(dbDevice);
         await _context.SaveChangesAsync();
 

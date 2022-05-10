@@ -69,6 +69,13 @@ public class StarController : ControllerBase
         return Ok(response);
     }
 
+    [HttpPut("starcatalog")]
+    public async Task<ActionResult<ServiceResponse<StarCatalog>>> StarCatalogPut(StarCatalog starCatalog)
+    {
+        var response = await _starService.StarCatalogPut(starCatalog);
+        return Ok(response);
+    }
+
     [HttpPost("starcatalog/primary")]
     public async Task<ActionResult<ServiceResponse<StarCatalog>>> StarCatalogSetAsPrimaryPost(
         StarCatalogCK identification)
@@ -92,7 +99,7 @@ public class StarController : ControllerBase
     }
 
     [HttpPost("catalog")]
-    public async Task<ActionResult<ServiceResponse<Catalog>>> CatalogPost(CatalogEdit catalog)
+    public async Task<ActionResult<ServiceResponse<Catalog>>> CatalogPost(Catalog catalog)
     {
         var response = await _starService.CatalogPost(catalog);
         return Ok(response);

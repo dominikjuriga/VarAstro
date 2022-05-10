@@ -36,6 +36,14 @@ public class LightCurveService : ILightCurveService
         };
     }
 
+    private List<LightCurveDTO> MapCurvesToList(List<LightCurve> curves)
+    {
+        List<LightCurveDTO> response = new();
+        foreach (var curve in curves) response.Add(_mapper.Map<LightCurveDTO>(curve));
+
+        return response;
+    }
+
     public async Task<ServiceResponse<LightCurveDTO>> LightCurveSingleGet(int curveId)
     {
         var data = await _context.LightCurves
@@ -51,7 +59,7 @@ public class LightCurveService : ILightCurveService
         if (data is null)
             return ResponseHelper.FailResponse<LightCurveDTO>(Keywords.NotFoundMessage);
 
-        if (!IsPublic(data.PublishVariant))
+        if (!PublishHelper.IsPublic(data.PublishVariant))
             return ResponseHelper.FailResponse<LightCurveDTO>(Keywords.NotPublished);
 
         return new ServiceResponse<LightCurveDTO>
@@ -65,7 +73,7 @@ public class LightCurveService : ILightCurveService
         var lc = await _context.LightCurves.Where(lc => lc.Id == id).Include(lc => lc.Star).FirstOrDefaultAsync();
         if (lc is null)
             return null;
-        if (!CanShareFile(lc.PublishVariant))
+        if (!PublishHelper.CanShareFile(lc.PublishVariant))
             return null;
         var fileData = Encoding.ASCII.GetBytes(lc.DataFileContent);
         var fileResult = new FileContentResult(fileData, "text/plain");
@@ -94,7 +102,7 @@ public class LightCurveService : ILightCurveService
         if (curve is null)
             return ResponseHelper.FailResponse<string>(Keywords.NotFoundMessage);
 
-        if (!CanShareCurve(curve.PublishVariant))
+        if (!PublishHelper.CanShareCurve(curve.PublishVariant))
             return ResponseHelper.FailResponse<string>(Keywords.NotPublished);
 
         char[] delimiters = { '\r', '\n' };
@@ -167,11 +175,7 @@ public class LightCurveService : ILightCurveService
             data.Add(new ObservationLogDTO
             {
                 Contributions = item.Contributions,
-                User = new UserSimpleDTO
-                {
-                    Id = item.User.Id,
-                    Name = item.User.UserName
-                }
+                User = _mapper.Map<UserSimpleDTO>(item.User)
             });
 
         return new ServiceResponse<List<ObservationLogDTO>>
@@ -188,57 +192,20 @@ public class LightCurveService : ILightCurveService
             .Include(lc => lc.Observatory)
             .Include(lc => lc.Star)
             .ToListAsync();
-        var user = await _context.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
 
-        var response = MapCurvesToList(data);
+        var user = await _context.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
+        if (user is null) return ResponseHelper.FailResponse<ObservationLogDetailDTO>(Keywords.NotFoundMessage);
+
+        List<LightCurveDTO> curveDtos = new();
+        foreach (var curve in data) curveDtos.Add(_mapper.Map<LightCurveDTO>(curve));
 
         return new ServiceResponse<ObservationLogDetailDTO>
         {
             Data = new ObservationLogDetailDTO
             {
-                Curves = response,
-                User = new UserDTO
-                {
-                    Name = $"{user.FirstName} {user.LastName}"
-                }
+                Curves = curveDtos,
+                User = _mapper.Map<UserDTO>(user)
             }
         };
-    }
-
-    private List<LightCurveDTO> MapCurvesToList(List<LightCurve> curves)
-    {
-        List<LightCurveDTO> response = new();
-        foreach (var curve in curves) response.Add(_mapper.Map<LightCurveDTO>(curve));
-
-        return response;
-    }
-
-    private List<PublishVariant> MapPermissions = new()
-        { PublishVariant.All, PublishVariant.OnlyMap, PublishVariant.OnlyMapAndCurve };
-
-    private List<PublishVariant> CurvePermissions = new()
-        { PublishVariant.All, PublishVariant.OnlyMapAndCurve };
-
-    private List<PublishVariant> FilePermissions = new()
-        { PublishVariant.All };
-
-    private bool IsPublic(PublishVariant variant)
-    {
-        return variant != PublishVariant.None;
-    }
-
-    private bool CanShareMap(PublishVariant variant)
-    {
-        return MapPermissions.Contains(variant);
-    }
-
-    private bool CanShareCurve(PublishVariant variant)
-    {
-        return CurvePermissions.Contains(variant);
-    }
-
-    private bool CanShareFile(PublishVariant variant)
-    {
-        return FilePermissions.Contains(variant);
     }
 }

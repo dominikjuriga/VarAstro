@@ -99,9 +99,18 @@ else
 
     <section>
         <h4>Priebeh krivky</h4>
-        @if (_curve.Values is not null)
+        @if (_curve.ValuesFinishedLoading)
         {
-            <ScatterChart Values="@_curve.Values"></ScatterChart>
+            @if (_curve is {Values: not null})
+            {
+                <ScatterChart Values="@_curve.Values"></ScatterChart>
+            }
+            else
+            {
+                <Alert type="@Keywords.AlertDanger">
+                    @Keywords.NotPublished
+                </Alert>
+            }
         }
         else
         {
@@ -143,10 +152,12 @@ else
     private async Task GetValuesForCurve()
     {
         var response = await LightCurveService.LightCurveSingleValuesGet(LightCurveId);
-        if (response.Success)
+        if (response is {Success: true})
         {
             _curve.Values = response.Data;
         }
+
+        _curve.ValuesFinishedLoading = true;
         StateHasChanged();
     }
 

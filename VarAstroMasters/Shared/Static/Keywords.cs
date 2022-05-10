@@ -23,6 +23,7 @@ public static class Keywords
     public static readonly string AlertDanger = "danger";
     public static readonly string AcceptedImageFormats = "image/png, image/jpeg, image/gif";
     public static readonly string NotFoundMessage = "Objekt nenájdený.";
+    public static readonly string AlreadyExists = "Objekt so zhodným identifikátorom už existuje.";
     public static readonly string NotPublished = "Tento záznam nie je verejný.";
     public static readonly string CurveNotPublished = "Toto pozorovanie nemá zverejnenú krivku.";
     public static readonly string MapNotPublished = "Toto pozorovanie nemá zverejnenú mapu.";
@@ -36,5 +37,8 @@ public static class Keywords
     public static readonly string PutFailed = "Úprava záznamu bola neúspešná.";
     public static readonly string PostFailed = "Vytvorenie záznamu bolo neúspešné.";
     public static readonly string DeleteFailed = "Odstránenie záznamu bolo neúspešné.";
+    public static readonly string CannotDeletePrimaryCat = "Primárny katalóg nie je možné odstrániť.";
+    public static readonly string SearchSucceeded = "Pre zadaný výraz bolo nájdených";
+    public static readonly string SearchFailed = "Pre zadaný výraz neboli nájdené žiadne výsledky.";
     public const string StringLength = "Pole musí obsahovať {2} až {1} znakov.";
 }

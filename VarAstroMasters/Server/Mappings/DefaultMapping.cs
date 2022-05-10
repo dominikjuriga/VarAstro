@@ -12,6 +12,9 @@ public class DefaultMapping : Profile
         CreateMap<Observatory, ObservatoryDTO>();
         CreateMap<User, UserDTO>().ForMember(dest => dest.Name,
             opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
+        CreateMap<User, UserSimpleDTO>().ForMember(dest => dest.Name,
+            opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
+
         CreateMap<LightCurve, LightCurveDTO>();
     }
 }

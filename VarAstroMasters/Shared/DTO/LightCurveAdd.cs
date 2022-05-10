@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Http;
+using VarAstroMasters.Shared.Models;
 
-namespace VarAstroMasters.Shared.Models;
+namespace VarAstroMasters.Shared.DTO;
 
 public class LightCurveAdd
 {

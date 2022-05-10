@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace VarAstroMasters.Shared.Models;
+﻿namespace VarAstroMasters.Shared.Models;
 
 public class Star
 {

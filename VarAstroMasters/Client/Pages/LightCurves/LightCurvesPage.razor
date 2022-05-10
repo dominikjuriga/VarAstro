@@ -25,8 +25,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _lightCurves = await LightCurveService.LightCurveListGet();
-        GetValuesForCurves();
+        var response = await LightCurveService.LightCurveListGet();
+        if (response is {Success:true, Data: not null})
+        {
+            _lightCurves = response.Data;
+            GetValuesForCurves();
+        }
     }
 
     private async Task GetValuesForCurves()
@@ -39,6 +43,7 @@ else
                 curve.Values = response.Data;
                 StateHasChanged();
             }
+            curve.ValuesFinishedLoading = true;
         }
     }
 
