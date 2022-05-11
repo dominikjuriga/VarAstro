@@ -62,7 +62,6 @@ else
                     <InputNumber id="latitude" @bind-Value="ObservatoryEdit.Latitude" class="form-control"></InputNumber>
                     <ValidationMessage For="@(() => ObservatoryEdit.Latitude)"/>
                 </div>
-                <ValidationSummary></ValidationSummary>
 
                 <button type="submit" class="btn btn-primary">Uložiť</button>
                 <button type="button" @onclick="CancelEdit" class="btn btn-secondary">Zrušiť</button>

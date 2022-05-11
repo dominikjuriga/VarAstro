@@ -1,0 +1,53 @@
+﻿@inject IAuthService AuthService
+@inject ILocalStorageService LocalStorageService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<MudNavMenu Class="my-3">
+    <MudNavLink Icon="@Icons.Filled.Home" Match="NavLinkMatch.All" Href="/">Domov</MudNavLink>
+    <MudNavLink Icon="@Icons.Filled.MenuBook" Href="@Endpoints.ClientObservationLogListGet">Pozorovacie denníky</MudNavLink>
+    <MudNavLink Icon="@Icons.Filled.Search" Href="@Endpoints.ClientSearch">Vyhľadávanie</MudNavLink>
+    <MudNavLink Icon="@Icons.Filled.Star" Href="@Endpoints.ClientStarListGet">Hviezdy</MudNavLink>
+    <MudNavLink Icon="@Icons.Filled.Stars" Href="@Endpoints.ClientStarDraftListGet">Moje Hviezdy</MudNavLink>
+    <MudNavGroup Icon="@Icons.Filled.Person" Title="Používateľ" Expanded="false">
+        <MudNavLink Icon="@Icons.Filled.Camera" Href="@Endpoints.ClientDeviceListGet">Zariadenia</MudNavLink>
+        <MudNavLink Icon="@Icons.Filled.Place" Href="@Endpoints.ClientObservatoryListGet">Hvezdárne</MudNavLink>
+    </MudNavGroup>
+    <AuthorizeView Roles="@Keywords.Role_Admin">
+        <MudNavGroup Icon="@Icons.Filled.Lock" Title="Administrácia" Expanded="false">
+            <MudNavLink Icon="@Icons.Filled.DataArray" Href="@Endpoints.ClientAdminCatalogs">Katalógy</MudNavLink>
+        </MudNavGroup>
+    </AuthorizeView>
+
+    <MudDivider Class="my-2"/>
+
+    <AuthorizeView>
+        <Authorized>
+            <MudButton Class="text-center" Variant="Variant.Filled" @onclick="HandleLogOut">
+                Odhlásiť sa
+            </MudButton>
+        </Authorized>
+        <NotAuthorized>
+            <MudNavLink Icon="@Icons.Filled.Login" Href="@Endpoints.ClientAuthLogIn">Prihlásenie</MudNavLink>
+            <MudNavLink Icon="@Icons.Filled.PersonAdd" Href="@Endpoints.ClientDeviceListGet">Registrácia</MudNavLink>
+        </NotAuthorized>
+    </AuthorizeView>
+
+    <MudDivider Class="my-2"/>
+</MudNavMenu>
+
+@code {
+
+    private async Task HandleLogOut()
+    {
+        if (await LocalStorageService.ContainKeyAsync(Keywords.JWT_Bearer_Token))
+        {
+            await LocalStorageService.RemoveItemAsync(Keywords.JWT_Bearer_Token);
+            ((AppAuthStateProvider)AuthenticationStateProvider).LogOut();
+        }
+
+        StateHasChanged();
+        NavigationManager.NavigateTo("/");
+    }
+
+}

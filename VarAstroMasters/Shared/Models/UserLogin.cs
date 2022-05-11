@@ -1,16 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using VarAstroMasters.Shared.Static;
 
 namespace VarAstroMasters.Shared.Models;
 
 public class UserLogin
 {
-    [Required]
-    [EmailAddress]
-    [Display(Name ="Email Address")]
-    public string EmailAddress { get; set;} = String.Empty;
+    [Required(ErrorMessage = Keywords.FormFieldRequired)]
+    [EmailAddress(ErrorMessage = Keywords.FormInvalidFormat)]
+    public string EmailAddress { get; set; } = string.Empty;
 
-    [Required]
-    [DataType(DataType.Password)]
-    [Display(Name ="Password")]
-    public string Password { get; set;} = String.Empty;
+    [Required(ErrorMessage = Keywords.FormFieldRequired)]
+    [DataType(DataType.Password, ErrorMessage = Keywords.FormInvalidFormat)]
+    public string Password { get; set; } = string.Empty;
 }

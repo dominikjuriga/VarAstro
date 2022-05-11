@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using VarAstroMasters.Shared.Static;
 
 namespace VarAstroMasters.Shared.Models;
 
 public class SearchQuery
 {
-    [Required(ErrorMessage = "Pole dotaz je povinné.")]
-    [StringLength(50, MinimumLength = 3, ErrorMessage = "Dotaz musí mať dĺžku {2}-{1} znakov.")]
+    [Required(ErrorMessage = Keywords.FormFieldRequired)]
+    [StringLength(50, MinimumLength = 3, ErrorMessage = Keywords.FormStringLength)]
     public string Query { get; set; } = string.Empty;
 }

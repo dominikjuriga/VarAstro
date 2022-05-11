@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using VarAstroMasters.Shared.Static;
 
 namespace VarAstroMasters.Shared.Models;
 
@@ -15,14 +16,12 @@ public class StarVariability
     public int StarId { get; set; }
     public VariabilityType VariabilityType { get; set; }
 
-    [Required]
-    [Column(TypeName = "decimal(18, 9)")]
+    [Required(ErrorMessage = Keywords.FormFieldRequired)]
+    public double Epoch { get; set; }
 
-    public decimal Epoch { get; set; }
+    [Required(ErrorMessage = Keywords.FormFieldRequired)]
+    public double Period { get; set; }
 
-    [Required]
-    [Column(TypeName = "decimal(18, 9)")]
-    public decimal Period { get; set; }
-
-    [Required] public double PrimaryMinimum { get; set; }
+    [Required(ErrorMessage = Keywords.FormFieldRequired)]
+    public double PrimaryMinimum { get; set; }
 }

@@ -92,7 +92,9 @@ namespace VarAstroMasters.Server.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    RA = table.Column<double>(type: "double", nullable: false),
+                    DEC = table.Column<double>(type: "double", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -233,7 +235,7 @@ namespace VarAstroMasters.Server.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "longtext", nullable: false)
+                    Name = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     UserId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
@@ -256,8 +258,8 @@ namespace VarAstroMasters.Server.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Longitude = table.Column<decimal>(type: "decimal(10,8)", nullable: false),
-                    Latitude = table.Column<decimal>(type: "decimal(10,8)", nullable: false),
+                    Longitude = table.Column<double>(type: "double", nullable: false),
+                    Latitude = table.Column<double>(type: "double", nullable: false),
                     Address = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     UserId = table.Column<string>(type: "varchar(255)", nullable: false)
@@ -309,11 +311,9 @@ namespace VarAstroMasters.Server.Migrations
                     StarId = table.Column<int>(type: "int", nullable: false),
                     CatalogId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Ra = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Dec = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Mag = table.Column<decimal>(type: "decimal(10,3)", nullable: false),
+                    Ra = table.Column<double>(type: "double", nullable: false),
+                    Dec = table.Column<double>(type: "double", nullable: false),
+                    Mag = table.Column<double>(type: "double", nullable: false),
                     CrossId = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Primary = table.Column<bool>(type: "tinyint(1)", nullable: false)
@@ -369,8 +369,8 @@ namespace VarAstroMasters.Server.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     StarId = table.Column<int>(type: "int", nullable: false),
                     VariabilityType = table.Column<int>(type: "int", nullable: false),
-                    Epoch = table.Column<decimal>(type: "decimal(18,9)", nullable: false),
-                    Period = table.Column<decimal>(type: "decimal(18,9)", nullable: false),
+                    Epoch = table.Column<double>(type: "double", nullable: false),
+                    Period = table.Column<double>(type: "double", nullable: false),
                     PrimaryMinimum = table.Column<double>(type: "double", nullable: false)
                 },
                 constraints: table =>
@@ -398,10 +398,8 @@ namespace VarAstroMasters.Server.Migrations
                     DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     DataFileContent = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ImageFileName = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     DeviceId = table.Column<int>(type: "int", nullable: true),
-                    Comment = table.Column<string>(type: "longtext", nullable: false)
+                    Comment = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ObservatoryId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -433,6 +431,27 @@ namespace VarAstroMasters.Server.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "Images",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Data = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LightCurveId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Images", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Images_LightCurves_LightCurveId",
+                        column: x => x.LightCurveId,
+                        principalTable: "LightCurves",
+                        principalColumn: "Id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.InsertData(
                 table: "Catalogs",
                 column: "Name",
@@ -445,18 +464,18 @@ namespace VarAstroMasters.Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "Stars",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 1, "CzeV 343" });
+                columns: new[] { "Id", "DEC", "Name", "RA" },
+                values: new object[] { 1, 0.0, "CzeV 343", 0.0 });
 
             migrationBuilder.InsertData(
                 table: "StarCatalog",
                 columns: new[] { "CatalogId", "StarId", "CrossId", "Dec", "Mag", "Primary", "Ra" },
-                values: new object[] { "UCAC4", 1, "605-025126", "+30:57:03.59", 13.71m, true, "05:48:24.012" });
+                values: new object[] { "UCAC4", 1, "605-025126", 30.0, 13.710000000000001, true, 75.0 });
 
             migrationBuilder.InsertData(
                 table: "StarVariability",
                 columns: new[] { "Id", "Epoch", "Period", "PrimaryMinimum", "StarId", "VariabilityType" },
-                values: new object[] { 1, 2455958.36058m, 1.209373m, 13.720000000000001, 1, 1 });
+                values: new object[] { 1, 2455958.3605800001, 1.209373, 13.720000000000001, 1, 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -499,6 +518,11 @@ namespace VarAstroMasters.Server.Migrations
                 name: "IX_Devices_UserId",
                 table: "Devices",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Images_LightCurveId",
+                table: "Images",
+                column: "LightCurveId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LightCurves_DeviceId",
@@ -566,7 +590,7 @@ namespace VarAstroMasters.Server.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "LightCurves");
+                name: "Images");
 
             migrationBuilder.DropTable(
                 name: "StarCatalog");
@@ -584,13 +608,16 @@ namespace VarAstroMasters.Server.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "LightCurves");
+
+            migrationBuilder.DropTable(
+                name: "Catalogs");
+
+            migrationBuilder.DropTable(
                 name: "Devices");
 
             migrationBuilder.DropTable(
                 name: "Observatories");
-
-            migrationBuilder.DropTable(
-                name: "Catalogs");
 
             migrationBuilder.DropTable(
                 name: "Stars");

@@ -1,73 +1,49 @@
 ﻿@page "/login"
-@using Microsoft.AspNetCore.WebUtilities
 @inject IAuthService AuthService
 @inject ILocalStorageService LocalStorageService
-@inject NavigationManager NavigationManager
+@* @inject NavigationManager NavigationManager *@
 @inject HttpClient HttpClient
 @inject AppAuthStateProvider AuthStateProvider 
 
 <PageTitle>Prihlásenie | @Keywords.DefaultPageTitle</PageTitle>
 
-<h3>Prihlásenie</h3>
-
-@if (!succeeded)
+@if (!Succeeded)
 {
-    <EditForm Model="_userLogin" OnValidSubmit="HandleLogin">
-        <DataAnnotationsValidator/>
+    <MudCard>
+        <EditForm Model="UserLogin" OnValidSubmit="HandleLogin">
+            <MudCardContent>
+                <MudText>Prihlásenie</MudText>
+                <DataAnnotationsValidator/>
+                <MudTextField @bind-Value="UserLogin.EmailAddress" Label="Email" For="@(() => UserLogin.EmailAddress)"/>
+                <MudTextField @bind-Value="UserLogin.Password" Label="Heslo" For="@(() => UserLogin.Password)" InputType="InputType.Password"/>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Prihlásiť sa</MudButton>
+            </MudCardActions>
 
-        <div class="form-group my-3">
-            <label for="email">Email</label>
-            <InputText @bind-Value="_userLogin.EmailAddress" id="email" class="form-control"/>
-            <ValidationMessage For="@(() => _userLogin.EmailAddress)"/>
-        </div>
-
-        <div class="form-group my-3">
-            <label for="password">Heslo</label>
-            <InputText @bind-Value="_userLogin.Password" id="password" type="password" class="form-control"/>
-            <ValidationMessage For="@(() => _userLogin.Password)"/>
-        </div>
-
-        <ValidationSummary/>
-
-        <button type="submit" class="btn btn-primary btn-lg">Prihlásiť sa</button>
-    </EditForm>
+        </EditForm>
+    </MudCard>
 }
 else
 {
-    <Alert>
-        Prihlásenie prebehlo úspešne.
-    </Alert>
+    <MudAlert Severity="Severity.Success">Prihlásenie prebehlo úspešne.</MudAlert>
 }
 
 @code {
-    private UserLogin _userLogin { get; set; } = new();
-    private bool succeeded { get; set; } = false;
-
-    protected override void OnInitialized()
-    {
-        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
-    // if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("returnUrl", out var url))
-    // {
-    //     _returnUrl = url;
-    // }
-    }
+    private UserLogin UserLogin { get; set; } = new();
+    private bool Succeeded { get; set; }
 
     private async Task HandleLogin()
     {
-        var response = await AuthService.LogIn(_userLogin);
+        var response = await AuthService.LogIn(UserLogin);
         if (response is {Success: true })
         {
-    // _message = string.Empty;
             await LocalStorageService.SetItemAsync(Keywords.JWT_Bearer_Token, response.Data);
             await AuthStateProvider.LogIn();
             HttpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue(Keywords.Client_HTTP_Bearer_Header,
                     response.Data);
-            succeeded = true;
-        }
-        else
-        {
-    // _message = response.Message;
+            Succeeded = true;
         }
     }
 

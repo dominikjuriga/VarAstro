@@ -60,17 +60,34 @@ else
                     </td>
                 </tr>
             }
-            @if (PrimaryStarCatalog is not null)
-            {
-                <tr>
-                    <th scope="row">RA</th>
-                    <td>@PrimaryStarCatalog.Ra (@PrimaryStarCatalog.CatalogId)</td>
-                </tr>
-                <tr>
-                    <th scope="row">DEC</th>
-                    <td>@PrimaryStarCatalog.Dec (@PrimaryStarCatalog.CatalogId)</td>
-                </tr>
-            }
+            <tr>
+                <th scope="row">RA</th>
+                <td>
+                    <MudChip Color="Color.Info">
+                        @Star.RA (astrometria)
+                    </MudChip>
+                    @if (PrimaryStarCatalog is not null)
+                    {
+                        <MudChip>
+                            @PrimaryStarCatalog.Ra (@PrimaryStarCatalog.CatalogId)
+                        </MudChip>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">DEC</th>
+                <td>
+                    <MudChip Color="Color.Info">
+                        @Star.DEC (astrometria)
+                    </MudChip>
+                    @if (PrimaryStarCatalog is not null)
+                    {
+                        <MudChip>
+                            @PrimaryStarCatalog.Dec (@PrimaryStarCatalog.CatalogId)
+                        </MudChip>
+                    }
+                </td>
+            </tr>
             @if (Star is {StarPublish: not null})
             {
                 <tr>

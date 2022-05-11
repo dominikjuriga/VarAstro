@@ -104,7 +104,7 @@ else
                         <label for="ra" class="form-label">
                             RA
                         </label>
-                        <InputText id="ra" @bind-Value="_editSC.Ra" class="form-control"></InputText>
+                        <InputNumber id="ra" @bind-Value="_editSC.Ra" class="form-control"></InputNumber>
                         <ValidationMessage For="@(() => _editSC.Ra)"/>
                     </div>
 
@@ -112,7 +112,7 @@ else
                         <label for="dec" class="form-label">
                             DEC
                         </label>
-                        <InputText id="dec" @bind-Value="_editSC.Dec" class="form-control"></InputText>
+                        <InputNumber id="dec" @bind-Value="_editSC.Dec" class="form-control"></InputNumber>
                         <ValidationMessage For="@(() => _editSC.Dec)"/>
                     </div>
 

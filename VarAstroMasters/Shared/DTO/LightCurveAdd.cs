@@ -1,25 +1,31 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using VarAstroMasters.Shared.Models;
+using VarAstroMasters.Shared.Static;
 
 namespace VarAstroMasters.Shared.DTO;
 
 public class LightCurveAdd
 {
-    [Required] public int StarId { get; set; }
+    [Required(ErrorMessage = Keywords.FormFieldRequired)]
+    public int StarId { get; set; }
 
-    [Required(ErrorMessage = "Dátový súbor je povinný.")]
+    [Required(ErrorMessage = Keywords.FormFieldRequired)]
     public string DataFileContent { get; set; }
 
-    [Required(ErrorMessage = "Pole Formát JD je povinné.")]
+    [Required(ErrorMessage = Keywords.FormFieldRequired)]
+
     public string? JD { get; set; }
 
-    [Required(ErrorMessage = "Pole filter je povinné.")]
+    [Required(ErrorMessage = Keywords.FormFieldRequired)]
+
     public string? Filter { get; set; }
 
-    [Required(ErrorMessage = "Pole fotometrický systém je povinné.")]
+    [Required(ErrorMessage = Keywords.FormFieldRequired)]
+
     public string? PhotometricSystem { get; set; } = null;
 
-    [Required(ErrorMessage = "Pole zverejniť pozorovanie je povinné.")]
+    [Required(ErrorMessage = Keywords.FormFieldRequired)]
+
     public PublishVariant PublishVariant { get; set; } = PublishVariant.All;
 
     public string Comment { get; set; } = string.Empty;

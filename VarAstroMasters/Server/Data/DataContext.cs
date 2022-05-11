@@ -22,7 +22,9 @@ public class DataContext : IdentityDbContext<User>
             new Star
             {
                 Id = 1,
-                Name = "CzeV 343"
+                Name = "CzeV 343",
+                RA = 12,
+                DEC = 13
             }
         );
 
@@ -43,9 +45,9 @@ public class DataContext : IdentityDbContext<User>
                 StarId = 1,
                 CatalogId = "UCAC4",
                 CrossId = "605-025126",
-                Ra = "05:48:24.012",
-                Dec = "+30:57:03.59",
-                Mag = 13.71m,
+                Ra = 75.00d,
+                Dec = 30.00d,
+                Mag = 13.71d,
                 Primary = true
             }
         );
@@ -54,8 +56,8 @@ public class DataContext : IdentityDbContext<User>
             new StarVariability
             {
                 Id = 1,
-                Epoch = 2455958.36058m,
-                Period = 1.209373m,
+                Epoch = 2455958.36058d,
+                Period = 1.209373d,
                 PrimaryMinimum = 13.72,
                 StarId = 1,
                 VariabilityType = VariabilityType.Extrinsic

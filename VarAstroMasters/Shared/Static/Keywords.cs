@@ -41,5 +41,9 @@ public static class Keywords
     public static readonly string SearchSucceeded = "Pre zadaný výraz bolo nájdených";
     public static readonly string SearchFailed = "Pre zadaný výraz neboli nájdené žiadne výsledky.";
     public static readonly int DefaultFilter = 0;
-    public const string StringLength = "Pole musí obsahovať {2} až {1} znakov.";
+    public const string FormStringLength = "Pole musí obsahovať {2} až {1} znakov.";
+    public const string FormValueRange = "Hodnota pola musí byť v rozmedzí {2} až {1}.";
+    public const string FormFieldRequired = "Toto pole je povinné.";
+    public const string FormInvalidFormat = "Táto hodnota nie je pre toto pole platná.";
+    public const string FormPasswordMismatch = "Heslá sa musia zhodovať.";
 }

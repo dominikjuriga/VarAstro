@@ -1,28 +1,60 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu/>
-    </div>
+@* <div class="page"> *@
+@*     <div class="sidebar"> *@
+@*         <CustomNavMenu/> *@
+@*     </div> *@
+@* *@
+@*     <main> *@
+@*         <div class="top-row px-4"> *@
+@*             <a href="/swagger/index.html">API Ref</a> *@
+@*         </div> *@
+@* *@
+@*         <article class="content px-4"> *@
+@*             @Body *@
+@*         </article> *@
+@*     </main> *@
+@* </div> *@
+@* *@
+@* <MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme"/> *@
+@* <MudDialogProvider/> *@
+@* <MudSnackbarProvider/> *@
 
-    <main>
-        <div class="top-row px-4">
-            <a href="/swagger/index.html">API Ref</a>
-        </div>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
-
-<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme"/>
+<MudThemeProvider Theme="_theme" @bind-IsDarkMode="_isDarkMode"/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
+
+<MudLayout>
+    <MudAppBar>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
+        Var Astro
+    </MudAppBar>
+    <MudDrawer @bind-Open="@_drawerOpen" Class="text-center">
+        <CustomNavMenu/>
+        <div class="d-flex align-items-center justify-content-center">
+            <MudIcon Icon="@Icons.Filled.LightMode"/>
+            <MudSwitch @bind-Checked="@_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool"/>
+            <MudIcon Icon="@Icons.Filled.DarkMode"/>
+        </div>
+
+    </MudDrawer>
+    <MudMainContent>
+        <MudContainer Class="mt-5">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
 
 @code {
 
     private MudTheme _theme = new();
-    private bool _isDarkMode = false;
+    private bool _isDarkMode = true;
+    private bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
 
 }

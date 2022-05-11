@@ -179,7 +179,8 @@ namespace VarAstroMasters.Server.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -267,11 +268,11 @@ namespace VarAstroMasters.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<decimal>("Latitude")
-                        .HasColumnType("decimal(10,8)");
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double");
 
-                    b.Property<decimal>("Longitude")
-                        .HasColumnType("decimal(10,8)");
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -290,9 +291,15 @@ namespace VarAstroMasters.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<double>("DEC")
+                        .HasColumnType("double");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<double>("RA")
+                        .HasColumnType("double");
 
                     b.HasKey("Id");
 
@@ -302,7 +309,9 @@ namespace VarAstroMasters.Server.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "CzeV 343"
+                            DEC = 0.0,
+                            Name = "CzeV 343",
+                            RA = 0.0
                         });
                 });
 
@@ -318,19 +327,17 @@ namespace VarAstroMasters.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Dec")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<double>("Dec")
+                        .HasColumnType("double");
 
-                    b.Property<decimal>("Mag")
-                        .HasColumnType("decimal(10,3)");
+                    b.Property<double>("Mag")
+                        .HasColumnType("double");
 
                     b.Property<bool>("Primary")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("Ra")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<double>("Ra")
+                        .HasColumnType("double");
 
                     b.HasKey("CatalogId", "StarId");
 
@@ -344,10 +351,10 @@ namespace VarAstroMasters.Server.Migrations
                             CatalogId = "UCAC4",
                             StarId = 1,
                             CrossId = "605-025126",
-                            Dec = "+30:57:03.59",
-                            Mag = 13.71m,
+                            Dec = 30.0,
+                            Mag = 13.710000000000001,
                             Primary = true,
-                            Ra = "05:48:24.012"
+                            Ra = 75.0
                         });
                 });
 
@@ -414,11 +421,11 @@ namespace VarAstroMasters.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Epoch")
-                        .HasColumnType("decimal(18,9)");
+                    b.Property<double>("Epoch")
+                        .HasColumnType("double");
 
-                    b.Property<decimal>("Period")
-                        .HasColumnType("decimal(18,9)");
+                    b.Property<double>("Period")
+                        .HasColumnType("double");
 
                     b.Property<double>("PrimaryMinimum")
                         .HasColumnType("double");
@@ -440,8 +447,8 @@ namespace VarAstroMasters.Server.Migrations
                         new
                         {
                             Id = 1,
-                            Epoch = 2455958.36058m,
-                            Period = 1.209373m,
+                            Epoch = 2455958.3605800001,
+                            Period = 1.209373,
                             PrimaryMinimum = 13.720000000000001,
                             StarId = 1,
                             VariabilityType = 1
