@@ -6,7 +6,7 @@ public interface IStarService
 {
     Task<ServiceResponse<StarDTO>> StarSingleGet(int starId);
     Task<ServiceResponse<List<Star>>> StarListGet();
-    Task<ServiceResponse<List<Star>>> Search(string searchQuery);
+    Task<ServiceResponse<StarSearchDTO>> Search(string searchQuery);
 
     Task<ServiceResponse<StarPublish>> PublicationSingleGet(int starId);
     Task<ServiceResponse<StarPublish>> PublicationPost(StarPublish starPublish);

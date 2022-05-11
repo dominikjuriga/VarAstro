@@ -1,38 +1,25 @@
 ﻿@page "/Stars"
 @inject IStarService StarService
-<h3>Hviezdy</h3>
 
-@if (_stars.Count == 0)
-{
-    <Loader/>
-}
-else
-{
-    <section>
-        @if (_stars.Count == 0)
-        {
-            <h4>Neexistujú žiadne hviezdy.</h4>
-        }
-        else
-        {
-            <ul>
-                @foreach (var star in _stars)
-                {
-                    <li>
-                        <a href="@Endpoints.ClientStarSingleGet/@star.Id">@star.Name</a>
-                    </li>
-                }
-            </ul>
-        }
-    </section>
-}
+<MudCard>
+    <MudCardContent>
+        <MudText Typo="Typo.h3">Hviezdy</MudText>
+        <StarListTable Data="Stars" Loading="Loading"></StarListTable>
+    </MudCardContent>
+</MudCard>
 
 @code {
-    private List<StarDTO> _stars = new();
+    private List<StarDTO> Stars { get; set; } = new();
+    private bool Loading { get; set; } = true;
 
     protected override async Task OnInitializedAsync()
     {
-        _stars = await StarService.GetStarsAsync();
+        var response = await StarService.GetStarsAsync();
+        if (response is {Success: true, Data: not null})
+        {
+            Stars = response.Data;
+        }
+        Loading = false;
     }
 
 }

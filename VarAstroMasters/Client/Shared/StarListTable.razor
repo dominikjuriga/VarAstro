@@ -1,0 +1,33 @@
+﻿@inject NavigationManager NavigationManager
+
+<MudTable Striped="@true" Items="Data" Hover="true" Loading="@Loading" T="StarDTO" OnRowClick="@RowClicked">
+    <HeaderContent>
+        <MudTh>Názov</MudTh>
+        <MudTh>RA</MudTh>
+        <MudTh>DEC</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Názov">
+            <div class="cursor-pointer">
+                @context.Name
+            </div>
+        </MudTd>
+        <MudTd DataLabel="RA">@context.RA</MudTd>
+        <MudTd DataLabel="DEC">@context.DEC</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+
+    [Parameter]
+    public bool Loading { get; set; }
+
+    [Parameter]
+    public List<StarDTO> Data { get; set; } = new();
+
+    public void RowClicked(TableRowClickEventArgs<StarDTO> c)
+    {
+        NavigationManager.NavigateTo($"{Endpoints.ClientStarSingleGet}/{c.Item.Id}");
+    }
+
+}

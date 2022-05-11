@@ -4,9 +4,9 @@ namespace VarAstroMasters.Client.Services.StarService;
 
 public interface IStarService
 {
-    Task<List<StarDTO>> GetStarsAsync();
+    Task<ServiceResponse<List<StarDTO>>> GetStarsAsync();
     Task<ServiceResponse<StarDTO>> GetStarAsync(int starId);
-    Task<ServiceResponse<List<Star>>> Search(string searchQuery);
+    Task<ServiceResponse<StarSearchDTO>> Search(string searchQuery);
     Task<ServiceResponse<StarPublish>> GetPublication(int starId);
     Task<ServiceResponse<List<StarCatalog>>> GetStarCatalogs(int starId);
     Task<ServiceResponse<StarCatalog>> SaveStarCatalog(StarCatalog starCatalog);

@@ -9,12 +9,10 @@ public class StarService : IStarService
         _httpClient = httpClient;
     }
 
-    public async Task<List<StarDTO>> GetStarsAsync()
+    public async Task<ServiceResponse<List<StarDTO>>> GetStarsAsync()
     {
         var response = await _httpClient.GetFromJsonAsync<ServiceResponse<List<StarDTO>>>(Endpoints.ApiStarAllGet);
-        if (response is { Data: not null }) return response.Data;
-
-        return new List<StarDTO>();
+        return response;
     }
 
     public async Task<ServiceResponse<StarDTO>> GetStarAsync(int starId)
@@ -24,10 +22,10 @@ public class StarService : IStarService
         return response;
     }
 
-    public async Task<ServiceResponse<List<Star>>> Search(string searchQuery)
+    public async Task<ServiceResponse<StarSearchDTO>> Search(string searchQuery)
     {
         var response =
-            await _httpClient.GetFromJsonAsync<ServiceResponse<List<Star>>>(
+            await _httpClient.GetFromJsonAsync<ServiceResponse<StarSearchDTO>>(
                 $"{Endpoints.ApiStarSearch}/{searchQuery}");
         return response;
     }

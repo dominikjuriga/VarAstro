@@ -48,17 +48,22 @@ public class StarService : IStarService
         };
     }
 
-    public async Task<ServiceResponse<List<Star>>> Search(string searchQuery)
+    public async Task<ServiceResponse<StarSearchDTO>> Search(string searchQuery)
     {
         var data = await _context.Stars
             .Where(s => s.Name.ToLower().Contains(searchQuery.ToLower()))
             .ToListAsync();
 
         var msg = data.Count == 0 ? Keywords.SearchFailed : $"{Keywords.SearchSucceeded} {data.Count} záznamov.";
+        List<StarDTO> dtos = new();
+        foreach (var star in data) dtos.Add(_mapper.Map<StarDTO>(star));
 
-        return new ServiceResponse<List<Star>>
+        return new ServiceResponse<StarSearchDTO>
         {
-            Data = data,
+            Data = new StarSearchDTO
+            {
+                Data = dtos
+            },
             Message = msg
         };
     }

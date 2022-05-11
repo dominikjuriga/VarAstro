@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-
+@inject ILocalStorageService LocalStorageService
 @* <div class="page"> *@
 @*     <div class="sidebar"> *@
 @*         <CustomNavMenu/> *@
@@ -21,7 +21,7 @@
 @* <MudSnackbarProvider/> *@
 
 
-<MudThemeProvider Theme="_theme" @bind-IsDarkMode="_isDarkMode"/>
+<MudThemeProvider Theme="Theme" @bind-IsDarkMode="IsDarkMode"/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
@@ -30,11 +30,11 @@
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
         Var Astro
     </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen" Class="text-center">
+    <MudDrawer @bind-Open="@DrawerOpen" Class="text-center">
         <CustomNavMenu/>
         <div class="d-flex align-items-center justify-content-center">
             <MudIcon Icon="@Icons.Filled.LightMode"/>
-            <MudSwitch @bind-Checked="@_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool"/>
+            <MudSwitch @bind-Checked="IsDarkMode" Color="Color.Primary" Class="ma-4" T="bool"/>
             <MudIcon Icon="@Icons.Filled.DarkMode"/>
         </div>
 
@@ -48,13 +48,29 @@
 
 @code {
 
-    private MudTheme _theme = new();
-    private bool _isDarkMode = true;
-    private bool _drawerOpen = true;
+    private MudTheme Theme { get; set; } = new();
+
+    private bool IsDarkMode { get; set; } = true;
+
+    private bool DrawerOpen { get; set; } = true;
 
     void DrawerToggle()
     {
-        _drawerOpen = !_drawerOpen;
+        DrawerOpen = !DrawerOpen;
     }
+
+    // private async Task SaveToLocalStorage(bool value)
+    // {
+    //     await LocalStorageService.SetItemAsync(Keywords.DarkMode, value);
+    // }
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     var item = await LocalStorageService.ContainKeyAsync(Keywords.DarkMode);
+    //     if (item)
+    //     {
+    //         IsDarkMode = item;
+    //     }
+    // }
 
 }

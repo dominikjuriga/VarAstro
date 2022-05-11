@@ -6,6 +6,7 @@ public static class Keywords
     public static readonly string JWT_Issuer = "Jwt:Issuer";
     public static readonly string JWT_Key = "Jwt:Key";
     public static readonly string JWT_Bearer_Token = "bearerToken";
+    public static readonly string DarkMode = "DarkMode";
     public static readonly string AuthType = "jwt";
     public static readonly string Role_User = "User";
     public static readonly string Role_Admin = "Administrator";

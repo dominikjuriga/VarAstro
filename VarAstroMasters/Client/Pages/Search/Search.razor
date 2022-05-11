@@ -1,47 +1,38 @@
 ﻿@page "/Search"
 @inject IStarService StarService
 @inject NavigationManager NavigationManager
-<h3>Vyhľadávanie</h3>
 
-@if (_message is not null)
+@if (Message is not null)
 {
-    <Alert type="danger">
-        @_message
-    </Alert>
+    <MudAlert Severity="Severity.Error">@Message</MudAlert>
 }
 
-<section>
-    <div class="my-3">
-        <label for="Query" class="form-label">
-            Dotaz (vyhľadajte hviezdy podľa názvu)
-        </label>
-        <input class="form-control" @bind-value="_query" @ref="searchInput"/>
-    </div>
-    <button class="btn btn-primary" type="button" @onclick="HandleSearch">Vyhľadať</button>
-</section>
+<MudCard>
+    <MudCardContent>
+        <MudText Typo="Typo.h3">Vyhľadávanie</MudText>
+        <MudFocusTrap DefaultFocus="DefaultFocus">
+            <MudTextField @bind-Value="Query" Label="Dotaz"/>
+        </MudFocusTrap>
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton OnClick="HandleSearch">Vyhľadať</MudButton>
+    </MudCardActions>
+</MudCard>
 
 @code {
-    private string _query { get; set; } = string.Empty;
-    protected ElementReference searchInput;
-    private string? _message { get; set; }
+    private string Query { get; set; } = string.Empty;
+    private string? Message { get; set; }
+    DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private void HandleSearch()
     {
-        if (firstRender)
+        if (Query.Length < 3)
         {
-            await searchInput.FocusAsync();
-        }
-    }
-
-    private async Task HandleSearch()
-    {
-        if (_query.Length < 3)
-        {
-            _message = "Dĺžka musí byť aspoň 3 znaky.";
+            Message = "Dĺžka musí byť aspoň 3 znaky.";
         }
         else
         {
-            NavigationManager.NavigateTo($"/Search/{_query}");
+            NavigationManager.NavigateTo($"/Search/{Query}");
         }
     }
 

@@ -24,153 +24,67 @@ else
         </section>
     </AuthorizeView>
 
-    <section>
-        <h4>Údaje o hviezde</h4>
-        <ResponsiveTable>
-            <tbody>
-            @if (Star is {StarVariability: not null})
+    <MudCard Class="mb-5">
+        <MudCardContent>
+            <MudText Typo="Typo.h5">Údaje o hviezde</MudText>
+            <StarMetaListTable Data="Star"></StarMetaListTable>
+        </MudCardContent>
+    </MudCard>
+
+    <MudCard Class="mb-5">
+        <MudCardContent>
+            <MudText Typo="Typo.h5">Prítomnosť hviezdy v katalógoch</MudText>
+            @if (Star is {StarCatalogs: not null, StarCatalogs.Count: > 0})
             {
-                <tr>
-                    <th scope="row">Epocha</th>
-                    <td>@Star.StarVariability.Epoch</td>
-                </tr>
-                <tr>
-                    <th scope="row">Perióda</th>
-                    <td>@Star.StarVariability.Period</td>
-                </tr>
-                <tr>
-                    <th scope="row">Primárne minimum</th>
-                    <td>@Star.StarVariability.PrimaryMinimum</td>
-                </tr>
-                <tr>
-                    <th scope="row">Typ premennej hviezdy</th>
-                    <td>
-                        @if (Star.StarVariability.VariabilityType == VariabilityType.Intrinsic)
-                        {
-                            <span>Fyzikálna</span>
-                        }
-                        else if (Star.StarVariability.VariabilityType == VariabilityType.Extrinsic)
-                        {
-                            <span>Geometrická</span>
-                        }
-                        else
-                        {
-                            <span>-</span>
-                        }
-                    </td>
-                </tr>
-            }
-            <tr>
-                <th scope="row">RA</th>
-                <td>
-                    <MudChip Color="Color.Info">
-                        @Star.RA (astrometria)
-                    </MudChip>
-                    @if (PrimaryStarCatalog is not null)
-                    {
-                        <MudChip>
-                            @PrimaryStarCatalog.Ra (@PrimaryStarCatalog.CatalogId)
-                        </MudChip>
-                    }
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">DEC</th>
-                <td>
-                    <MudChip Color="Color.Info">
-                        @Star.DEC (astrometria)
-                    </MudChip>
-                    @if (PrimaryStarCatalog is not null)
-                    {
-                        <MudChip>
-                            @PrimaryStarCatalog.Dec (@PrimaryStarCatalog.CatalogId)
-                        </MudChip>
-                    }
-                </td>
-            </tr>
-            @if (Star is {StarPublish: not null})
-            {
-                <tr>
-                    <th scope="row">Objavená</th>
-                    <td>@Star.StarPublish.Year</td>
-                </tr>
-                <tr>
-                    <th scope="row">Objaviteľ</th>
-                    <td>@Star.StarPublish.Discoverer</td>
-                </tr>
-                <tr>
-                    <th scope="row">Odkaz na publikáciu</th>
-                    <td>
-                        <a href="/@Star.StarPublish.PublicationLink" target="_blank" rel="noopener noreferrer">@Star.StarPublish.PublicationLink</a>
-                    </td>
-                </tr>
+                <MudTable Striped="true" Items="Star.StarCatalogs" Hover="true" T="StarCatalog">
+                    <HeaderContent>
+                        <MudTh>Katalóg</MudTh>
+                        <MudTh>RA</MudTh>
+                        <MudTh>DEC</MudTh>
+                        <MudTh>MAG</MudTh>
+                        <MudTh>Cross ID</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Katalóg">
+                            @context.CatalogId
+                        </MudTd>
+                        <MudTd DataLabel="RA">
+                            @context.Ra
+                        </MudTd>
+                        <MudTd DataLabel="DEC">
+                            @context.Dec
+                        </MudTd>
+                        <MudTd DataLabel="MAG">
+                            @context.Mag
+                        </MudTd>
+                        <MudTd DataLabel="Cross ID">
+                            @context.CrossId
+                        </MudTd>
+                    </RowTemplate>
+                </MudTable>
             }
             else
             {
-                <tr>
-                    <th scope="row">Publikovaná</th>
-                    <td>Nie</td>
-                </tr>
+                <h4>Táto hviezda sa nenachádza v žiadnych katalógoch.</h4>
             }
-            </tbody>
-        </ResponsiveTable>
-    </section>
-    <section>
-        <h4>Prítomnosť hviezdy v katalógoch</h4>
-        @if (Star is {StarCatalogs: not null, StarCatalogs.Count: > 0})
-        {
-            <ResponsiveTable>
-                <thead>
-                <tr>
-                    <th scope="col">Katalóg</th>
-                    <th scope="col">
-                        RA
-                    </th>
-                    <th scope="col">
-                        DEC
-                    </th>
-                    <th scope="col">
-                        MAG
-                    </th>
-                    <th scope="col">
-                        Cross-ID
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
+        </MudCardContent>
+    </MudCard>
 
-                @foreach (var sc in Star.StarCatalogs)
-                {
-                    <tr>
-                        <th scope="row">@sc.CatalogId</th>
-                        <td>@sc.Ra</td>
-                        <td>@sc.Dec</td>
-                        <td>@sc.Mag</td>
-                        <td>@sc.CrossId</td>
-                    </tr>
-                }
-                </tbody>
-            </ResponsiveTable>
-        }
-        else
-        {
-            <h4>Táto hviezda sa nenachádza v žiadnych katalógoch.</h4>
-        }
-    </section>
-
-    <section>
-        <h4> Pozorovanie tejto hviezdy</h4>
-        @if (Star is {LightCurves.Count: 0})
-        {
-            <h5>
-                Táto hviezda nemá žiadne pozorovania.
-            </h5>
-        }
-        else if (Star is {LightCurves.Count: > 0})
-        {
-            <LightCurveListWithValues Curves="@Star.LightCurves" CurveLayout="col-12"/>
-        }
-    </section>
+    <MudCard Class="mb-5">
+        <MudCardContent>
+            <h4> Pozorovanie tejto hviezdy</h4>
+            @if (Star is {LightCurves.Count: 0})
+            {
+                <h5>
+                    Táto hviezda nemá žiadne pozorovania.
+                </h5>
+            }
+            else if (Star is {LightCurves.Count: > 0})
+            {
+                <LightCurveListWithValues Curves="@Star.LightCurves" CurveLayout="col-12"/>
+            }
+        </MudCardContent>
+    </MudCard>
 }
 
 @code {

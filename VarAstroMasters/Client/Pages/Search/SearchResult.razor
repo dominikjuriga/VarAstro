@@ -1,41 +1,25 @@
 ﻿@page "/Search/{SearchQuery}"
+@using Microsoft.IdentityModel.Tokens
 @inject IStarService StarService
-<h3>Výsledky vyhľadávania</h3>
 
-@if (Message is not null)
-{
-    <Alert type="@MessageType">
-        @Message
-    </Alert>
-}
-
-@if (Results is not null)
-{
-    <section>
-        <ResponsiveTable>
-            <tbody>
-            @foreach (var result in Results)
-            {
-                <tr>
-                    <td>
-                        <a href="@Endpoints.ClientStarSingleGet/@result.Id">@result.Name</a>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </ResponsiveTable>
-    </section>
-}
+<MudCard>
+    <MudCardContent>
+        <MudText Typo="Typo.h3">Výsledky vyhľadávania</MudText>
+        @if (!Message.IsNullOrEmpty())
+        {
+            <MudAlert Severity="Severity.Info">@Message</MudAlert>
+        }
+        <StarTable Data="Results" Loading="Loading"/>
+    </MudCardContent>
+</MudCard>
 
 @code {
 
     [Parameter]
     public string SearchQuery { get; set; } = string.Empty;
 
-    private string? Message { get; set; }
-    private List<Star>? Results { get; set; }
-
-    private string? MessageType { get; set; }
+    private List<StarDTO>? Results { get; set; }
+    private bool Loading { get; set; } = true;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -46,13 +30,14 @@
         else
         {
             var response = await StarService.Search(SearchQuery);
-            if (response.Success)
+            if (response is {Success: true, Data.Data: not null})
             {
-                Results = response.Data;
+                Results = response.Data.Data;
             }
-            Message = response.Message;
-            MessageType = MessageHelper.GetAlertType(response.Success);
+            Loading = false;
         }
     }
+
+    public string Message { get; set; }
 
 }
