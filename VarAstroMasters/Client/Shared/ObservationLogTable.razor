@@ -1,0 +1,28 @@
+﻿@inject NavigationManager NavigationManager
+<MudTable T="@ObservationLogDTO" Items="Data" Loading="Loading" OnRowClick="@RowClicked">
+    <HeaderContent>
+        <MudTh>Používateľ</MudTh>
+        <MudTh>Príspevky</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>
+            <div class="cursor-pointer">@context.User.Name</div>
+        </MudTd>
+        <MudTd>@context.Contributions</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+
+    [Parameter]
+    public bool Loading { get; set; }
+
+    [Parameter]
+    public List<ObservationLogDTO> Data { get; set; }
+
+    public void RowClicked(TableRowClickEventArgs<ObservationLogDTO> c)
+    {
+        NavigationManager.NavigateTo($"{Endpoints.ClientObservationLogSingleGet}/{c.Item.User.Id}");
+    }
+
+}

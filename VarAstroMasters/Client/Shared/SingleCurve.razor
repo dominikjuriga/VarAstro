@@ -1,21 +1,21 @@
 ﻿<div class="@CurveLayout mb-3">
     <div class="card">
         <div class="card-body">
-            <span>
+            <span class="text-black">
                 Pozorovanie pridané
-                <a href="@Endpoints.ClientLightCurveSingleGet/@Curve.Id">
+                <a class="text-black" href="@Endpoints.ClientLightCurveSingleGet/@Curve.Id">
                     @Curve.DateCreated.ToString(Keywords.DefaultDateTimeFormat)
                 </a>
             </span>
             <br/>
-            <span>
+            <span class="text-black">
                 Autor
-                <a href="@Endpoints.ClientObservationLogSingleGet/@Curve.User.Id">@Curve.User.Name</a>
+                <a class="text-black" href="@Endpoints.ClientObservationLogSingleGet/@Curve.User.Id">@Curve.User.Name</a>
             </span>
             <br/>
             @if (Curve.Device is not null)
             {
-                <span>
+                <span class="text-black">
                     <span class="oi oi-aperture"></span>
                     @Curve.Device.Name
                 </span>

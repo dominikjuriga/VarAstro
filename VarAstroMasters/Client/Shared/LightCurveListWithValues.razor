@@ -14,4 +14,9 @@
     [Parameter]
     public string CurveLayout { get; set; }
 
+    protected override void OnParametersSet()
+    {
+        StateHasChanged();
+    }
+
 }

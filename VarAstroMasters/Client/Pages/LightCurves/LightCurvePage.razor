@@ -23,100 +23,102 @@ else if (_curve is null && _message is not null)
 }
 else
 {
-    <section>
-        <ResponsiveTable>
-            <tbody>
-            <tr>
-                <th scope="row">Autor</th>
-                <td>@_curve.User.Name</td>
-            </tr>
-            <tr>
-                <th scope="row">RA</th>
-                <td>@_starRa</td>
-            </tr>
-            <tr>
-                <th scope="row">DEC</th>
-                <td>@_starDec</td>
-            </tr>
-            <tr>
-                <th scope="row">Hvezdáreň</th>
-                <td>@(_curve.Observatory is null ? "Nešpecifikovaná" : _curve.Observatory.Address)</td>
-            </tr>
-            <tr>
-                <th scope="row">Zariadenie</th>
-                <td>@(_curve.Device is null ? "Nešpecifikované" : _curve.Device.Name)</td>
-            </tr>
-            <tr>
-                <th scope="row">Pridané</th>
-                <td>@_curve.DateCreated.ToString(Keywords.DefaultDateTimeFormat)</td>
-            </tr>
-            <tr>
-                <th scope="row">Poznámky</th>
-                <td>
-                    @(_curve.Comment is null ||
-                      _curve.Comment.Length == 0 ? "Nezadané" : _curve.Comment)
-                </td>
-            </tr>
-            @if (_curve.DataFileLink is not null)
-            {
+    <MudCard Class="mb-3">
+        <MudCardContent>
+            <MudSimpleTable>
+                <tbody>
                 <tr>
-                    <th scope="row">Odkaz na súbor</th>
+                    <th scope="row">Autor</th>
+                    <td>@_curve.User.Name</td>
+                </tr>
+                <tr>
+                    <th scope="row">RA</th>
+                    <td>@_curve.Star.RA</td>
+                </tr>
+                <tr>
+                    <th scope="row">DEC</th>
+                    <td>@_curve.Star.DEC</td>
+                </tr>
+                <tr>
+                    <th scope="row">Hvezdáreň</th>
+                    <td>@(_curve.Observatory is null ? "Nešpecifikovaná" : _curve.Observatory.Address)</td>
+                </tr>
+                <tr>
+                    <th scope="row">Zariadenie</th>
+                    <td>@(_curve.Device is null ? "Nešpecifikované" : _curve.Device.Name)</td>
+                </tr>
+                <tr>
+                    <th scope="row">Pridané</th>
+                    <td>@_curve.DateCreated.ToString(Keywords.DefaultDateTimeFormat)</td>
+                </tr>
+                <tr>
+                    <th scope="row">Poznámky</th>
                     <td>
-                        <a href="@_curve.DataFileLink" target="_blank" rel="noopener noreferrer">Stiahnuť dátový súbor</a>
+                        @(_curve.Comment is null ||
+                          _curve.Comment.Length == 0 ? "Nezadané" : _curve.Comment)
                     </td>
                 </tr>
-            }
-            </tbody>
-        </ResponsiveTable>
-    </section>
+                @if (_curve.DataFileLink is not null)
+                {
+                    <tr>
+                        <th scope="row">Odkaz na súbor</th>
+                        <td>
+                            <a href="@_curve.DataFileLink" target="_blank" rel="noopener noreferrer">Stiahnuť dátový súbor</a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </MudSimpleTable>
+        </MudCardContent>
+    </MudCard>
 
 
-    <section>
-        <h4>Mapka</h4>
-        @if (_curve is {Images: null})
-        {
-            <Alert type="@Keywords.AlertDanger">
-                @Keywords.MapNotPublished
-            </Alert>
-        }
-        else
-        {
-            @foreach (var image in _curve.Images)
+    <MudCard Class="mb-3">
+        <MudCardContent>
+            <h4>Mapka</h4>
+            @if (_curve is {Images: null})
             {
-                <MudCard>
-                    <MudCardContent Style="display: flex; justify-content: center">
-                        <MudImage Src="@image.Data"/>
-                    </MudCardContent>
-                    @* <MudCardActions Style="justify-content: center"> *@
-                    @*     <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => RemoveImage(image.Id)"> *@
-                    @*         Remove Image *@
-                    @*     </MudButton> *@
-                    @* </MudCardActions> *@
-                </MudCard>
-            }
-        }
-    </section>
-
-    <section>
-        <h4>Priebeh krivky</h4>
-        @if (_curve.ValuesFinishedLoading)
-        {
-            @if (_curve is {Values: not null})
-            {
-                <ScatterChart Values="@_curve.Values"></ScatterChart>
+                <Alert type="@Keywords.AlertDanger">
+                    @Keywords.MapNotPublished
+                </Alert>
             }
             else
             {
-                <Alert type="@Keywords.AlertDanger">
-                    @Keywords.NotPublished
-                </Alert>
+                @foreach (var image in _curve.Images)
+                {
+                    <MudCard>
+                        <MudCardContent Style="display: flex; justify-content: center">
+                            <MudImage Src="@image.Data"/>
+                        </MudCardContent>
+
+                    </MudCard>
+                }
             }
-        }
-        else
-        {
-            <Loader/>
-        }
-    </section>
+        </MudCardContent>
+    </MudCard>
+
+    <MudCard Class="mb-3">
+        <MudCardContent>
+            <h4>Priebeh krivky</h4>
+            @if (_curve.ValuesFinishedLoading)
+            {
+                @if (_curve is {Values: not null})
+                {
+                    <ScatterChart Values="@_curve.Values"></ScatterChart>
+                }
+                else
+                {
+                    <Alert type="@Keywords.AlertDanger">
+                        @Keywords.NotPublished
+                    </Alert>
+                }
+            }
+            else
+            {
+                <Loader/>
+            }
+        </MudCardContent>
+    </MudCard>
 }
 
 @code {

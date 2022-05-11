@@ -1,32 +1,16 @@
 ﻿@page "/ObservationLogs"
 @inject ILightCurveService LightCurveService
-<h3>Pozorovacie denníky</h3>
 
-@if (Logs is null)
-{
-    <Loader/>
-}
-else
-{
-    <section>
-        @if (Logs.Count == 0)
-        {
-            <h4>Neexistujú žiadne denníky.</h4>
-        }
-        else
-        {
-            <ul>
-                @foreach (var log in Logs)
-                {
-                    <li><a href="@Endpoints.ClientObservationLogSingleGet/@log.User.Id">@log.User.Name</a> (@log.Contributions príspevkov)</li>
-                }
-            </ul>
-        }
-    </section>
-}
+<MudCard>
+    <MudCardContent>
+        <h3>Pozorovacie denníky</h3>
+        <ObservationLogTable Data="Logs" Loading="Loading"/>
+    </MudCardContent>
+</MudCard>
 
 @code {
     private List<ObservationLogDTO>? Logs { get; set; }
+    private bool Loading { get; set; } = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -35,6 +19,7 @@ else
         {
             Logs = response.Data;
         }
+        Loading = false;
     }
 
 }
