@@ -7,6 +7,7 @@ public interface IStarService
     Task<ServiceResponse<List<StarDTO>>> GetStarsAsync();
     Task<ServiceResponse<StarDTO>> GetStarAsync(int starId);
     Task<ServiceResponse<StarSearchDTO>> Search(string searchQuery);
+    Task<ServiceResponse<StarSearchDTO>> SearchByCoords(string searchQuery);
     Task<ServiceResponse<StarPublish>> GetPublication(int starId);
     Task<ServiceResponse<List<StarCatalog>>> GetStarCatalogs(int starId);
     Task<ServiceResponse<StarCatalog>> SaveStarCatalog(StarCatalog starCatalog);

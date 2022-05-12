@@ -39,6 +39,7 @@ public static class Endpoints
     public static readonly string ApiStarAllGet = $"{ApiStarBasePath}";
     public static readonly string ApiStarSingleGet = $"{ApiStarBasePath}";
     public static readonly string ApiStarSearch = $"{ApiStarBasePath}/search";
+    public static readonly string ApiStarSearchByCoords = $"{ApiStarBasePath}/searchbycoords";
     public static readonly string ApiStarPublicationGet = $"{ApiStarBasePath}/publication";
 
     // Star Drafts
@@ -103,6 +104,7 @@ public static class Endpoints
     public static readonly string ClientAuthLogIn = "/Login";
     public static readonly string ClientAuthRegister = "/Register";
     public static readonly string ClientSearch = "/Search";
+    public static readonly string ClientSearchByCoords = "/SearchByCoords";
     public static readonly string ClientAdminBase = "/Admin";
     public static readonly string ClientAdminStars = $"{ClientAdminBase}/Stars";
     public static readonly string ClientAdminCatalogs = $"{ClientAdminBase}/Catalogs";

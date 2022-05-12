@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json;
+using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using VarAstroMasters.Shared.CompositeKeys;
 
 namespace VarAstroMasters.Server.Services.StarService;
@@ -50,13 +53,17 @@ public class StarService : IStarService
 
     public async Task<ServiceResponse<StarSearchDTO>> Search(string searchQuery)
     {
-        var data = await _context.Stars
-            .Where(s => s.Name.ToLower().Contains(searchQuery.ToLower()))
+        var stars = await _context.Stars
+            .Where(s =>
+                s.Name.ToLower().Contains(searchQuery.ToLower()) ||
+                s.StarCatalogs.Any(sc => sc.CrossId.ToLower() == searchQuery.ToLower()))
             .ToListAsync();
 
-        var msg = data.Count == 0 ? Keywords.SearchFailed : $"{Keywords.SearchSucceeded} {data.Count} záznamov.";
+        var msg = stars.Count == 0
+            ? Keywords.SearchFailed
+            : $"{Keywords.SearchSucceeded} {stars.Count}.";
         List<StarDTO> dtos = new();
-        foreach (var star in data) dtos.Add(_mapper.Map<StarDTO>(star));
+        foreach (var star in stars) dtos.Add(_mapper.Map<StarDTO>(star));
 
         return new ServiceResponse<StarSearchDTO>
         {
@@ -66,6 +73,69 @@ public class StarService : IStarService
             },
             Message = msg
         };
+    }
+
+    public async Task<ServiceResponse<StarSearchDTO>> SearchByCoords(string searchQuery)
+    {
+        StarCoordDTO? location;
+        try
+        {
+            location = JsonSerializer.Deserialize<StarCoordDTO>(searchQuery);
+        }
+        catch (Exception e)
+        {
+            return ResponseHelper.FailResponse<StarSearchDTO>(Keywords.InvalidValues);
+        }
+
+        if (location is null) return ResponseHelper.FailResponse<StarSearchDTO>("ASd");
+        var raRadians = RaToRadians(location.RaH, location.RaM, location.RaS);
+        var decRadians = DecToRadians(location.DecD, location.DecM, location.DecS);
+
+        // Threshold in radians, because of float inaccuracy - Needs to be determined later on
+        var threshold = 1;
+
+        if (raRadians is null || decRadians is null)
+            return ResponseHelper.FailResponse<StarSearchDTO>(Keywords.ValuesOutOfBounds);
+
+        var stars = await _context.Stars.Where(s =>
+                (s.RA > raRadians - threshold && s.RA < raRadians + threshold && s.DEC > decRadians - threshold &&
+                 s.DEC < decRadians + threshold) ||
+                s.StarCatalogs.Any(sc =>
+                    sc.Ra > raRadians - threshold && sc.Ra < raRadians + threshold && sc.Dec > decRadians - threshold &&
+                    sc.Dec < decRadians + threshold)
+            )
+            .ToListAsync();
+
+        var msg = stars.Count == 0
+            ? Keywords.SearchFailed
+            : $"{Keywords.SearchSucceeded} {stars.Count}. (odchýlka +-{threshold}rad)";
+
+        List<StarDTO> dtos = new();
+        foreach (var star in stars) dtos.Add(_mapper.Map<StarDTO>(star));
+
+        return new ServiceResponse<StarSearchDTO>
+        {
+            Data = new StarSearchDTO
+            {
+                Data = dtos
+            },
+            Message = msg
+        };
+    }
+
+    private double? RaToRadians(int? hours, int? minutes, int? seconds)
+    {
+        if (hours is null || minutes is null || seconds is null) return null;
+        return hours * 15 + minutes / 4d + seconds / 240d;
+    }
+
+    private double? DecToRadians(int? degrees, int? minutes, int? seconds)
+    {
+        if (degrees is null || minutes is null || seconds is null) return null;
+        if (degrees > 0)
+            return degrees + minutes / 60d + seconds / 3600d;
+        else
+            return degrees - (double)minutes / 60d - (double)seconds / 3600d;
     }
 
 

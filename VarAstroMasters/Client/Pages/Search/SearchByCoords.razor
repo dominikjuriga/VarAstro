@@ -1,0 +1,48 @@
+﻿@page "/SearchByCoords"
+@using System.Text.Json
+@inject NavigationManager NavigationManager
+
+@if (Message is not null)
+{
+    <MudAlert Severity="Severity.Error">@Message</MudAlert>
+}
+
+<MudCard>
+    <MudFocusTrap DefaultFocus="DefaultFocus">
+        <EditForm Model="Query" OnValidSubmit="HandleSearch">
+            <DataAnnotationsValidator/>
+            <MudCardContent>
+                <MudText Typo="Typo.h3">Vyhľadávanie</MudText>
+                <MudText Typo="Typo.h6">RA</MudText>
+                <MudPaper Class="d-flex gap-2 mb-5">
+                    <MudNumericField @bind-Value="Query.RaH" For="() => Query.RaH" Label="Hodiny"/>
+                    <MudNumericField @bind-Value="Query.RaM" For="() => Query.RaM" Label="Minúty"/>
+                    <MudNumericField @bind-Value="Query.RaS" For="() => Query.RaS" Label="Sekundy"/>
+                </MudPaper>
+                <MudDivider/>
+                <MudText Typo="Typo.h6">DEC</MudText>
+                <MudPaper Class="d-flex gap-2 mb-5">
+                    <MudTextField @bind-Value="Query.DecD" For="() => Query.DecD" Label="Stupne"/>
+                    <MudTextField @bind-Value="Query.DecM" For="() => Query.DecM"Label="Arcmin"/>
+                    <MudTextField @bind-Value="Query.DecS" For="() => Query.DecS" Label="Arcsec"/>
+                </MudPaper>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Vyhľadať</MudButton>
+            </MudCardActions>
+        </EditForm>
+    </MudFocusTrap>
+</MudCard>
+
+@code {
+    private StarCoordDTO Query { get; set; } = new();
+    private string? Message { get; set; }
+    DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
+
+    private async Task HandleSearch()
+    {
+        var str = JsonSerializer.Serialize(Query);
+        NavigationManager.NavigateTo($"{Endpoints.ClientSearchByCoords}/{str}");
+    }
+
+}

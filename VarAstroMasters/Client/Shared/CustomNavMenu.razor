@@ -6,7 +6,11 @@
 <MudNavMenu Class="my-3">
     <MudNavLink Icon="@Icons.Filled.Home" Match="NavLinkMatch.All" Href="/">Domov</MudNavLink>
     <MudNavLink Icon="@Icons.Filled.MenuBook" Href="@Endpoints.ClientObservationLogListGet">Pozorovacie denníky</MudNavLink>
-    <MudNavLink Icon="@Icons.Filled.Search" Href="@Endpoints.ClientSearch">Vyhľadávanie</MudNavLink>
+
+    <MudNavGroup Icon="@Icons.Filled.Search" Title="Vyhľadávanie" Expanded="false">
+        <MudNavLink Icon="@Icons.Filled.Title" Href="@Endpoints.ClientSearch">Podľa mena alebo Cross ID</MudNavLink>
+        <MudNavLink Icon="@Icons.Filled.LocationSearching" Href="@Endpoints.ClientSearchByCoords">Podľa koordinátov (RA, DEC)</MudNavLink>
+    </MudNavGroup>
     <MudNavLink Icon="@Icons.Filled.Star" Href="@Endpoints.ClientStarListGet">Hviezdy</MudNavLink>
     <MudNavLink Icon="@Icons.Filled.Stars" Href="@Endpoints.ClientStarDraftListGet">Moje Hviezdy</MudNavLink>
     <MudNavGroup Icon="@Icons.Filled.Person" Title="Používateľ" Expanded="false">

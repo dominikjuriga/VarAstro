@@ -30,6 +30,14 @@ public class StarService : IStarService
         return response;
     }
 
+    public async Task<ServiceResponse<StarSearchDTO>> SearchByCoords(string searchQuery)
+    {
+        var response =
+            await _httpClient.GetFromJsonAsync<ServiceResponse<StarSearchDTO>>(
+                $"{Endpoints.ApiStarSearchByCoords}/{searchQuery}");
+        return response;
+    }
+
 
     public async Task<ServiceResponse<StarPublish>> GetPublication(int starId)
     {

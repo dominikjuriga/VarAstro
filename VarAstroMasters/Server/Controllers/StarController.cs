@@ -34,6 +34,13 @@ public class StarController : ControllerBase
         return Ok(response);
     }
 
+    [HttpGet("searchbycoords/{searchQuery}")]
+    public async Task<ActionResult<ServiceResponse<StarSearchDTO>>> SearchByCoords(string searchQuery)
+    {
+        var response = await _starService.SearchByCoords(searchQuery);
+        return Ok(response);
+    }
+
     [HttpGet("publication/{starId:int}")]
     public async Task<ActionResult<ServiceResponse<StarPublish>>> PublicationSingleGet(int starId)
     {

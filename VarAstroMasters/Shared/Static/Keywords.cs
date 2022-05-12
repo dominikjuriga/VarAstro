@@ -32,6 +32,8 @@ public static class Keywords
     public const string RegisterSucceeded = "Registrácia úspešná.";
     public const string InvalidCredentials = "Nesprávne údaje.";
     public const string InvalidToken = "Vaša požiadavka neobsahuje autentifikačný token. Ste prihlásený?";
+    public const string InvalidValues = "Zadali ste zlé hodnoty.";
+    public const string ValuesOutOfBounds = "Hodnoty sú mimo rozsah.";
     public const string PostSucceeded = "Záznam bol vytvorený.";
     public const string DeleteSucceeded = "Záznam bol odstránený.";
     public const string PutSucceeded = "Záznam bol upravený.";
@@ -39,7 +41,7 @@ public static class Keywords
     public const string PostFailed = "Vytvorenie záznamu bolo neúspešné.";
     public const string DeleteFailed = "Odstránenie záznamu bolo neúspešné.";
     public const string CannotDeletePrimaryCat = "Primárny katalóg nie je možné odstrániť.";
-    public const string SearchSucceeded = "Pre zadaný výraz bolo nájdených";
+    public const string SearchSucceeded = "Počet vyhovujúcich záznamov je";
     public const string SearchFailed = "Pre zadaný výraz neboli nájdené žiadne výsledky.";
     public const string CannotDeletePrimaryCatalog = "Primárny katalóg nie je možné vymazať.";
     public const int DefaultFilter = 0;

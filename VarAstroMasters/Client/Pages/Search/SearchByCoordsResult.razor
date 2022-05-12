@@ -1,0 +1,39 @@
+﻿@page "/SearchByCoords/{searchQuery}"
+@using Microsoft.IdentityModel.Tokens
+@inject IStarService StarService
+
+<MudCard>
+    <MudCardContent>
+        <MudText Typo="Typo.h3">Výsledky vyhľadávania</MudText>
+        @if (!Message.IsNullOrEmpty())
+        {
+            <MudAlert Severity="MessageSeverity">@Message</MudAlert>
+        }
+        <StarListTable Data="Results" Loading="Loading"/>
+    </MudCardContent>
+</MudCard>
+
+@code {
+
+    [Parameter]
+    public string SearchQuery { get; set; } = string.Empty;
+
+    private List<StarDTO>? Results { get; set; }
+    private bool Loading { get; set; } = true;
+    private string Message { get; set; }
+    private Severity MessageSeverity { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var response = await StarService.SearchByCoords(SearchQuery);
+        Message = response.Message;
+        MessageSeverity = response.Success ? Severity.Success : Severity.Error;
+        if (response is {Success:true})
+        {
+            Results = response.Data.Data;
+        }
+        Loading = false;
+    }
+
+
+}

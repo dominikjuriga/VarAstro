@@ -1,5 +1,4 @@
 ﻿@page "/Search"
-@inject IStarService StarService
 @inject NavigationManager NavigationManager
 
 @if (Message is not null)
@@ -11,7 +10,7 @@
     <MudCardContent>
         <MudText Typo="Typo.h3">Vyhľadávanie</MudText>
         <MudFocusTrap DefaultFocus="DefaultFocus">
-            <MudTextField @bind-Value="Query" Label="Dotaz"/>
+            <MudTextField @bind-Value="Query" Label="Oficiálny názov alebo Cross ID"/>
         </MudFocusTrap>
     </MudCardContent>
     <MudCardActions>
