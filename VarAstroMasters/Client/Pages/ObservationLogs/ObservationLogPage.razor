@@ -3,21 +3,37 @@
 
 <MudCard>
     <MudCardContent>
-        <MudText Typo="Typo.h3">Pozorovací denník @Log.User.Name</MudText>
+        <MudText Typo="Typo.h3">
+            Pozorovací denník
+            @if (Log is {User: not null})
+            {
+                <span>@Log.User.Name</span>
+            }
+        </MudText>
         @if (Log is {Curves.Count: 0})
         {
             <p>Tento denník nemá žiadne pozorovania.</p>
         }
         else
         {
-            <MudSelect Class="mb-3" T="int" MultiSelection="false" SelectedValuesChanged="(e) => HandleFilter(e.First())" Label="Filtrovať podľa názvu hviezdy">
-                <MudSelectItem T="int" value="@Keywords.DefaultFilter">Všetky</MudSelectItem>
-                @foreach (var star in Log.DistinctStars)
-                {
-                    <MudSelectItem T="int" value="@star.Id">@star.Name</MudSelectItem>
-                }
-            </MudSelect>
-            <LightCurveListWithValues Curves="@FilteredCurves"/>
+            @if (Log is {DistinctStars: not null})
+            {
+                <MudSelect Class="mb-3" T="int" MultiSelection="false" @bind-Value="FilterId" Label="Filtrovať podľa názvu hviezdy">
+                    <MudSelectItem T="int" value="@Keywords.DefaultFilter">Všetky</MudSelectItem>
+                    @foreach (var star in Log.DistinctStars)
+                    {
+                        <MudSelectItem T="int" value="@star.Id">@star.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            }
+            @if (LightCurves is not null)
+            {
+                <LightCurveListWithValues Curves="@LightCurves" FilterId="FilterId"/>
+            }
+            else
+            {
+                <Loader/>
+            }
         }
     </MudCardContent>
 </MudCard>
@@ -29,7 +45,7 @@
 
     private ObservationLogDetailDTO? Log { get; set; }
     private List<LightCurveDTO>? LightCurves { get; set; }
-    private List<LightCurveDTO>? FilteredCurves { get; set; }
+    private int FilterId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -38,28 +54,10 @@
         {
             Log = response.Data;
             LightCurves = response.Data.Curves;
-            HandleFilter(Keywords.DefaultFilter);
 
     // Not awaiting, so the page doesnt wait for the loading to finish
             GetValuesForCurves();
         }
-    }
-
-
-    private void HandleFilter(int starId)
-    {
-        if (LightCurves is null) return;
-    // TODO filtrovanie asi uplne nefunguje TODO
-        if (starId == Keywords.DefaultFilter)
-        {
-            FilteredCurves = LightCurves;
-        }
-        else
-        {
-            FilteredCurves = LightCurves.Where(lc => lc.StarId == starId).ToList();
-            Console.WriteLine(FilteredCurves.First().StarId);
-        }
-        StateHasChanged();
     }
 
     private async Task GetValuesForCurves()

@@ -1,4 +1,4 @@
-﻿<div class="@CurveLayout mb-3">
+﻿<div class="@CurveLayout mb-3 @(Display ? "" : "d-none")">
     <div class="card">
         <div class="card-body">
             <span class="text-black">
@@ -33,7 +33,7 @@
             {
                 @if (Curve.Values is not null)
                 {
-                    <ScatterChart Values="@Curve.Values"/>
+                    <ScatterChart Values="@Curve.Values" StarName="@Curve.Star.Name"/>
                 }
                 else
                 {
@@ -53,12 +53,18 @@
 @code {
 
     [Parameter]
-    public bool IsCard { get; set; }
+    public bool Display { get; set; }
 
     [Parameter]
     public LightCurveDTO Curve { get; set; }
 
     [Parameter]
     public string CurveLayout { get; set; } = "col-lg-6 col-xl-4";
+
+
+    protected override void OnParametersSet()
+    {
+        StateHasChanged();
+    }
 
 }

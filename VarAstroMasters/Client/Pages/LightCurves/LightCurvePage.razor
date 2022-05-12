@@ -3,21 +3,21 @@
 
 <h3>
     Detail krivky
-    @if (_curve is {Star: not null})
+    @if (Curve is {Star: not null})
     {
         <span>
             (hviezda
             <strong>
-                <a href="@Endpoints.ClientStarSingleGet/@_curve.Star.Id">@_curve.Star.Name</a>
+                <a href="@Endpoints.ClientStarSingleGet/@Curve.Star.Id">@Curve.Star.Name</a>
             </strong>)
         </span>
     }
 </h3>
-@if (_curve is null && _message is null)
+@if (Curve is null && _message is null)
 {
     <Loader/>
 }
-else if (_curve is null && _message is not null)
+else if (Curve is null && _message is not null)
 {
     <Alert type="@_messageType">@_message</Alert>
 }
@@ -29,41 +29,41 @@ else
                 <tbody>
                 <tr>
                     <th scope="row">Autor</th>
-                    <td>@_curve.User.Name</td>
+                    <td>@Curve.User.Name</td>
                 </tr>
                 <tr>
                     <th scope="row">RA</th>
-                    <td>@_curve.Star.RA</td>
+                    <td>@Curve.Star.RA</td>
                 </tr>
                 <tr>
                     <th scope="row">DEC</th>
-                    <td>@_curve.Star.DEC</td>
+                    <td>@Curve.Star.DEC</td>
                 </tr>
                 <tr>
                     <th scope="row">Hvezdáreň</th>
-                    <td>@(_curve.Observatory is null ? "Nešpecifikovaná" : _curve.Observatory.Address)</td>
+                    <td>@(Curve.Observatory is null ? "Nešpecifikovaná" : Curve.Observatory.Address)</td>
                 </tr>
                 <tr>
                     <th scope="row">Zariadenie</th>
-                    <td>@(_curve.Device is null ? "Nešpecifikované" : _curve.Device.Name)</td>
+                    <td>@(Curve.Device is null ? "Nešpecifikované" : Curve.Device.Name)</td>
                 </tr>
                 <tr>
                     <th scope="row">Pridané</th>
-                    <td>@_curve.DateCreated.ToString(Keywords.DefaultDateTimeFormat)</td>
+                    <td>@Curve.DateCreated.ToString(Keywords.DefaultDateTimeFormat)</td>
                 </tr>
                 <tr>
                     <th scope="row">Poznámky</th>
                     <td>
-                        @(_curve.Comment is null ||
-                          _curve.Comment.Length == 0 ? "Nezadané" : _curve.Comment)
+                        @(Curve.Comment is null ||
+                          Curve.Comment.Length == 0 ? "Nezadané" : Curve.Comment)
                     </td>
                 </tr>
-                @if (_curve.DataFileLink is not null)
+                @if (Curve.DataFileLink is not null)
                 {
                     <tr>
                         <th scope="row">Odkaz na súbor</th>
                         <td>
-                            <a href="@_curve.DataFileLink" target="_blank" rel="noopener noreferrer">Stiahnuť dátový súbor</a>
+                            <a href="@Curve.DataFileLink" target="_blank" rel="noopener noreferrer">Stiahnuť dátový súbor</a>
                         </td>
                     </tr>
                 }
@@ -76,7 +76,7 @@ else
     <MudCard Class="mb-3">
         <MudCardContent>
             <h4>Mapka</h4>
-            @if (_curve is {Images: null})
+            @if (Curve is {Images: null})
             {
                 <Alert type="@Keywords.AlertDanger">
                     @Keywords.MapNotPublished
@@ -84,7 +84,7 @@ else
             }
             else
             {
-                @foreach (var image in _curve.Images)
+                @foreach (var image in Curve.Images)
                 {
                     <MudCard>
                         <MudCardContent Style="display: flex; justify-content: center">
@@ -100,11 +100,11 @@ else
     <MudCard Class="mb-3">
         <MudCardContent>
             <h4>Priebeh krivky</h4>
-            @if (_curve.ValuesFinishedLoading)
+            @if (Curve is not null && Curve.ValuesFinishedLoading)
             {
-                @if (_curve is {Values: not null})
+                @if (Curve is {Values: not null, Star: not null})
                 {
-                    <ScatterChart Values="@_curve.Values"></ScatterChart>
+                    <ScatterChart Values="@Curve.Values" StarName="@Curve.Star.Name"/>
                 }
                 else
                 {
@@ -126,7 +126,7 @@ else
     [Parameter]
     public int LightCurveId { get; set; }
 
-    private LightCurveDTO? _curve { get; set; }
+    private LightCurveDTO? Curve { get; set; }
     private string _starRa = "-";
     private string _starDec = "-";
     private string? _message { get; set; }
@@ -138,8 +138,8 @@ else
         var response = await LightCurveService.LightCurveSingleGet(LightCurveId);
         if (response.Success)
         {
-            _curve = response.Data;
-            var sc = _curve.Star.StarCatalogs.Where(c => c.Primary).FirstOrDefault();
+            Curve = response.Data;
+            var sc = Curve.Star.StarCatalogs.Where(c => c.Primary).FirstOrDefault();
             if (sc is not null)
             {
                 _starRa = $"{sc.Ra} ({sc.CatalogId})";
@@ -156,10 +156,10 @@ else
         var response = await LightCurveService.LightCurveSingleValuesGet(LightCurveId);
         if (response is {Success: true})
         {
-            _curve.Values = response.Data;
+            Curve.Values = response.Data;
         }
 
-        _curve.ValuesFinishedLoading = true;
+        Curve.ValuesFinishedLoading = true;
         StateHasChanged();
     }
 
