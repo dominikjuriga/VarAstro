@@ -1,0 +1,235 @@
+﻿@page "/Admin/Stars/{StarId:int}/Catalogs"
+@inject NavigationManager NavigationManager
+@inject IStarService StarService
+
+@if (StarCatalogs is null)
+{
+    <Loader/>
+}
+else
+{
+    <MudCard>
+        <MudCardHeader>
+            <MudText Typo="Typo.h3">
+                Identifikácia v katalógoch
+            </MudText>
+        </MudCardHeader>
+
+        <MudCardContent>
+            @if (Message is not null)
+            {
+                <MudAlert Severity="MessageSeverity">@Message</MudAlert>
+            }
+            <MudCard>
+                <MudCardHeader>
+                    <MudText Typo="Typo.h4">
+                        Akcie
+                    </MudText>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NewStarCatalog">Pridať záznam</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GoBack">Späť na hviezdu</MudButton>
+                </MudCardContent>
+            </MudCard>
+            @* @if (_message is not null) *@
+            @* { *@
+            @*     <Alert type="@_messageType"> *@
+            @*         @_message *@
+            @*     </Alert> *@
+            @* } *@
+
+            @if (EditSc is null && StarCatalogs is not null)
+            {
+                <MudCard>
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h4">Existujúce záznamy</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudSimpleTable>
+                            <thead>
+                            <tr>
+                                <th>ID Katalógu</th>
+                                <th>Cross ID</th>
+                                <th>RA</th>
+                                <th>DEC</th>
+                                <th>MAG</th>
+                                <th>Primárny katalóg</th>
+                                <th>Akcie</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var sc in StarCatalogs)
+                            {
+                                <tr>
+                                    <td>
+                                        @sc.CatalogId
+                                    </td>
+                                    <td>
+                                        @sc.CrossId
+                                    </td>
+                                    <td>@sc.Ra</td>
+                                    <td>@sc.Dec</td>
+                                    <td>@sc.Mag</td>
+                                    <td>@(sc.Primary ? "Áno" : "Nie")</td>
+                                    <td>
+                                        <MudButton OnClick="() => EditStarCatalog(sc)" Variant="Variant.Filled" Color="Color.Secondary">Upraviť</MudButton>
+                                        <MudButton OnClick="() => DeleteStarCatalog(sc)" Variant="Variant.Filled" Color="Color.Primary">Zmazať</MudButton>
+
+                                        @if (!sc.Primary)
+                                        {
+                                            <MudButton OnClick="() => MakeScPrimary(sc)" Variant="Variant.Filled" Color="Color.Info">Nastaviť ako primárny</MudButton>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </MudSimpleTable>
+                    </MudCardContent>
+                </MudCard>
+            }
+            else
+            {
+                <MudCard>
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h4">@(EditSc.New ? "Nový" : "Upraviť") záznam</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+
+                        <EditForm Model="EditSc" OnValidSubmit="SaveEdit">
+                            <DataAnnotationsValidator/>
+                            <MudSelect Class="mb-5" T="string" Label="ID katalógu" id="catalog" @bind-Value="EditSc.CatalogId" For="@(() => EditSc.CatalogId)">
+                                @foreach (var catalog in Catalogs)
+                                {
+                                    <MudSelectItem T="string" value="@catalog.Name">@catalog.Name</MudSelectItem>
+                                }
+                            </MudSelect>
+                            <MudTextField Label="CrossId" Variant="Variant.Filled" Class="mb-5" @bind-Value="EditSc.CrossId" For="@(() => EditSc.CrossId)"/>
+                            <MudNumericField T="double" Label="Ra" Variant="Variant.Filled" Class="mb-5" @bind-Value="EditSc.Ra" For="@(() => EditSc.Ra)"/>
+                            <MudNumericField T="double" Label="Dec" Variant="Variant.Filled" Class="mb-5" @bind-Value="EditSc.Dec" For="@(() => EditSc.Dec)"/>
+                            <MudNumericField T="double" Label="Mag" Variant="Variant.Filled" Class="mb-5" @bind-Value="EditSc.Mag" For="@(() => EditSc.Mag)"/>
+
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Uložiť zmenu</MudButton>
+                            <MudButton OnClick="CancelEdit" Variant="Variant.Filled" Color="Color.Secondary">Zrušiť</MudButton>
+                        </EditForm>
+
+                    </MudCardContent>
+                </MudCard>
+            }
+        </MudCardContent>
+    </MudCard>
+}
+
+@code {
+
+    [Parameter]
+    public int StarId { get; set; }
+
+    private List<StarCatalog>? StarCatalogs { get; set; }
+    private List<Catalog>? Catalogs { get; set; }
+    private StarCatalog? EditSc { get; set; }
+    private string? Message { get; set; }
+    private Severity MessageSeverity { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var responseSc = await StarService.GetStarCatalogs(StarId);
+        if (responseSc.Success)
+        {
+            StarCatalogs = responseSc.Data;
+        }
+        var responseC = await StarService.CatalogListGet();
+        if (responseC.Success)
+        {
+            Catalogs = responseC.Data;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+    // if (_starPublication.StarId is -1)
+    // {
+    //     _starPublication.StarId = StarId;
+    // }
+    // var response = await StarService.SavePublication(_starPublication);
+    // _message = response.Message;
+    // _messageType = response.Success ? "success" : "danger";
+    }
+
+    private void CancelEdit()
+    {
+        EditSc = null;
+    }
+
+    private async Task SaveEdit()
+    {
+        if (EditSc is null || StarCatalogs is null) return;
+        if (EditSc.New)
+        {
+            var response = await MakeRequest(StarService.StarCatalogPost(EditSc));
+            if (response is {Success:true, Data: not null}) StarCatalogs.Add(response.Data);
+        }
+        else
+        {
+            await MakeRequest(StarService.StarCatalogPut(EditSc));
+        }
+    }
+
+    private void NewStarCatalog()
+    {
+        EditSc = new StarCatalog();
+        EditSc.StarId = StarId;
+    }
+
+    private void EditStarCatalog(StarCatalog sc)
+    {
+        sc.New = false;
+        EditSc = sc;
+    }
+
+    private async Task DeleteStarCatalog(StarCatalog sc)
+    {
+        if (StarCatalogs is null) return;
+        if (sc.Primary)
+        {
+            Message = Keywords.CannotDeletePrimaryCatalog;
+            MessageSeverity = Severity.Error;
+            return;
+        }
+        var response = await MakeRequest(StarService.DeleteStarCatalog(sc.StarId, sc.CatalogId));
+        if (response is {Success:true})
+
+            StarCatalogs = StarCatalogs.Where(catalog => catalog.CatalogId != sc.CatalogId).ToList();
+    }
+
+    private async Task MakeScPrimary(StarCatalog sc)
+    {
+        if (StarCatalogs is null) return;
+        var identification = new StarCatalogCK
+        {
+            StarId = sc.StarId,
+            CatalogId = sc.CatalogId
+        };
+        var response = await MakeRequest(StarService.SetStarCatalogPrimary(identification));
+
+        if (response.Success)
+        {
+            foreach (var catalog in StarCatalogs) catalog.Primary = false;
+            var c = StarCatalogs.FirstOrDefault(starCatalog => starCatalog.CatalogId == identification.CatalogId);
+            if (c is not null) c.Primary = true;
+        }
+    }
+
+    private async Task<ServiceResponse<T>> MakeRequest<T>(Task<ServiceResponse<T>> request)
+    {
+        var response = await request;
+        Message = response.Message;
+        MessageSeverity = response.Success ? Severity.Success : Severity.Error;
+        return response;
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo($"{Endpoints.ClientStarSingleGet}/{StarId}");
+    }
+
+}

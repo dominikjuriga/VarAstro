@@ -1,0 +1,33 @@
+﻿<MudTable Striped="true" Items="Data" Hover="true" T="StarCatalog">
+    <HeaderContent>
+        <MudTh>Katalóg</MudTh>
+        <MudTh>RA</MudTh>
+        <MudTh>DEC</MudTh>
+        <MudTh>MAG</MudTh>
+        <MudTh>Cross ID</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Katalóg">
+            @context.CatalogId
+        </MudTd>
+        <MudTd DataLabel="RA">
+            @context.Ra
+        </MudTd>
+        <MudTd DataLabel="DEC">
+            @context.Dec
+        </MudTd>
+        <MudTd DataLabel="MAG">
+            @context.Mag
+        </MudTd>
+        <MudTd DataLabel="Cross ID">
+            @context.CrossId
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+
+    [Parameter]
+    public List<StarCatalog> Data { get; set; }
+
+}

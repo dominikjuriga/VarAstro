@@ -1,43 +1,26 @@
 ﻿@page "/ObservationLogs/{Id}"
 @inject ILightCurveService LightCurveService
 
-@if (Log is null)
-{
-    <Loader/>
-}
-else
-{
-    <h3>
-        Pozorovací denník @Log.User.Name
-    </h3>
-    <MudCard>
-        <MudCardContent>
-            @if (LightCurves is null)
-            {
-                <Loader/>
-            }
-            else
-            {
-                if (Log.Curves.Count == 0)
+<MudCard>
+    <MudCardContent>
+        <MudText Typo="Typo.h3">Pozorovací denník @Log.User.Name</MudText>
+        @if (Log is {Curves.Count: 0})
+        {
+            <p>Tento denník nemá žiadne pozorovania.</p>
+        }
+        else
+        {
+            <MudSelect Class="mb-3" T="int" MultiSelection="false" SelectedValuesChanged="(e) => HandleFilter(e.First())" Label="Filtrovať podľa názvu hviezdy">
+                <MudSelectItem T="int" value="@Keywords.DefaultFilter">Všetky</MudSelectItem>
+                @foreach (var star in Log.DistinctStars)
                 {
-                    <p>Tento denník nemá žiadne pozorovania.</p>
+                    <MudSelectItem T="int" value="@star.Id">@star.Name</MudSelectItem>
                 }
-                else
-                {
-                    // 
-                    <MudSelect Class="mb-3" T="int" MultiSelection="false" SelectedValuesChanged="(e) => HandleFilter(e.First())" Label="Filtrovať podľa názvu hviezdy">
-                        <MudSelectItem T="int" value="@Keywords.DefaultFilter">Všetky</MudSelectItem>
-                        @foreach (var star in Log.DistinctStars)
-                        {
-                            <MudSelectItem T="int" value="@star.Id">@star.Name</MudSelectItem>
-                        }
-                    </MudSelect>
-                    <LightCurveListWithValues Curves="@FilteredCurves"/>
-                }
-            }
-        </MudCardContent>
-    </MudCard>
-}
+            </MudSelect>
+            <LightCurveListWithValues Curves="@FilteredCurves"/>
+        }
+    </MudCardContent>
+</MudCard>
 
 @code {
 
@@ -56,19 +39,17 @@ else
             Log = response.Data;
             LightCurves = response.Data.Curves;
             HandleFilter(Keywords.DefaultFilter);
+
+    // Not awaiting, so the page doesnt wait for the loading to finish
             GetValuesForCurves();
         }
     }
 
-    private void HandleChange(ChangeEventArgs e)
-    {
-        Console.WriteLine("chanmge");
-        HandleFilter(int.Parse(e.Value.ToString()));
-    }
 
     private void HandleFilter(int starId)
     {
-        Console.WriteLine(starId);
+        if (LightCurves is null) return;
+    // TODO filtrovanie asi uplne nefunguje TODO
         if (starId == Keywords.DefaultFilter)
         {
             FilteredCurves = LightCurves;

@@ -1,54 +1,31 @@
 ﻿@page "/Admin/Stars/{StarId:int}/Publication"
 @inject IStarService StarService
 @inject NavigationManager NavigationManager
-<h3>
-    Publikácia hviezdy
-    @if (_starPublication is {StarName: not null, StarName: {Length: > 0}})
-    {
-        <span> - @_starPublication.StarName</span>
-    }
-</h3>
 
-@if (_starPublication is null)
+@if (StarPublish is null)
 {
     <Loader/>
 }
 else
 {
-    @if (_message is not null)
-    {
-        <Alert type="@_messageType">
-            @_message
-        </Alert>
-    }
-    <EditForm Model="_starPublication" OnValidSubmit="HandleSubmit">
-        <div class="my-3">
-            <label for="discoverer" class="form-label">
-                Objaviteľ
-            </label>
-            <InputText id="discoverer" @bind-Value="_starPublication.Discoverer" class="form-control"></InputText>
-            <ValidationMessage For="@(() => _starPublication.Discoverer)"/>
-        </div>
-
-        <div class="my-3">
-            <label for="year" class="form-label">
-                Rok
-            </label>
-            <InputNumber id="year" @bind-Value="_starPublication.Year" class="form-control"></InputNumber>
-            <ValidationMessage For="@(() => _starPublication.Year)"/>
-        </div>
-
-        <div class="my-3">
-            <label for="link" class="form-label">
-                Odkaz na publikáciu
-            </label>
-            <InputText id="link" @bind-Value="_starPublication.PublicationLink" class="form-control"></InputText>
-            <ValidationMessage For="@(() => _starPublication.PublicationLink)"/>
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-lg">Uložiť publikáciu</button>
-        <button type="button" class="btn btn-secondary btn-lg" @onclick="GoBack">Späť na hviezdu</button>
-    </EditForm>
+    <MudCard>
+        <MudCardHeader>
+            <MudText Typo="Typo.h3">Publikácia hviezdy @StarPublish.StarName</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            @if (Message is not null)
+            {
+                <MudAlert Severity="@MessageSeverity">@Message</MudAlert>
+            }
+            <EditForm Model="StarPublish" OnValidSubmit="HandleSubmit">
+                <MudTextField class="mb-5" @bind-Value="StarPublish.Discoverer" Label="Objaviteľ" Variant="Variant.Filled" For="@(() => StarPublish.Discoverer)"/>
+                <MudNumericField class="mb-5" @bind-Value="StarPublish.Year" Label="Rok objavenia" Variant="Variant.Filled" For="@(() => StarPublish.Year)"/>
+                <MudTextField class="mb-5" @bind-Value="StarPublish.PublicationLink" Label="Odkaz na publikáciu" Variant="Variant.Filled" For="@(() => StarPublish.PublicationLink)"/>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Uložiť publikáciu</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="GoBack">Späť na hviezdu</MudButton>
+            </EditForm>
+        </MudCardContent>
+    </MudCard>
 }
 
 @code {
@@ -56,9 +33,9 @@ else
     [Parameter]
     public int StarId { get; set; }
 
-    private StarPublish _starPublication { get; set; }
-    private string? _message { get; set; }
-    private string? _messageType { get; set; }
+    private StarPublish? StarPublish { get; set; }
+    private string? Message { get; set; }
+    private Severity MessageSeverity { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -67,24 +44,24 @@ else
         {
             if (response.Data is null)
             {
-                _starPublication = new StarPublish();
+                StarPublish = new StarPublish();
             }
             else
             {
-                _starPublication = response.Data;
+                StarPublish = response.Data;
             }
         }
     }
 
     private async Task HandleSubmit()
     {
-        if (_starPublication.StarId is -1)
+        if (StarPublish.StarId is -1)
         {
-            _starPublication.StarId = StarId;
+            StarPublish.StarId = StarId;
         }
-        var response = await StarService.SavePublication(_starPublication);
-        _message = response.Message;
-        _messageType = response.Success ? Keywords.AlertSuccess : Keywords.AlertDanger;
+        var response = await StarService.SavePublication(StarPublish);
+        Message = response.Message;
+        MessageSeverity = response.Success ? Severity.Success : Severity.Error;
     }
 
     private void GoBack()

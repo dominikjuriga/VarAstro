@@ -2,87 +2,74 @@
 
 @inject IStarService StarService
 @inject ILightCurveService LightCurveService
+@inject NavigationManager NavigationManager
 
 <PageTitle>@(Star is null ? "" : Star.Name) | @Keywords.DefaultPageTitle</PageTitle>
 
-@if (Star == null)
+@if (Star is null)
 {
     <Loader/>
 }
 else
 {
-    <div class="d-flex justify-content-between">
-        <h3>Hviezda <strong>@Star.Name</strong></h3>
-        <a class="btn btn-outline-primary" href="@Endpoints.ClientLightCurvePost/@Star.Id">Pridať pozorovanie</a>
-    </div>
-
-    <AuthorizeView Roles="Administrator">
-        <section>
-            <h4>Administrácia hviezdy</h4>
-            <a href="@Endpoints.ClientAdminStars/@Star.Id/Publication" class="btn btn-primary">Spravovať publikáciu</a>
-            <a href="@Endpoints.ClientAdminStars/@Star.Id/Catalogs" class="btn btn-primary">Identifikácia v katalógoch</a>
-        </section>
-    </AuthorizeView>
-
     <MudCard Class="mb-5">
+        <MudCardHeader>
+            <MudText Typo="Typo.h3">
+                Hviezda
+                @if (Star is {Name: not null})
+                {
+                    <span>@Star.Name</span>
+                }
+            </MudText>
+        </MudCardHeader>
         <MudCardContent>
-            <MudText Typo="Typo.h5">Údaje o hviezde</MudText>
-            <StarMetaListTable Data="Star"></StarMetaListTable>
-        </MudCardContent>
-    </MudCard>
+            <MudCard Class="mb-5">
+                <MudCardContent>
+                    <MudText Typo="Typo.h4">Akcie</MudText>
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="NavigateToNew">Pridať pozorovanie</MudButton>
+                </MudCardContent>
+            </MudCard>
+            <AuthorizeView Roles="Administrator">
+                <MudCard Class="mb-5">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h4">Administrácia hviezdy</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="NavigateToPublications">Spravovať publikáciu</MudButton>
+                        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="NavigateToCatalogs">Spravovať hviezdu v katalógoch</MudButton>
+                    </MudCardContent>
+                </MudCard>
+            </AuthorizeView>
 
-    <MudCard Class="mb-5">
-        <MudCardContent>
-            <MudText Typo="Typo.h5">Prítomnosť hviezdy v katalógoch</MudText>
-            @if (Star is {StarCatalogs: not null, StarCatalogs.Count: > 0})
-            {
-                <MudTable Striped="true" Items="Star.StarCatalogs" Hover="true" T="StarCatalog">
-                    <HeaderContent>
-                        <MudTh>Katalóg</MudTh>
-                        <MudTh>RA</MudTh>
-                        <MudTh>DEC</MudTh>
-                        <MudTh>MAG</MudTh>
-                        <MudTh>Cross ID</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="Katalóg">
-                            @context.CatalogId
-                        </MudTd>
-                        <MudTd DataLabel="RA">
-                            @context.Ra
-                        </MudTd>
-                        <MudTd DataLabel="DEC">
-                            @context.Dec
-                        </MudTd>
-                        <MudTd DataLabel="MAG">
-                            @context.Mag
-                        </MudTd>
-                        <MudTd DataLabel="Cross ID">
-                            @context.CrossId
-                        </MudTd>
-                    </RowTemplate>
-                </MudTable>
-            }
-            else
-            {
-                <h4>Táto hviezda sa nenachádza v žiadnych katalógoch.</h4>
-            }
-        </MudCardContent>
-    </MudCard>
+            <MudCard Class="mb-5">
+                <MudCardContent>
+                    <MudText Typo="Typo.h5">Údaje o hviezde</MudText>
+                    <StarMetaListTable Data="Star"></StarMetaListTable>
+                </MudCardContent>
+            </MudCard>
 
-    <MudCard Class="mb-5">
-        <MudCardContent>
-            <h4> Pozorovanie tejto hviezdy</h4>
-            @if (Star is {LightCurves.Count: 0})
-            {
-                <h5>
-                    Táto hviezda nemá žiadne pozorovania.
-                </h5>
-            }
-            else if (Star is {LightCurves.Count: > 0})
-            {
-                <LightCurveListWithValues Curves="@Star.LightCurves" CurveLayout="col-12"/>
-            }
+            <MudCard Class="mb-5">
+                <MudCardContent>
+                    <MudText Typo="Typo.h5">Prítomnosť hviezdy v katalógoch</MudText>
+                    <StarCatalogTable Data="Star.StarCatalogs"></StarCatalogTable>
+                </MudCardContent>
+            </MudCard>
+
+            <MudCard Class="mb-5">
+                <MudCardContent>
+                    <h4> Pozorovanie tejto hviezdy</h4>
+                    @if (Star is {LightCurves.Count: 0})
+                    {
+                        <h5>
+                            Táto hviezda nemá žiadne pozorovania.
+                        </h5>
+                    }
+                    else if (Star is {LightCurves.Count: > 0})
+                    {
+                        <LightCurveListWithValues Curves="@Star.LightCurves" CurveLayout="col-12"/>
+                    }
+                </MudCardContent>
+            </MudCard>
         </MudCardContent>
     </MudCard>
 }
@@ -102,6 +89,8 @@ else
         {
             Star = response.Data;
             PrimaryStarCatalog = Star.StarCatalogs?.FirstOrDefault(sc => sc.Primary);
+
+    // not awaiting so the curves load in the bg without waiting for finish
             GetCurveValues();
         }
     }
@@ -118,6 +107,24 @@ else
             lc.ValuesFinishedLoading = true;
             StateHasChanged();
         }
+    }
+
+    private void NavigateToNew()
+    {
+        if (Star is null) return;
+        NavigationManager.NavigateTo($"{Endpoints.ClientLightCurvePost}/{Star.Id}");
+    }
+
+    private void NavigateToPublications()
+    {
+        if (Star is null) return;
+        NavigationManager.NavigateTo($"{Endpoints.ClientAdminStars}/{Star.Id}/Publication");
+    }
+
+    private void NavigateToCatalogs()
+    {
+        if (Star is null) return;
+        NavigationManager.NavigateTo($"{Endpoints.ClientAdminStars}/{Star.Id}/Catalogs");
     }
 
 }
