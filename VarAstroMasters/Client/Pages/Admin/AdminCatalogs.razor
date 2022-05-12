@@ -1,134 +1,125 @@
 ﻿@page "/Admin/Catalogs"
 @inject IStarService StarService
-<div class="d-flex justify-content-between">
-    <h3>Správa katalógov</h3>
-    <div>
-        <button class="btn btn-primary" @onclick="NewCatalog">Pridať katalóg</button>
-        @if (_editCatalog is not null)
-        {
-            <button class="btn btn-primary" @onclick="CancelEdit">Späť na prehľad</button>
-        }
-    </div>
-</div>
 
-@if (_catalogs is null)
+@if (Catalogs is null)
 {
     <Loader/>
 }
 else
 {
-    @if (_message is not null)
-    {
-        <Alert type="@_messageType">
-            @_message
-        </Alert>
-    }
-    <section>
-        @if (_editCatalog is not null)
-        {
-            <EditForm Model="_editCatalog">
-                <div class="my-3">
-                    <label for="name" class="form-label">
-                        Názov katalógu
-                    </label>
-                    <InputText id="name" @bind-Value="_editCatalog.Name" class="form-control"></InputText>
-                    <ValidationMessage For="@(() => _editCatalog.Name)"/>
-                </div>
+    <MudCard>
+        <MudCardHeader>
+            <MudText Typo="Typo.h3">Katalógy</MudText>
+        </MudCardHeader>
+        <MudCardContent>
 
-                <button class="btn btn-primary" type="submit" @onclick="SaveEdit">Uložiť</button>
-                <button class="btn btn-secondary" type="button" @onclick="CancelEdit">Zrušiť</button>
-            </EditForm>
-        }
-        else
-        {
-            @if (_catalogToDelete is not null)
+            @if (EditCatalog is null)
             {
-                <Alert type="@Keywords.AlertInfo">
-                    Naozaj chcete odstrániť katalóg @_catalogToDelete? Táto akcia je nevratná a zmaže všetky pridružené záznamy (identifikácia hviezd v katalógu)! <br/>
-                    <button class="btn btn-danger my-3" @onclick="DeleteCatalog">Áno, chcem zmazať katalóg</button><br/>
-                    <button class="btn btn-secondary" @onclick="CancelDelete">Nie, zrušiť akciu</button>
-                </Alert>
+                <MudCard Class="mb-5">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h4">Akcie</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NewCatalog">Nový katalóg</MudButton>
+                    </MudCardContent>
+                </MudCard>
             }
-            if (_catalogs.Count > 0)
+
+            @if (Message is not null)
             {
-                <ResponsiveTable>
-                    <thead>
-                    <tr>
-                        <th>Katalóg</th>
-                        <th>Akcie</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var catalog in _catalogs)
-                    {
-                        <tr>
-                            <td>@catalog.Name</td>
-                            <td>
-                                <button title="Budete vyzvaný k potvrdeniu akcie" class="btn btn-primary" @onclick="() => ConfirmDeleteCatalog(catalog.Name)">Zmazať</button>
-                                @* <button class="btn btn-primary" @onclick="() => EditCatalog(catalog)">Upraviť</button> *@
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </ResponsiveTable>
+                <MudAlert Severity="@MessageSeverity">
+                    @Message
+                </MudAlert>
+            }
+            @if (EditCatalog is not null)
+            {
+                <EditForm Model="EditCatalog" class="mb-5">
+                    <MudTextField class="mb-5" @bind-Value="EditCatalog.Name" For="() => EditCatalog.Name" Variant="Variant.Filled" Label="Názov katalógu"/>
+
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveEdit">Uložiť</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CancelEdit">Zrušiť</MudButton>
+                </EditForm>
             }
             else
             {
-                <p>Systém neobsahuje žiadne katalógy.</p>
+                @if (CatalogToDelete is not null)
+                {
+                    <MudAlert Severity="Severity.Warning" Class="mb-5">
+                        Naozaj chcete odstrániť katalóg @CatalogToDelete? Táto akcia je nevratná a zmaže všetky pridružené záznamy (identifikácia hviezd v katalógu)! <br/>
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="DeleteCatalog">Áno, chcem zmazať katalóg</MudButton><br/>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CancelDelete">Nie, zrušiť akciu</MudButton>
+                    </MudAlert>
+                }
+                if (Catalogs.Count > 0)
+                {
+                    <MudSimpleTable>
+                        <thead>
+                        <tr>
+                            <th>Katalóg</th>
+                            <th>Akcie</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var catalog in Catalogs)
+                        {
+                            <tr>
+                                <td>@catalog.Name</td>
+                                <td>
+                                    <MudTooltip Text="Akcia vyžaduje dodatočné potvrdenie">
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => ConfirmDeleteCatalog(catalog.Name)">Zmazať</MudButton>
+                                    </MudTooltip>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </MudSimpleTable>
+                }
+                else
+                {
+                    <p>Systém neobsahuje žiadne katalógy.</p>
+                }
             }
-        }
-    </section>
+
+        </MudCardContent>
+    </MudCard>
 }
 
 @code {
-    private List<Catalog>? _catalogs { get; set; }
-    private CatalogEdit? _editCatalog { get; set; }
-    private string? _message { get; set; }
-    private string? _messageType { get; set; }
-    private string? _catalogToDelete { get; set; }
+    private List<Catalog>? Catalogs { get; set; }
+    private CatalogEdit? EditCatalog { get; set; }
+    private string? Message { get; set; }
+    private Severity MessageSeverity { get; set; }
+    private string? CatalogToDelete { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         var response = await StarService.CatalogListGet();
         if (response.Success)
         {
-            _catalogs = response.Data;
+            Catalogs = response.Data;
         }
     }
 
     private void NewCatalog()
     {
-        SetMessage();
-        _editCatalog = new CatalogEdit();
-    }
-
-    private void EditCatalog(Catalog catalog)
-    {
-        _editCatalog = new CatalogEdit
-        {
-            Name = catalog.Name,
-            OriginalName = catalog.Name,
-            New = false
-        };
+        EditCatalog = new CatalogEdit();
     }
 
     private async Task SaveEdit()
     {
-        var response = await StarService.CatalogPost(_editCatalog);
-        SetMessage(response.Message, response.Success ? Keywords.AlertSuccess : Keywords.AlertDanger);
-        if (response is {Success: true, Data: not null} && _catalogs is not null)
+        var response = await StarService.CatalogPost(EditCatalog);
+        Message = response.Message;
+        MessageSeverity = response.Success ? Severity.Success : Severity.Error;
+        if (response is {Success: true, Data: not null} && Catalogs is not null)
         {
-            if (_editCatalog.New)
-            {
-                _catalogs.Add(new Catalog { Name = response.Data.Name });
-            }
+            if (EditCatalog.New) Catalogs.Add(new Catalog { Name = response.Data.Name });
             else
             {
-                var cat = _catalogs.Where(c => c.Name == _editCatalog.OriginalName).FirstOrDefault();
+                var cat = Catalogs.Where(c => c.Name == EditCatalog.OriginalName).FirstOrDefault();
                 if (cat is not null)
                 {
-                    _catalogs.Remove(cat);
-                    _catalogs.Add(response.Data);
+                    Catalogs.Remove(cat);
+                    Catalogs.Add(response.Data);
                 }
             }
         }
@@ -136,39 +127,31 @@ else
 
     private void ConfirmDeleteCatalog(string catalogName)
     {
-        _catalogToDelete = catalogName;
+        CatalogToDelete = catalogName;
     }
 
     private void CancelDelete()
     {
-        _catalogToDelete = null;
+        CatalogToDelete = null;
     }
 
     private async Task DeleteCatalog()
     {
-        if (_catalogToDelete is null)
+        if (CatalogToDelete is null) return;
+
+        var response = await StarService.CatalogDelete(CatalogToDelete);
+        if (response is {Success:true})
         {
-            return;
+            Catalogs = Catalogs.Where(c => c.Name != CatalogToDelete).ToList();
+            CatalogToDelete = null;
         }
-        SetMessage();
-        var response = await StarService.CatalogDelete(_catalogToDelete);
-        if (response.Success)
-        {
-            _catalogs = _catalogs.Where(c => c.Name != _catalogToDelete).ToList();
-            _catalogToDelete = null;
-        }
-        SetMessage(response.Message, response.Success ? Keywords.AlertSuccess : Keywords.AlertDanger);
+        Message = response.Message;
+        MessageSeverity = response.Success ? Severity.Success : Severity.Error;
     }
 
     private void CancelEdit()
     {
-        _editCatalog = null;
-    }
-
-    private void SetMessage(string? message = null, string type = "success")
-    {
-        _message = message;
-        _messageType = type;
+        EditCatalog = null;
     }
 
 }
