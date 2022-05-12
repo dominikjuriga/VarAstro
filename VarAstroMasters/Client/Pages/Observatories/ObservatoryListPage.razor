@@ -1,116 +1,96 @@
 ﻿@page "/Observatory/List"
 @using VarAstroMasters.Shared.Helpers
 @inject IObservatoryService ObservatoryService
-
 @if (Observatories is null)
 {
     <Loader/>
 }
 else
 {
-    @if (ObservatoryEdit is not null)
+    if (Observatories is {Count: 0})
     {
-        <div class="d-flex justify-content-between">
-            <h3>Úprava hvezdárne</h3>
-            <div>
-                <a class="btn btn-primary" href="@Endpoints.ClientObservatoryListGet">Zoznam hvezdární</a>
-            </div>
-        </div>
+        <MudAlert Severity="Severity.Info" Class="mb-5">
+            Nemáte žiadne registrované hvezdárne
+        </MudAlert>
     }
-    else
-    {
-        <div class="d-flex justify-content-between">
-
-            <h3>Vaše hvezdárne</h3>
-            <div>
-                <button class="btn btn-primary" @onclick="NewItem">Pridať hvezdáreň</button>
-            </div>
-        </div>
-    }
-
-    @if (Message is not null)
-    {
-        <Alert type="@MessageType">
-            @Message
-        </Alert>
-    }
-    <section>
-        @if (ObservatoryEdit is not null)
-        {
-            <EditForm Model="ObservatoryEdit" OnValidSubmit="HandleSubmit">
-                <DataAnnotationsValidator/>
-                <div class="my-3">
-                    <label for="address" class="form-label">
-                        Adresa
-                    </label>
-                    <InputText id="address" @bind-Value="ObservatoryEdit.Address" class="form-control"></InputText>
-                    <ValidationMessage For="@(() => ObservatoryEdit.Address)"/>
-                </div>
-
-                <div class="my-3">
-                    <label for="longitude" class="form-label">
-                        Zemepisná dĺžka
-                    </label>
-                    <InputNumber id="longitude" @bind-Value="ObservatoryEdit.Longitude" class="form-control"></InputNumber>
-                    <ValidationMessage For="@(() => ObservatoryEdit.Longitude)"/>
-                </div>
-
-                <div class="my-3">
-                    <label for="latitude" class="form-label">
-                        Zemepisná šírka
-                    </label>
-                    <InputNumber id="latitude" @bind-Value="ObservatoryEdit.Latitude" class="form-control"></InputNumber>
-                    <ValidationMessage For="@(() => ObservatoryEdit.Latitude)"/>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Uložiť</button>
-                <button type="button" @onclick="CancelEdit" class="btn btn-secondary">Zrušiť</button>
-            </EditForm>
-        }
-        else
-        {
-            @if (Observatories.Count == 0)
+    <MudCard>
+        <MudCardHeader>
+            <MudText Typo="Typo.h3">
+                Vaše hvezdárne
+            </MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            @if (Message is not null)
             {
-                <Alert type="@Keywords.AlertInfo">
-                    <span>Nemáte žiadne registrované hvezdárne.</span>
-                </Alert>
+                <MudAlert Severity="@MessageSeverity" Class="mb-5">
+                    @Message
+                </MudAlert>
+            }
+
+            @if (ObservatoryEdit is not null)
+            {
+                <MudCard Class="mb-5">
+                    <MudCardContent>
+                        <EditForm Model="ObservatoryEdit" OnValidSubmit="HandleSubmit">
+                            <DataAnnotationsValidator/>
+                            <MudTextField class="mb-5" @bind-Value="ObservatoryEdit.Address" Variant="Variant.Filled" For="() => ObservatoryEdit.Address" Label="Adresa hvezdárne"/>
+                            <MudNumericField Step="0.0001" class="mb-5" @bind-Value="ObservatoryEdit.Longitude" Variant="Variant.Filled" For="() => ObservatoryEdit.Longitude" Label="Zemepisná dĺžka"/>
+                            <MudNumericField Step="0.0001" class="mb-5" @bind-Value="ObservatoryEdit.Latitude" Variant="Variant.Filled" For="() => ObservatoryEdit.Latitude" Label="Zemepisná šírka"/>
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Uložiť</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CancelEdit">Zrušiť</MudButton>
+                        </EditForm>
+                    </MudCardContent>
+                </MudCard>
             }
             else
             {
-                <ResponsiveTable>
-                    <thead>
-                    <tr>
-                        <th>Adresa</th>
-                        <th>Zem. dĺžka</th>
-                        <th>Zem. šírka</th>
-                        <th>Akcie</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var observatory in Observatories)
-                    {
+                <MudCard Class="mb-5">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h4">Akcie</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NewItem">Pridať hvezdáreň</MudButton>
+                    </MudCardContent>
+                </MudCard>
+
+                @if (Observatories is {Count: > 0})
+                {
+                    <MudSimpleTable>
+                        <thead>
                         <tr>
-                            <td>@observatory.Address</td>
-                            <td>@observatory.Longitude</td>
-                            <td>@observatory.Latitude</td>
-                            <td>
-                                <button class="btn btn-outline-info" @onclick="() => DeleteObservatory(observatory.Id)">Zmazať</button>
-                                <button class="btn btn-outline-success" @onclick="() => OpenEditObservatory(observatory)">Upraviť</button>
-                            </td>
+                            <th>Adresa</th>
+                            <th>Zemepisná dĺžka</th>
+                            <th>Zemepisná šírka</th>
+                            <th>Akcie</th>
                         </tr>
-                    }
-                    </tbody>
-                </ResponsiveTable>
+                        </thead>
+                        <tbody>
+                        @foreach (var observatory in Observatories)
+                        {
+                            <tr>
+                                <td>@observatory.Address</td>
+                                <td>@observatory.Longitude</td>
+                                <td>@observatory.Latitude</td>
+                                <td>
+                                    <MudButton OnClick="() => DeleteObservatory(observatory.Id)" Variant="Variant.Filled" Color="Color.Primary">Zmazať</MudButton>
+                                    <MudButton OnClick="() => OpenEditObservatory(observatory)" Variant="Variant.Filled" Color="Color.Primary">Upraviť</MudButton>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </MudSimpleTable>
+                }
             }
-        }
-    </section>
+
+        </MudCardContent>
+    </MudCard>
 }
 
 @code {
     private List<Observatory>? Observatories { get; set; }
     private Observatory? ObservatoryEdit { get; set; }
     private string? Message { get; set; }
-    private string? MessageType { get; set; }
+    private Severity MessageSeverity { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -135,7 +115,7 @@ else
             Observatories = Observatories.Where(d => d.Id != observatoryId).ToList();
         }
         Message = response?.Message;
-        MessageType = MessageHelper.GetAlertType(response?.Success);
+        MessageSeverity = response.Success ? Severity.Success : Severity.Error;
     }
 
     private void OpenEditObservatory(Observatory observatory)
@@ -170,7 +150,7 @@ else
             CancelEdit();
         }
         Message = response.Message;
-        MessageType = MessageHelper.GetAlertType(response.Success);
+        MessageSeverity = response.Success ? Severity.Success : Severity.Error;
     }
 
 }

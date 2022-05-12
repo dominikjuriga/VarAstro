@@ -8,89 +8,86 @@
 }
 else
 {
-    @if (DeviceEdit is not null)
+    if (Devices is {Count: 0})
     {
-        <div class="d-flex justify-content-between">
-            <h3>Úprava zariadenia</h3>
-            <div>
-                <a class="btn btn-primary" href="@Endpoints.ClientDeviceListGet">Zoznam zariadení</a>
-            </div>
-        </div>
+        <MudAlert Severity="Severity.Info" Class="mb-5">
+            Nemáte žiadne registrované zariadenia
+        </MudAlert>
     }
-    else
-    {
-        <div class="d-flex justify-content-between">
-
-            <h3>Vaše zariadenia</h3>
-            <div>
-                <button class="btn btn-primary" @onclick="NewItem">Pridať zariadenie</button>
-            </div>
-        </div>
-    }
-
-    @if (Message is not null)
-    {
-        <Alert type="@MessageType">
-            @Message
-        </Alert>
-    }
-    <section>
-        @if (DeviceEdit is not null)
-        {
-            <EditForm Model="DeviceEdit" OnValidSubmit="HandleSubmit">
-                <DataAnnotationsValidator/>
-                <div class="my-3">
-                    <label for="name" class="form-label">
-                        Názov zariadenia
-                    </label>
-                    <InputText id="name" @bind-Value="DeviceEdit.Name" class="form-control"></InputText>
-                </div>
-
-
-                <button type="submit" class="btn btn-primary">Uložiť</button>
-                <button type="button" @onclick="CancelEdit" class="btn btn-secondary">Zrušiť</button>
-            </EditForm>
-        }
-        else
-        {
-            @if (Devices.Count == 0)
+    <MudCard>
+        <MudCardHeader>
+            <MudText Typo="Typo.h3">
+                Vaše zariadenia
+            </MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            @if (Message is not null)
             {
-                <Alert type="@Keywords.AlertInfo">
-                    <span>Nemáte žiadne registrované zariadenia.</span>
-                </Alert>
+                <MudAlert Severity="@MessageSeverity">
+                    @Message
+                </MudAlert>
+            }
+
+            @if (DeviceEdit is not null)
+            {
+                <MudCard Class="mb-5">
+                    <MudCardContent>
+
+                        <EditForm Model="DeviceEdit" OnValidSubmit="HandleSubmit">
+                            <DataAnnotationsValidator/>
+                            <MudTextField class="mb-5" @bind-Value="DeviceEdit.Name" Variant="Variant.Filled" For="() => DeviceEdit.Name" Label="Názov zariadenia"/>
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Uložiť</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CancelEdit">Zrušiť</MudButton>
+                        </EditForm>
+
+                    </MudCardContent>
+                </MudCard>
             }
             else
             {
-                <ResponsiveTable>
-                    <thead>
-                    <tr>
-                        <th>Názov</th>
-                        <th>Akcie</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var device in Devices)
-                    {
+                <MudCard Class="mb-5">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h4">Akcie</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NewItem">Pridať zariadenie</MudButton>
+                    </MudCardContent>
+                </MudCard>
+
+                @if (Devices is {Count: > 0})
+                {
+                    <MudSimpleTable>
+                        <thead>
                         <tr>
-                            <td>@device.Name</td>
-                            <td>
-                                <button class="btn btn-outline-info" @onclick="() => DeleteDevice(device.Id)">Zmazať</button>
-                                <button class="btn btn-outline-success" @onclick="() => OpenEditDevice(device)">Upraviť</button>
-                            </td>
+                            <th>Názov</th>
+                            <th>Akcie</th>
                         </tr>
-                    }
-                    </tbody>
-                </ResponsiveTable>
+                        </thead>
+                        <tbody>
+                        @foreach (var device in Devices)
+                        {
+                            <tr>
+                                <td>@device.Name</td>
+                                <td>
+                                    <MudButton OnClick="() => DeleteDevice(device.Id)" Variant="Variant.Filled" Color="Color.Primary">Zmazať</MudButton>
+                                    <MudButton OnClick="() => OpenEditDevice(device)" Variant="Variant.Filled" Color="Color.Primary">Upraviť</MudButton>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </MudSimpleTable>
+                }
             }
-        }
-    </section>
+
+        </MudCardContent>
+    </MudCard>
 }
 
 @code {
     private List<Device>? Devices { get; set; }
     private Device? DeviceEdit { get; set; }
     private string? Message { get; set; }
-    private string? MessageType { get; set; }
+    private Severity MessageSeverity { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -115,7 +112,7 @@ else
             Devices = Devices.Where(d => d.Id != deviceId).ToList();
         }
         Message = response?.Message;
-        MessageType = MessageHelper.GetAlertType(response?.Success);
+        MessageSeverity = response.Success ? Severity.Success : Severity.Error;
     }
 
     private void OpenEditDevice(Device device)
@@ -150,7 +147,7 @@ else
             CancelEdit();
         }
         Message = response?.Message;
-        MessageType = MessageHelper.GetAlertType(response?.Success);
+        MessageSeverity = response.Success ? Severity.Success : Severity.Error;
     }
 
 }
