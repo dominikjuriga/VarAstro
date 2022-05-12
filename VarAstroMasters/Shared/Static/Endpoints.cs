@@ -37,9 +37,11 @@ public static class Endpoints
     // Stars
     public static readonly string ApiStarBasePath = "api/star";
     public static readonly string ApiStarAllGet = $"{ApiStarBasePath}";
+    public static readonly string ApiStarPost = $"{ApiStarBasePath}";
     public static readonly string ApiStarSingleGet = $"{ApiStarBasePath}";
     public static readonly string ApiStarSearch = $"{ApiStarBasePath}/search";
     public static readonly string ApiStarSearchByCoords = $"{ApiStarBasePath}/searchbycoords";
+    public static readonly string ApiStarGetFirstByCoords = $"{ApiStarBasePath}/firstbycoords";
     public static readonly string ApiStarPublicationGet = $"{ApiStarBasePath}/publication";
 
     // Star Drafts

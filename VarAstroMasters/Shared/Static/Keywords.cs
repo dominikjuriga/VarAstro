@@ -24,6 +24,8 @@ public static class Keywords
     public const string AlertDanger = "danger";
     public const string AcceptedImageFormats = "image/png, image/jpeg, image/gif";
     public const string NotFoundMessage = "Objekt nenájdený.";
+    public const string CoordsNotFoundMessage = "Objekt s takýmito koordinátmi neexistuje.";
+    public const string CoordsFoundMessage = "Pre dané koordináty existuje objekt.";
     public const string AlreadyExists = "Objekt so zhodným identifikátorom už existuje.";
     public const string NotPublished = "Tento záznam nie je verejný.";
     public const string CurveNotPublished = "Toto pozorovanie nemá zverejnenú krivku.";

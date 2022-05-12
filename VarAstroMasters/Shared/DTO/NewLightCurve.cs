@@ -4,33 +4,30 @@ using VarAstroMasters.Shared.Static;
 
 namespace VarAstroMasters.Shared.DTO;
 
-public class LightCurveAdd
+public class NewLightCurve
 {
-    [Required(ErrorMessage = Keywords.FormFieldRequired)]
-    public int StarId { get; set; }
+    public NewStar NewStar { get; set; } = new();
+    public StarDTO? ExistingStar { get; set; }
 
     [Required(ErrorMessage = Keywords.FormFieldRequired)]
-    public string DataFileContent { get; set; }
+    public List<Image> Images { get; set; } = new();
 
     [Required(ErrorMessage = Keywords.FormFieldRequired)]
-
-    public string? JD { get; set; }
-
-    [Required(ErrorMessage = Keywords.FormFieldRequired)]
-
-    public string? Filter { get; set; }
+    public string JD { get; set; } = string.Empty;
 
     [Required(ErrorMessage = Keywords.FormFieldRequired)]
+    public string PhotometricSystem { get; set; } = string.Empty;
 
-    public string? PhotometricSystem { get; set; } = null;
-
-    public double? VarAperture { get; set; }
+    public double VarAperture { get; set; }
 
     [Required(ErrorMessage = Keywords.FormFieldRequired)]
+    public string Filter { get; set; } = string.Empty;
 
+    [Required(ErrorMessage = Keywords.FormFieldRequired)]
     public PublishVariant PublishVariant { get; set; } = PublishVariant.All;
 
-    public string Comment { get; set; } = string.Empty;
     public int DeviceId { get; set; } = 0;
-    public List<Image> Images { get; set; } = new();
+    public int ObservatoryId { get; set; } = 0;
+    public string Description { get; set; } = string.Empty;
+    public bool CreateStarOnSubmit { get; set; } = false;
 }

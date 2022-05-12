@@ -141,7 +141,11 @@ else
     {
         var response = await StarService.GetStarAsync(StarId);
         _star = response.Data;
-        _devices = await UserService.UserMyDevicesGet();
+        var deviceResponse = await UserService.UserMyDevicesGet();
+        if (deviceResponse is {Success:true})
+        {
+            _devices = deviceResponse.Data;
+        }
         _lightCurveAdd.StarId = _star.Id;
     }
 

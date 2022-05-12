@@ -11,6 +11,7 @@ public class DefaultMapping : Profile
         CreateMap<Device, DeviceDTO>();
         CreateMap<LightCurveAdd, LightCurve>();
         CreateMap<DeviceAdd, Device>();
+        CreateMap<NewStar, Star>();
         CreateMap<Observatory, ObservatoryDTO>();
         CreateMap<User, UserDTO>().ForMember(dest => dest.Name,
             opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));

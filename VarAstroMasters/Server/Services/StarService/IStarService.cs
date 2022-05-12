@@ -17,9 +17,11 @@ public interface IStarService
     Task<ServiceResponse<StarCatalog>> StarCatalogPut(StarCatalog starCatalog);
     Task<ServiceResponse<bool>> StarCatalogDelete(int starId, string catalogId);
     Task<ServiceResponse<List<Catalog>>> CatalogListGet();
+    Task<ServiceResponse<StarDTO>> FirstByCoords(StarCoordDTO coords);
 
     Task<ServiceResponse<bool>> CatalogDelete(string catalogName);
 
     //////////////////////////
     Task<ServiceResponse<Catalog>> CatalogPost(Catalog catalog);
+    Task<ServiceResponse<int>> StarPost(NewStar newStar);
 }

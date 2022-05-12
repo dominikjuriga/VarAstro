@@ -18,7 +18,9 @@ public interface IStarService
     Task<ServiceResponse<bool>> CatalogDelete(string catalogName);
     Task<ServiceResponse<bool>> SetStarCatalogPrimary(StarCatalogCK identification);
     Task<ServiceResponse<StarPublish>> SavePublication(StarPublish starPublish);
+    Task<ServiceResponse<StarDTO>> GetStarByCoords(StarCoordDTO coords);
 
     //////////////////////////
     Task<ServiceResponse<Catalog>> CatalogPost(CatalogEdit catalog);
+    Task<ServiceResponse<int>> StarPost(NewStar newStar);
 }

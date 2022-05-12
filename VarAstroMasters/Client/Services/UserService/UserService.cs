@@ -23,10 +23,10 @@ public class UserService : IUserService
         return response.Data;
     }
 
-    public async Task<List<DeviceDTO>> UserMyDevicesGet()
+    public async Task<ServiceResponse<List<DeviceDTO>>> UserMyDevicesGet()
     {
         var response =
             await _httpClient.GetFromJsonAsync<ServiceResponse<List<DeviceDTO>>>(Endpoints.ApiUserMyDevicesGet);
-        return response.Data;
+        return response;
     }
 }

@@ -105,10 +105,22 @@ public class StarService : IStarService
         return await response.Content.ReadFromJsonAsync<ServiceResponse<StarPublish>>();
     }
 
+    public async Task<ServiceResponse<StarDTO>> GetStarByCoords(StarCoordDTO coords)
+    {
+        var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiStarGetFirstByCoords, coords);
+        return await response.Content.ReadFromJsonAsync<ServiceResponse<StarDTO>>();
+    }
+
 
     public async Task<ServiceResponse<Catalog>> CatalogPost(CatalogEdit catalog)
     {
         var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiCatalogPost, catalog);
         return await response.Content.ReadFromJsonAsync<ServiceResponse<Catalog>>();
+    }
+
+    public async Task<ServiceResponse<int>> StarPost(NewStar newStar)
+    {
+        var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiStarPost, newStar);
+        return await response.Content.ReadFromJsonAsync<ServiceResponse<int>>();
     }
 }

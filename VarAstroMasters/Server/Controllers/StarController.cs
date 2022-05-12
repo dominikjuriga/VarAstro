@@ -20,6 +20,13 @@ public class StarController : ControllerBase
         return Ok(response);
     }
 
+    [HttpPost]
+    public async Task<ActionResult<ServiceResponse<int>>> StarPost(NewStar newStar)
+    {
+        var response = await _starService.StarPost(newStar);
+        return Ok(response);
+    }
+
     [HttpGet("{starId}")]
     public async Task<ActionResult<ServiceResponse<StarDTO>>> StarSingleGet(int starId)
     {
@@ -38,6 +45,13 @@ public class StarController : ControllerBase
     public async Task<ActionResult<ServiceResponse<StarSearchDTO>>> SearchByCoords(string searchQuery)
     {
         var response = await _starService.SearchByCoords(searchQuery);
+        return Ok(response);
+    }
+
+    [HttpPost("firstbycoords")]
+    public async Task<ActionResult<ServiceResponse<StarSearchDTO>>> FirstByCoords(StarCoordDTO coords)
+    {
+        var response = await _starService.FirstByCoords(coords);
         return Ok(response);
     }
 

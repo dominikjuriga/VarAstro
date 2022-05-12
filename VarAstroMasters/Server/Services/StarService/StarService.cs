@@ -88,14 +88,13 @@ public class StarService : IStarService
         }
 
         if (location is null) return ResponseHelper.FailResponse<StarSearchDTO>("ASd");
-        var raRadians = RaToRadians(location.RaH, location.RaM, location.RaS);
-        var decRadians = DecToRadians(location.DecD, location.DecM, location.DecS);
+        var raRadians = RaToRadians(location);
+        var decRadians = DecToRadians(location);
+        if (raRadians is null || decRadians is null)
+            return ResponseHelper.FailResponse<StarSearchDTO>(Keywords.InvalidValues);
 
         // Threshold in radians, because of float inaccuracy - Needs to be determined later on
         var threshold = 1;
-
-        if (raRadians is null || decRadians is null)
-            return ResponseHelper.FailResponse<StarSearchDTO>(Keywords.ValuesOutOfBounds);
 
         var stars = await _context.Stars.Where(s =>
                 (s.RA > raRadians - threshold && s.RA < raRadians + threshold && s.DEC > decRadians - threshold &&
@@ -123,19 +122,24 @@ public class StarService : IStarService
         };
     }
 
-    private double? RaToRadians(int? hours, int? minutes, int? seconds)
+    private double? RaToRadians(StarCoordDTO coords)
     {
-        if (hours is null || minutes is null || seconds is null) return null;
-        return hours * 15 + minutes / 4d + seconds / 240d;
+        if (coords is { RaH: not null, RaM: not null, RaS: not null })
+            return coords.RaH * 15 + coords.RaM / 4d + coords.RaS / 240d;
+        return null;
     }
 
-    private double? DecToRadians(int? degrees, int? minutes, int? seconds)
+    private double? DecToRadians(StarCoordDTO coords)
     {
-        if (degrees is null || minutes is null || seconds is null) return null;
-        if (degrees > 0)
-            return degrees + minutes / 60d + seconds / 3600d;
-        else
-            return degrees - (double)minutes / 60d - (double)seconds / 3600d;
+        if (coords is { DecD: not null, DecM: not null, DecS: not null })
+        {
+            if (coords.DecD >= 0)
+                return coords.DecD + coords.DecM / 60d + coords.DecS / 3600d;
+            else
+                return coords.DecD - coords.DecM / 60d - coords.DecS / 3600d;
+        }
+
+        return null;
     }
 
 
@@ -298,6 +302,39 @@ public class StarService : IStarService
         };
     }
 
+    public async Task<ServiceResponse<StarDTO>> FirstByCoords(StarCoordDTO coords)
+    {
+        var raRadians = RaToRadians(coords);
+        var decRadians = DecToRadians(coords);
+        if (raRadians is null || decRadians is null)
+            return ResponseHelper.FailResponse<StarDTO>(Keywords.InvalidValues);
+
+        var threshold = 1;
+
+        var star = await _context.Stars.Where(s =>
+                (s.RA > raRadians - threshold && s.RA < raRadians + threshold && s.DEC > decRadians - threshold &&
+                 s.DEC < decRadians + threshold) ||
+                s.StarCatalogs.Any(sc =>
+                    sc.Ra > raRadians - threshold && sc.Ra < raRadians + threshold && sc.Dec > decRadians - threshold &&
+                    sc.Dec < decRadians + threshold)
+            )
+            .Include(s => s.StarCatalogs)
+            .FirstOrDefaultAsync();
+
+        if (star is null)
+            return new ServiceResponse<StarDTO>
+            {
+                Success = false,
+                Message = $"{Keywords.CoordsNotFoundMessage} (Odchýlka +- {threshold}rad)."
+            };
+
+        return new ServiceResponse<StarDTO>
+        {
+            Data = _mapper.Map<StarDTO>(star),
+            Message = Keywords.CoordsFoundMessage
+        };
+    }
+
     public async Task<ServiceResponse<bool>> CatalogDelete(string catalogName)
     {
         var catalog = await _context.Catalogs.Where(c => c.Name == catalogName).FirstOrDefaultAsync();
@@ -333,6 +370,25 @@ public class StarService : IStarService
         {
             Data = catalog,
             Message = Keywords.PostSucceeded
+        };
+    }
+
+    public async Task<ServiceResponse<int>> StarPost(NewStar newStar)
+    {
+        var star = _mapper.Map<Star>(newStar);
+        var raRadians = StarCoordsHelper.RaToRadians(newStar.StarCoord);
+        var decRadians = StarCoordsHelper.DecToRadians(newStar.StarCoord);
+        if (raRadians is null || decRadians is null) return ResponseHelper.FailResponse<int>(Keywords.PostFailed);
+        star.RA = (double)raRadians;
+        star.DEC = (double)decRadians;
+        _context.Stars.Add(star);
+        var result = await _context.SaveChangesAsync();
+        if (result == 0) return ResponseHelper.FailResponse<int>(Keywords.PostFailed);
+
+        return new ServiceResponse<int>
+        {
+            Data = star.Id,
+            Message = "Objekt bol vytvorený."
         };
     }
 }
