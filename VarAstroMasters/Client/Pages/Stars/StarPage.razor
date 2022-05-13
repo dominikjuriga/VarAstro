@@ -19,6 +19,10 @@ else
                 @if (Star is {Name: not null})
                 {
                     <span>@Star.Name</span>
+                    @if (Star is {Identification.Count: 1})
+                    {
+                        <MudText Typo="Typo.h5">(@Star.Identification.First().UserIdentification)</MudText>
+                    }
                 }
             </MudText>
         </MudCardHeader>

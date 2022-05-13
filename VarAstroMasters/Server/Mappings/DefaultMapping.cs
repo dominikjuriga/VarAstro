@@ -9,6 +9,7 @@ public class DefaultMapping : Profile
         CreateMap<Star, StarDTO>();
         CreateMap<Star, StarBasicDTO>();
         CreateMap<Device, DeviceDTO>();
+        CreateMap<UserStarIdentification, UserStarIdentificationDTO>();
         CreateMap<LightCurveAdd, LightCurve>();
         CreateMap<DeviceAdd, Device>();
         CreateMap<NewStar, Star>();

@@ -1,7 +1,5 @@
 ﻿using System.Text.Json;
-using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using VarAstroMasters.Shared.CompositeKeys;
 
 namespace VarAstroMasters.Server.Services.StarService;
@@ -10,30 +8,40 @@ public class StarService : IStarService
 {
     private readonly DataContext _context;
     private readonly IMapper _mapper;
+    private readonly IAuthService _authService;
 
-    public StarService(DataContext context, IMapper mapper)
+    public StarService(DataContext context, IMapper mapper, IAuthService authService)
     {
         _context = context;
         _mapper = mapper;
+        _authService = authService;
     }
 
-    public async Task<ServiceResponse<List<Star>>> StarListGet()
+    public async Task<ServiceResponse<List<StarDTO>>> StarListGet()
     {
-        var data = await _context.Stars.ToListAsync();
+        var userId = _authService.GetUserId();
+        var data = await _context.Stars
+            .Include(s => s.Identification.Where(i => i.UserId == userId))
+            .Include(s => s.StarCatalogs)
+            .ToListAsync();
+        List<StarDTO> dtos = new();
+        foreach (var star in data) dtos.Add(_mapper.Map<StarDTO>(star));
 
-        return new ServiceResponse<List<Star>>
+        return new ServiceResponse<List<StarDTO>>
         {
-            Data = data
+            Data = dtos
         };
     }
 
     public async Task<ServiceResponse<StarDTO>> StarSingleGet(int starId)
     {
+        var userId = _authService.GetUserId();
         var star = await _context.Stars
             .Include(s => s.LightCurves)
             .ThenInclude(lc => lc.User)
             .Include(s => s.StarCatalogs)
             .Include(s => s.StarPublish)
+            .Include(s => s.Identification.Where(usi => usi.UserId == userId))
             .Include(s => s.StarVariability)
             .FirstOrDefaultAsync(s => s.Id == starId);
 

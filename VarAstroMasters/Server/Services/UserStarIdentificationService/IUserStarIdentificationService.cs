@@ -2,5 +2,5 @@
 
 public interface IUserStarIdentificationService
 {
-    Task<ServiceResponse<List<UserStarIdentification>>> UserIdentificationsListGet();
+    Task<ServiceResponse<List<UserStarIdentificationDTO>>> UserIdentificationsListGet();
 }

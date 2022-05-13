@@ -17,7 +17,7 @@
             <br/>
             <span class="text-black">
                 Autor
-                <MudLink Href="@($"@Endpoints.ClientObservationLogSingleGet/@Curve.User.Id")">@Curve.User.Name</MudLink>
+                <MudLink Href="@($"{@Endpoints.ClientObservationLogSingleGet}/{@Curve.User.Id}")">@Curve.User.Name</MudLink>
             </span>
             <br/>
             @if (Curve.Device is not null)

@@ -1,23 +1,31 @@
 ﻿@inject NavigationManager NavigationManager
 
-<MudTable Striped="@true" Items="Data" Hover="true" Loading="@Loading" T="StarDTO" OnRowClick="@RowClicked">
+<MudTable Striped="@true" Class="table-row-cursor" Items="Data" Hover="true" Loading="@Loading" T="StarDTO" OnRowClick="@RowClicked">
     <HeaderContent>
         <MudTh>Názov</MudTh>
         <MudTh>RA</MudTh>
         <MudTh>DEC</MudTh>
         <MudTh>Cross ID</MudTh>
+        <MudTh>Používateľské označenie</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Názov">
-            <div class="cursor-pointer">
                 @context.Name
-            </div>
         </MudTd>
         <MudTd DataLabel="RA">@context.RA</MudTd>
         <MudTd DataLabel="DEC">@context.DEC</MudTd>
-
         <MudTd DataLabel="Cross ID">
             @context.StarCatalogs?.First().CrossId (@context.StarCatalogs?.First().CatalogId)
+        </MudTd>
+        <MudTd>
+            @if (@context is {Identification.Count: 1})
+            {
+                @context.Identification.First().UserIdentification
+            }
+            else
+            {
+                <span>-</span>
+            }
         </MudTd>
     </RowTemplate>
 </MudTable>

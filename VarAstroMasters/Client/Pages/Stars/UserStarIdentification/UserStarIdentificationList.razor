@@ -7,17 +7,17 @@
         <MudText Typo="Typo.h3">Vaše identifikácie</MudText>
     </MudCardHeader>
     <MudCardContent>
-        <MudTable Items="Data" Loading="Loading" T="@UserStarIdentification" OnRowClick="@RowClicked">
+        <MudTable Class="table-row-cursor" Items="Data" Loading="Loading" T="@UserStarIdentificationDTO" OnRowClick="@RowClicked">
             <HeaderContent>
                 <MudTh>Názov hviezdy</MudTh>
                 <MudTh>Vaša identifikácia</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Názov hviezdy" Class="">
-                    <div class="cursor-pointer">@context.Star.Name</div>
+                    @context.Star.Name
                 </MudTd>
                 <MudTd DataLabel="Vaša identifikácia">
-                    <div class="cursor-pointer">@context.Identification</div>
+                    @context.UserIdentification
                 </MudTd>
             </RowTemplate>
         </MudTable>
@@ -25,7 +25,7 @@
 </MudCard>
 
 @code {
-    private List<UserStarIdentification>? Data;
+    private List<UserStarIdentificationDTO>? Data;
     private bool Loading { get; set; } = true;
 
     protected override async Task OnInitializedAsync()
@@ -36,9 +36,9 @@
         Loading = false;
     }
 
-    public void RowClicked(TableRowClickEventArgs<UserStarIdentification> c)
+    public void RowClicked(TableRowClickEventArgs<UserStarIdentificationDTO> c)
     {
-        NavigationManager.NavigateTo($"{Endpoints.ClientStarSingleGet}/{c.Item.StarId}");
+        NavigationManager.NavigateTo($"{Endpoints.ClientStarSingleGet}/{c.Item.Star.Id}");
     }
 
 }

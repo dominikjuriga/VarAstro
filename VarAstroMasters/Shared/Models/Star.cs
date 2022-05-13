@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using VarAstroMasters.Shared.DTO;
 using VarAstroMasters.Shared.Static;
 
 namespace VarAstroMasters.Shared.Models;
@@ -15,6 +16,8 @@ public class Star
 
     [Required(ErrorMessage = Keywords.FormFieldRequired)]
     public double DEC { get; set; }
+
+    public List<UserStarIdentification>? Identification { get; set; }
 
     public List<LightCurve> LightCurves { get; set; } = new();
     public List<StarCatalog> StarCatalogs { get; set; }

@@ -1,12 +1,12 @@
 ﻿@inject NavigationManager NavigationManager
-<MudTable T="@ObservationLogDTO" Items="Data" Loading="Loading" OnRowClick="@RowClicked">
+<MudTable T="@ObservationLogDTO" Class="table-row-cursor" Items="Data" Loading="Loading" OnRowClick="@RowClicked">
     <HeaderContent>
         <MudTh>Používateľ</MudTh>
         <MudTh>Príspevky</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd>
-            <div class="cursor-pointer">@context.User.Name</div>
+            @context.User.Name
         </MudTd>
         <MudTd>@context.Contributions</MudTd>
     </RowTemplate>

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace VarAstroMasters.Server.Services.UserStarIdentificationService;
 
@@ -16,18 +15,22 @@ public class UserStarIdentificationService : IUserStarIdentificationService
         _mapper = mapper;
     }
 
-    public async Task<ServiceResponse<List<UserStarIdentification>>> UserIdentificationsListGet()
+    public async Task<ServiceResponse<List<UserStarIdentificationDTO>>> UserIdentificationsListGet()
     {
         var userId = _authService.GetUserId();
-        if (userId is null) return ResponseHelper.FailResponse<List<UserStarIdentification>>(Keywords.InvalidToken);
+        if (userId is null) return ResponseHelper.FailResponse<List<UserStarIdentificationDTO>>(Keywords.InvalidToken);
         var data = await _context.UserStarIdentifications
             .Where(usi => usi.UserId == userId)
             .Include(usi => usi.Star)
             .ToListAsync();
 
-        return new ServiceResponse<List<UserStarIdentification>>
+        List<UserStarIdentificationDTO> dtos = new();
+        foreach (var userStarIdentification in data)
+            dtos.Add(_mapper.Map<UserStarIdentificationDTO>(userStarIdentification));
+
+        return new ServiceResponse<List<UserStarIdentificationDTO>>
         {
-            Data = data
+            Data = dtos
         };
     }
 }

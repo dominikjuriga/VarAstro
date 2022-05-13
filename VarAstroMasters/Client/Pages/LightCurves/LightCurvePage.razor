@@ -97,28 +97,11 @@ else
         </MudCardContent>
     </MudCard>
 
-    <MudCard Class="mb-3">
-        <MudCardContent>
-            <h4>Priebeh krivky</h4>
-            @if (Curve is not null && Curve.ValuesFinishedLoading)
-            {
-                @if (Curve is {Values: not null, Star: not null})
-                {
-                    <ScatterChart Values="@Curve.Values" StarName="@Curve.Star.Name"/>
-                }
-                else
-                {
-                    <Alert type="@Keywords.AlertDanger">
-                        @Keywords.NotPublished
-                    </Alert>
-                }
-            }
-            else
-            {
-                <Loader/>
-            }
-        </MudCardContent>
-    </MudCard>
+
+    @if (Curve is {Values: not null, Star: not null})
+    {
+        <SingleCurve Curve="Curve" CurveLayout="col-12" Display="@true"/>
+    }
 }
 
 @code {

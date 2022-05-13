@@ -1,4 +1,6 @@
-﻿namespace VarAstroMasters.Client.Services.UserStarIdentificationService;
+﻿using UserStarIdentificationDTO = VarAstroMasters.Shared.DTO.UserStarIdentificationDTO;
+
+namespace VarAstroMasters.Client.Services.UserStarIdentificationService;
 
 public class UserStarIdentificationService : IUserStarIdentificationService
 {
@@ -9,10 +11,10 @@ public class UserStarIdentificationService : IUserStarIdentificationService
         _http = http;
     }
 
-    public async Task<ServiceResponse<List<UserStarIdentification>>> UserIdentificationsListGet()
+    public async Task<ServiceResponse<List<UserStarIdentificationDTO>>> UserIdentificationsListGet()
     {
         var response =
-            await _http.GetFromJsonAsync<ServiceResponse<List<UserStarIdentification>>>(Endpoints
+            await _http.GetFromJsonAsync<ServiceResponse<List<UserStarIdentificationDTO>>>(Endpoints
                 .ApiUserStarIdentificationsFromToken);
         return response;
     }

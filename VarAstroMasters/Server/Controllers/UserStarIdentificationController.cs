@@ -12,7 +12,7 @@ public class UserStarIdentificationController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ServiceResponse<int>>> DraftPost()
+    public async Task<ActionResult<ServiceResponse<List<UserStarIdentificationDTO>>>> UserIdentificationsListGet()
     {
         var response = await _userStarIdentificationService.UserIdentificationsListGet();
         return Ok(response);

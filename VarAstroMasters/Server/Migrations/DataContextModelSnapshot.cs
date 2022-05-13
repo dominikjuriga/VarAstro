@@ -525,11 +525,13 @@ namespace VarAstroMasters.Server.Migrations
                     b.Property<int>("StarId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Identification")
+                    b.Property<string>("UserIdentification")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("UserId", "StarId");
+
+                    b.HasIndex("StarId");
 
                     b.ToTable("UserStarIdentifications");
                 });
@@ -676,6 +678,17 @@ namespace VarAstroMasters.Server.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("VarAstroMasters.Shared.Models.UserStarIdentification", b =>
+                {
+                    b.HasOne("VarAstroMasters.Shared.Models.Star", "Star")
+                        .WithMany("Identification")
+                        .HasForeignKey("StarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Star");
+                });
+
             modelBuilder.Entity("VarAstroMasters.Shared.Models.LightCurve", b =>
                 {
                     b.Navigation("Images");
@@ -683,6 +696,8 @@ namespace VarAstroMasters.Server.Migrations
 
             modelBuilder.Entity("VarAstroMasters.Shared.Models.Star", b =>
                 {
+                    b.Navigation("Identification");
+
                     b.Navigation("LightCurves");
 
                     b.Navigation("StarCatalogs");

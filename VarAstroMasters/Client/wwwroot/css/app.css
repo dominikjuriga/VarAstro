@@ -102,3 +102,7 @@ section {
 section:last-of-type {
     margin-bottom: 5rem;
 }
+
+.table-row-cursor .mud-table-body .mud-table-row {
+    cursor: pointer;
+}
