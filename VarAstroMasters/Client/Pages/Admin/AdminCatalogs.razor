@@ -46,8 +46,11 @@ else
                 {
                     <MudAlert Severity="Severity.Warning" Class="mb-5">
                         Naozaj chcete odstrániť katalóg @CatalogToDelete? Táto akcia je nevratná a zmaže všetky pridružené záznamy (identifikácia hviezd v katalógu)! <br/>
-                        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="DeleteCatalog">Áno, chcem zmazať katalóg</MudButton><br/>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CancelDelete">Nie, zrušiť akciu</MudButton>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CancelDelete">Nie, zrušiť akciu</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="DeleteCatalog">Áno, chcem zmazať katalóg</MudButton>
+                        </div>
                     </MudAlert>
                 }
                 if (Catalogs.Count > 0)
