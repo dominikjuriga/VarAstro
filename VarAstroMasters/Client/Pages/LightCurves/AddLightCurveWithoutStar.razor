@@ -6,6 +6,7 @@
 @inject IStarService StarService 
 @inject ILightCurveService LightCurveService 
 @inject IObservatoryService ObservatoryService 
+@inject IUserStarIdentificationService UserStarIdentificationService 
 
 @* Warning - This component is HUGE and will need refactoring 
     and splitting into multiple components 
@@ -123,7 +124,7 @@
                 <MudCardContent>
                     <MudText>Objekt sa zatiaľ v systéme nenachádza. Vyberte jeho názov.</MudText>
                     <MudTextField @bind-Value="@NewLightCurve.NewStarObj.Name" For="@(() => NewLightCurve.NewStarObj.Name)" Variant="Variant.Filled" Label="Názov objektu"/>
-                    <MudTextField @bind-Value="NewLightCurve.NewStarObj.UserIdentification" For="() => NewLightCurve.NewStarObj.UserIdentification" Variant="Variant.Filled" Label="Používateľská identifikácia (nepovinná)"/>
+                    <MudTextField @bind-Value="NewLightCurve.UserIdentification.UserIdentification" For="() => NewLightCurve.UserIdentification.UserIdentification" Variant="Variant.Filled" Label="Používateľská identifikácia (nepovinná)"/>
                     <MudDivider Class="my-5"/>
                     <MudPaper Class="d-flex gap-2 mb-5">
                         <MudNumericField @bind-Value="NewLightCurve.NewStarObj.StarCoord.RaH" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStarObj.StarCoord.RaH" Label="Hodiny"/>
@@ -246,13 +247,23 @@
         <MudDivider class="my-5"/>
         @if (SubmitMessages.Count > 0)
         {
-            foreach (var message in SubmitMessages)
-            {
-                <MudText>@message</MudText>
-            }
+            <MudText Typo="Typo.h5">Priebeh</MudText>
+            <MudList>
+                @foreach (var message in SubmitMessages)
+                {
+                    <MudListItem>@message</MudListItem>
+                }
+            </MudList>
             <MudDivider class="my-5"/>
         }
-        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Publikovať</MudButton>
+        @if (SubmitFinished)
+        {
+            <MudAlert Severity="Severity.Success">Zverejnenie úspešné.</MudAlert>
+        }
+        else
+        {
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Publikovať</MudButton>
+        }
     </EditForm>
 }
 
@@ -293,6 +304,7 @@
     private List<Catalog> Catalogs { get; set; } = new();
     private NewLightCurve NewLightCurve { get; set; } = new();
     private List<string> SubmitMessages { get; set; } = new();
+    private bool SubmitFinished { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -511,31 +523,37 @@
         if (NewLightCurve.CreateStarOnSubmit)
         {
             var starResponse = await StarService.StarPost(NewLightCurve.NewStarObj);
-            SubmitMessages.Add(starResponse.Message);
-            if (starResponse.Success is false) return;
+            SubmitMessages.Add($"Hviezda: {starResponse.Message}");
+            if (starResponse is {Success: false}) return;
+            Console.WriteLine($"{NewLightCurve.UserIdentification.UserIdentification} {NewLightCurve.UserIdentification.UserIdentification.Length}");
+            if (NewLightCurve is {UserIdentification.UserIdentification.Length: > 0 })
+            {
+                NewLightCurve.UserIdentification.StarId = starResponse.Data;
+                var response = await UserStarIdentificationService.UserIdentificationsPost(NewLightCurve.UserIdentification);
+                if (response is {Success: true})
+                {
+                    SubmitMessages.Add($"Identifikácia: {response.Message}");
+                }
+            }
 
             NewLightCurve.NewStarObj.StarCatalog.StarId = starResponse.Data;
             var starCatalogResponse = await StarService.StarCatalogPost(NewLightCurve.NewStarObj.StarCatalog);
-            SubmitMessages.Add(starCatalogResponse.Message);
+            SubmitMessages.Add($"Katalóg: {starCatalogResponse.Message}");
             if (starCatalogResponse is {Success: true})
             {
                 NewLightCurve.LightCurve.StarId = starResponse.Data;
                 var lightCurveResponse = await LightCurveService.LightCurvePost(NewLightCurve.LightCurve);
-                SubmitMessages.Add(lightCurveResponse.Message);
+                SubmitMessages.Add($"Krivka: {lightCurveResponse.Message}");
+                SubmitFinished = true;
             }
         }
         else
         {
             NewLightCurve.LightCurve.StarId = NewLightCurve.ExistingStar.Id;
             NewLightCurve.NewStarObj.Name = NewLightCurve.ExistingStar.Name;
-            
-            if (NewLightCurve is {UserIdentification.UserIdentification.Length: > 0 })
-            {
-                
-            }
-            
             var lightCurveResponse = await LightCurveService.LightCurvePost(NewLightCurve.LightCurve);
-            SubmitMessages.Add(lightCurveResponse.Message);
+            SubmitMessages.Add($"Krivka: {lightCurveResponse.Message}");
+            if (lightCurveResponse is {Success: true}) SubmitFinished = true;
         }
     }
 

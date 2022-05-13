@@ -31,6 +31,7 @@ else
                 <MudCardContent>
                     <MudText Typo="Typo.h4">Akcie</MudText>
                     <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="NavigateToNew">Pridať pozorovanie</MudButton>
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="NavigateToAddIdentification">Pridať identifikáciu</MudButton>
                 </MudCardContent>
             </MudCard>
             <AuthorizeView Roles="Administrator">
@@ -123,6 +124,12 @@ else
     {
         if (Star is null) return;
         NavigationManager.NavigateTo($"{Endpoints.ClientLightCurvePost}/{Star.Id}");
+    }
+
+    private void NavigateToAddIdentification()
+    {
+        if (Star is null) return;
+        NavigationManager.NavigateTo($"{Endpoints.ClientUserStarIdentificationPost}/{Star.Id}");
     }
 
     private void NavigateToPublications()

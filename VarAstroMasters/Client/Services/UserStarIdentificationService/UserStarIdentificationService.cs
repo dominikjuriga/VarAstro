@@ -18,4 +18,10 @@ public class UserStarIdentificationService : IUserStarIdentificationService
                 .ApiUserStarIdentificationsFromToken);
         return response;
     }
+
+    public async Task<ServiceResponse<bool>> UserIdentificationsPost(UserStarIdentificationCreateDTO usi)
+    {
+        var response = await _http.PostAsJsonAsync(Endpoints.ApiUserStarIdentificationPost, usi);
+        return await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
+    }
 }

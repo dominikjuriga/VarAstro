@@ -11,8 +11,6 @@ public class NewStar
     [Required(ErrorMessage = $"Názov hviezdy: {Keywords.FormFieldRequired}")]
     public string? Name { get; set; }
 
-    public string? UserIdentification { get; set; }
-
     [Required(ErrorMessage = $"Cross identifikácia: {Keywords.FormFieldRequired}")]
     [ValidateComplexType]
     public StarCatalog StarCatalog { get; set; } = new();

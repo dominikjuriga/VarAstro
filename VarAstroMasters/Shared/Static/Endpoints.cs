@@ -49,6 +49,7 @@ public static class Endpoints
     // User Star Identification
     public static readonly string ApiUserStarIdentificationBasePath = "api/userstaridentification";
     public static readonly string ApiUserStarIdentificationsFromToken = $"{ApiUserStarIdentificationBasePath}";
+    public static readonly string ApiUserStarIdentificationPost = $"{ApiUserStarIdentificationBasePath}";
 
     // Catalogs
     public static readonly string ApiCatalogsListGet = $"{ApiStarBasePath}/catalogs";
@@ -85,6 +86,7 @@ public static class Endpoints
 
     public static readonly string ClientUserStarIdentificationBase = "/usi";
     public static readonly string ClientUserStarIdentification = $"{ClientUserStarIdentificationBase}";
+    public static readonly string ClientUserStarIdentificationPost = $"{ClientUserStarIdentificationBase}";
 
     public static readonly string ClientObservationLogBase = "/ObservationLogs";
     public static readonly string ClientObservationLogListGet = $"{ClientObservationLogBase}";

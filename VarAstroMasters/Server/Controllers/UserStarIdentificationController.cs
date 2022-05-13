@@ -17,4 +17,11 @@ public class UserStarIdentificationController : ControllerBase
         var response = await _userStarIdentificationService.UserIdentificationsListGet();
         return Ok(response);
     }
+
+    [HttpPost]
+    public async Task<ActionResult<ServiceResponse<bool>>> UserIdentificationsPost(UserStarIdentificationCreateDTO usi)
+    {
+        var response = await _userStarIdentificationService.UserIdentificationsPost(usi);
+        return Ok(response);
+    }
 }

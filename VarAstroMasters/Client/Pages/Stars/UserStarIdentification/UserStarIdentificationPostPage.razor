@@ -1,0 +1,78 @@
+﻿@page "/usi/{StarId:int}"
+
+@inject IStarService StarService
+@inject IUserStarIdentificationService UserStarIdentificationService
+@inject NavigationManager NavigationManager
+
+<MudCard>
+    <MudCardHeader>
+        <MudText Typo="Typo.h3">
+            Pridať identifikáciu
+            @if (Star is not null)
+            {
+                <MudText> hviezde @Star.Name</MudText>
+            }
+        </MudText>
+    </MudCardHeader>
+    <MudCardContent>
+
+        @if (Message is not null)
+        {
+            <MudAlert Severity="MessageSeverity">
+                @Message
+            </MudAlert>
+        }
+
+        <MudCard>
+            <MudCardContent>
+                <EditForm Model="USI" OnValidSubmit="HandleSubmit">
+                    <MudTextField @bind-Value="USI.UserIdentification" Variant="Variant.Filled" Label="Identifikácia"></MudTextField>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Uložiť</MudButton>
+                    <MudButton OnClick="NavigateBack" Variant="Variant.Filled" Color="Color.Secondary">Späť na hviezdu</MudButton>
+                </EditForm>
+            </MudCardContent>
+        </MudCard>
+    </MudCardContent>
+</MudCard>
+
+@code {
+
+    [Parameter]
+    public int StarId { get; set; }
+
+    private UserStarIdentificationCreateDTO USI { get; set; } = new();
+    private string? Message { get; set; }
+    private Severity MessageSeverity { get; set; } = Severity.Error;
+
+    private Star? Star { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await StarService.StarSingleWithoutMetaGet(StarId);
+        if (response is {Success:true, Data: not null})
+        {
+            Star = response.Data;
+            USI.StarId = Star.Id;
+        }
+        else
+        {
+            Message = "Nepodarilo sa načítať údaje.";
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        var response = await UserStarIdentificationService.UserIdentificationsPost(USI);
+        if (response is {Success: true, Data: true})
+        {
+            MessageSeverity = Severity.Success;
+        }
+        Message = response.Message;
+    }
+
+    private void NavigateBack()
+    {
+        NavigationManager.NavigateTo($"{Endpoints.ClientStarSingleGet}/{StarId}");
+    }
+
+}

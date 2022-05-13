@@ -24,94 +24,98 @@ else
 {
 @if (!succeeded)
 {
-    <section>
-        <EditForm Model="_lightCurveAdd" OnValidSubmit="HandleSubmit">
-            <DataAnnotationsValidator/>
-            <InputFile id="data_file" hidden OnChange="HandleDataFileOnChange" class="form-control"></InputFile>
-            <InputFile id="images" OnChange="OnImageChange" hidden accept="@Keywords.AcceptedImageFormats" class="form-control"></InputFile>
-            <MudCard Class="mb-3">
-                <MudCardContent>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <MudButton HtmlTag="label"
-                                   Variant="Variant.Filled"
-                                   Color="Color.Primary"
-                                   StartIcon="@Icons.Filled.CloudUpload"
-                                   for="data_file">
-                            Zvoliť dátový súbor
-                        </MudButton>
-                        <span>@filename</span>
-                    </div>
-                </MudCardContent>
-            </MudCard>
+    <MudCard>
+        <MudCardContent>
+            <EditForm Model="_lightCurveAdd" OnValidSubmit="HandleSubmit">
+                <ObjectGraphDataAnnotationsValidator/>
+                <InputFile id="data_file" hidden OnChange="HandleDataFileOnChange" class="form-control"></InputFile>
+                <InputFile id="images" OnChange="OnImageChange" hidden accept="@Keywords.AcceptedImageFormats" class="form-control"></InputFile>
+                <MudCard Class="mb-3">
+                    <MudCardContent>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <MudButton HtmlTag="label"
+                                       Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Filled.CloudUpload"
+                                       for="data_file">
+                                Zvoliť dátový súbor
+                            </MudButton>
+                            <span>@filename</span>
+                            <ValidationMessage For="@(() => _lightCurveAdd.DataFileContent)"/>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
 
-            <MudCard Class="mb-3">
-                <MudCardContent Class="text-center">
-                    <MudFab HtmlTag="label"
-                            Color="Color.Primary"
-                            Icon="@Icons.Filled.Image"
-                            Label="Mapka"
-                            for="images"/>
+                <MudCard Class="mb-3">
+                    <MudCardContent Class="text-center">
+                        <MudFab HtmlTag="label"
+                                Color="Color.Primary"
+                                Icon="@Icons.Filled.Image"
+                                Label="Mapka"
+                                for="images"/>
+                        <ValidationMessage For="@(() => _lightCurveAdd.Images)"/>
 
-                    <div class="my-3 d-flex justify-content-center flex-wrap">
-                        @foreach (var image in _lightCurveAdd.Images)
-                        {
-                            <img src="@image.Data" alt="Mapka hviezdy"/>
-                        }
-                    </div>
-                </MudCardContent>
-            </MudCard>
+                        <div class="my-3 d-flex justify-content-center flex-wrap">
+                            @foreach (var image in _lightCurveAdd.Images)
+                            {
+                                <img src="@image.Data" alt="Mapka hviezdy"/>
+                            }
+                        </div>
+                    </MudCardContent>
+                </MudCard>
 
-            <MudSelect Class="mb-3" T="string" Variant="Variant.Filled" Label="Formát Juliánskeho dáta" @bind-Value="_lightCurveAdd.JD" For="@(() => _lightCurveAdd.JD)">
-                <MudSelectItem T="string" Value="@(Keywords.LcJdFormatHeliocentric)">Heliocentrický</MudSelectItem>
-                <MudSelectItem T="string" Value="@(Keywords.LcJdFormatGeocentric)">Geocentrický</MudSelectItem>
-            </MudSelect>
-
-            <MudSelect Class="mb-3" T="string" Variant="Variant.Filled" Label="Fotometrický systém" @bind-Value="_lightCurveAdd.PhotometricSystem" For="@(() => _lightCurveAdd.PhotometricSystem)">
-                <MudSelectItem T="string" Value="@(Keywords.LcPhotometricInstrumental)">Inštrumentálny</MudSelectItem>
-                <MudSelectItem T="string" Value="@(Keywords.LcPhotometricStandard)">Štandardný</MudSelectItem>
-            </MudSelect>
-
-            <MudTextField Class="mb-3" list="filter-types" @bind-Value="_lightCurveAdd.Filter" Label="Typ filtra" Variant="Variant.Filled" For="@(() => _lightCurveAdd.Filter)"/>
-            <datalist id="filter-types">
-                <option value="U"/>
-                <option value="B"/>
-                <option value="V"/>
-                <option value="R"/>
-                <option value="I"/>
-                <option value="u"/>
-                <option value="g"/>
-                <option value="r"/>
-                <option value="i"/>
-                <option value="z"/>
-            </datalist>
-
-            <MudSelect Class="mb-3" T="PublishVariant" Variant="Variant.Filled" Label="Zverejniť pozorovanie" @bind-Value="_lightCurveAdd.PublishVariant">
-                <MudSelectItem T="PublishVariant" Value="@PublishVariant.All">Zverejniť mapku, krivku a dátový súbor</MudSelectItem>
-                <MudSelectItem T="PublishVariant" Value="@PublishVariant.None">Nezverejňovať</MudSelectItem>
-                <MudSelectItem T="PublishVariant" Value="@PublishVariant.OnlyMap">Zverejniť mapku</MudSelectItem>
-                <MudSelectItem T="PublishVariant" Value="@PublishVariant.OnlyMapAndCurve">Zverejniť mapku a krivku</MudSelectItem>
-            </MudSelect>
-
-            <div class="d-flex justify-content-between align-items-center gap-3">
-                <MudSelect Class="mb-3" T="int" Variant="Variant.Filled" Label="Zariadenie" @bind-Value="_lightCurveAdd.DeviceId">
-                    <MudSelectItem T="int" Value="0">Neuvedené</MudSelectItem>
-                    @foreach (var device in _devices)
-                    {
-                        <MudSelectItem T="int" Value="@device.Id">@device.Name</MudSelectItem>
-                    }
+                <MudSelect Class="mb-3" T="string" Variant="Variant.Filled" Label="Formát Juliánskeho dáta" @bind-Value="_lightCurveAdd.JD" For="@(() => _lightCurveAdd.JD)">
+                    <MudSelectItem T="string" Value="@(Keywords.LcJdFormatHeliocentric)">Heliocentrický</MudSelectItem>
+                    <MudSelectItem T="string" Value="@(Keywords.LcJdFormatGeocentric)">Geocentrický</MudSelectItem>
                 </MudSelect>
-                <MudAvatar Rounded="true" @onclick="() => _lightCurveAdd.DeviceId = 0">
-                    <MudIcon Icon="@Icons.Filled.Cancel"/>
-                </MudAvatar>
-            </div>
-            <MudTextField Class="mb-3" T="string" Label="Poznámky" Variant="Variant.Filled" @bind-Value="_lightCurveAdd.Comment" Lines="3"/>
 
-            @* <ValidationSummary></ValidationSummary> *@
+                <MudSelect Class="mb-3" T="string" Variant="Variant.Filled" Label="Fotometrický systém" @bind-Value="_lightCurveAdd.PhotometricSystem" For="@(() => _lightCurveAdd.PhotometricSystem)">
+                    <MudSelectItem T="string" Value="@(Keywords.LcPhotometricInstrumental)">Inštrumentálny</MudSelectItem>
+                    <MudSelectItem T="string" Value="@(Keywords.LcPhotometricStandard)">Štandardný</MudSelectItem>
+                </MudSelect>
 
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Pridať pozorovanie</MudButton>
+                <MudTextField Class="mb-3" list="filter-types" @bind-Value="_lightCurveAdd.Filter" Label="Typ filtra" Variant="Variant.Filled" For="@(() => _lightCurveAdd.Filter)"/>
+                <datalist id="filter-types">
+                    <option value="U"/>
+                    <option value="B"/>
+                    <option value="V"/>
+                    <option value="R"/>
+                    <option value="I"/>
+                    <option value="u"/>
+                    <option value="g"/>
+                    <option value="r"/>
+                    <option value="i"/>
+                    <option value="z"/>
+                </datalist>
 
-        </EditForm>
-    </section>
+                <MudSelect Class="mb-3" T="PublishVariant" Variant="Variant.Filled" Label="Zverejniť pozorovanie" @bind-Value="_lightCurveAdd.PublishVariant">
+                    <MudSelectItem T="PublishVariant" Value="@PublishVariant.All">Zverejniť mapku, krivku a dátový súbor</MudSelectItem>
+                    <MudSelectItem T="PublishVariant" Value="@PublishVariant.None">Nezverejňovať</MudSelectItem>
+                    <MudSelectItem T="PublishVariant" Value="@PublishVariant.OnlyMap">Zverejniť mapku</MudSelectItem>
+                    <MudSelectItem T="PublishVariant" Value="@PublishVariant.OnlyMapAndCurve">Zverejniť mapku a krivku</MudSelectItem>
+                </MudSelect>
+
+                <div class="d-flex justify-content-between align-items-center gap-3">
+                    <MudSelect Class="mb-3" T="int" Variant="Variant.Filled" Label="Zariadenie" @bind-Value="_lightCurveAdd.DeviceId">
+                        <MudSelectItem T="int" Value="0">Neuvedené</MudSelectItem>
+                        @foreach (var device in _devices)
+                        {
+                            <MudSelectItem T="int" Value="@device.Id">@device.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudAvatar Rounded="true" @onclick="() => _lightCurveAdd.DeviceId = 0">
+                        <MudIcon Icon="@Icons.Filled.Cancel"/>
+                    </MudAvatar>
+                </div>
+                <MudTextField Class="mb-3" T="string" Label="Poznámky" Variant="Variant.Filled" @bind-Value="_lightCurveAdd.Comment" Lines="3"/>
+
+                @* <ValidationSummary></ValidationSummary> *@
+
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Pridať pozorovanie</MudButton>
+
+            </EditForm>
+        </MudCardContent>
+    </MudCard>
 }
 else
 {

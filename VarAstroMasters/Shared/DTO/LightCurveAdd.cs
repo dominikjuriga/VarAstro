@@ -33,5 +33,6 @@ public class LightCurveAdd
 
     [Required(ErrorMessage = $"Mapka: {Keywords.FormFieldRequired}")]
     [MinLength(1, ErrorMessage = $"Mapka: {Keywords.FormFieldRequired}")]
+    [ValidateComplexType]
     public List<Image> Images { get; set; } = new();
 }

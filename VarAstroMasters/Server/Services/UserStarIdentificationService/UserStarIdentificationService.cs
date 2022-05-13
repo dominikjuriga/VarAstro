@@ -33,4 +33,28 @@ public class UserStarIdentificationService : IUserStarIdentificationService
             Data = dtos
         };
     }
+
+    public async Task<ServiceResponse<bool>> UserIdentificationsPost(UserStarIdentificationCreateDTO usi)
+    {
+        var userId = _authService.GetUserId();
+        if (userId is null) return ResponseHelper.FailResponse<bool>(Keywords.InvalidToken);
+        var StarExists = _context.Stars.Any(s => s.Id == usi.StarId);
+        if (!StarExists) return ResponseHelper.FailResponse<bool>(Keywords.NotFoundMessage);
+
+        var identification = new UserStarIdentification
+        {
+            UserId = userId,
+            StarId = usi.StarId,
+            UserIdentification = usi.UserIdentification
+        };
+
+        _context.UserStarIdentifications.Add(identification);
+        var result = await _context.SaveChangesAsync();
+        if (result == 0) return ResponseHelper.FailResponse<bool>(Keywords.PostFailed);
+        return new ServiceResponse<bool>
+        {
+            Data = true,
+            Message = Keywords.PostSucceeded
+        };
+    }
 }
