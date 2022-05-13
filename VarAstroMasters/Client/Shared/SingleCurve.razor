@@ -2,15 +2,22 @@
     <div class="card">
         <div class="card-body">
             <span class="text-black">
+                Objekt
+                <MudLink Href="@($"{Endpoints.ClientStarSingleGet}/{Curve.Star.Id}")">
+                    @Curve.Star.Name
+                </MudLink>
+            </span>
+            <br/>
+            <span class="text-black">
                 Pozorovanie pridané
-                <a class="text-black" href="@Endpoints.ClientLightCurveSingleGet/@Curve.Id">
+                <MudLink Href="@($"{Endpoints.ClientLightCurveSingleGet}/{Curve.Id}")">
                     @Curve.DateCreated.ToString(Keywords.DefaultDateTimeFormat)
-                </a>
+                </MudLink>
             </span>
             <br/>
             <span class="text-black">
                 Autor
-                <a class="text-black" href="@Endpoints.ClientObservationLogSingleGet/@Curve.User.Id">@Curve.User.Name</a>
+                <MudLink Href="@($"@Endpoints.ClientObservationLogSingleGet/@Curve.User.Id")">@Curve.User.Name</MudLink>
             </span>
             <br/>
             @if (Curve.Device is not null)

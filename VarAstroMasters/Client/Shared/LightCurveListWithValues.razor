@@ -14,7 +14,7 @@
     public string CurveLayout { get; set; }
 
     [Parameter]
-    public int? FilterId { get; set; }
+    public int FilterId { get; set; } = Keywords.DefaultFilter;
 
     protected override void OnParametersSet()
     {

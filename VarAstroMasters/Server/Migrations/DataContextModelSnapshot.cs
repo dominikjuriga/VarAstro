@@ -232,8 +232,20 @@ namespace VarAstroMasters.Server.Migrations
                     b.Property<int?>("DeviceId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Filter")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("JD")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<int?>("ObservatoryId")
                         .HasColumnType("int");
+
+                    b.Property<string>("PhotometricSystem")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<int>("PublishVariant")
                         .HasColumnType("int");
@@ -244,6 +256,9 @@ namespace VarAstroMasters.Server.Migrations
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
+
+                    b.Property<double>("VarAperture")
+                        .HasColumnType("double");
 
                     b.HasKey("Id");
 
@@ -309,9 +324,9 @@ namespace VarAstroMasters.Server.Migrations
                         new
                         {
                             Id = 1,
-                            DEC = 0.0,
+                            DEC = 13.0,
                             Name = "CzeV 343",
-                            RA = 0.0
+                            RA = 12.0
                         });
                 });
 
@@ -325,7 +340,8 @@ namespace VarAstroMasters.Server.Migrations
 
                     b.Property<string>("CrossId")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<double>("Dec")
                         .HasColumnType("double");
@@ -356,35 +372,6 @@ namespace VarAstroMasters.Server.Migrations
                             Primary = true,
                             Ra = 75.0
                         });
-                });
-
-            modelBuilder.Entity("VarAstroMasters.Shared.Models.StarDraft", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Dec")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Ra")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("StarsDrafts");
                 });
 
             modelBuilder.Entity("VarAstroMasters.Shared.Models.StarPublish", b =>
@@ -530,6 +517,23 @@ namespace VarAstroMasters.Server.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("VarAstroMasters.Shared.Models.UserStarIdentification", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("StarId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Identification")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("UserId", "StarId");
+
+                    b.ToTable("UserStarIdentifications");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -652,17 +656,6 @@ namespace VarAstroMasters.Server.Migrations
                         .HasForeignKey("StarId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("VarAstroMasters.Shared.Models.StarDraft", b =>
-                {
-                    b.HasOne("VarAstroMasters.Shared.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VarAstroMasters.Shared.Models.StarPublish", b =>

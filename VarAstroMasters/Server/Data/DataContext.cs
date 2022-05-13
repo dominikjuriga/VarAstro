@@ -13,6 +13,8 @@ public class DataContext : IdentityDbContext<User>
     {
         builder.Entity<StarCatalog>()
             .HasKey(sc => new { sc.CatalogId, sc.StarId });
+        builder.Entity<UserStarIdentification>()
+            .HasKey(usi => new { usi.UserId, usi.StarId });
 
         // When Catalog is deleted, remove all entries of stars associated with the catalog
         builder.Entity<Catalog>()
@@ -68,7 +70,6 @@ public class DataContext : IdentityDbContext<User>
     }
 
     public DbSet<Star> Stars { get; set; }
-    public DbSet<StarDraft> StarsDrafts { get; set; }
     public DbSet<LightCurve> LightCurves { get; set; }
     public DbSet<Device> Devices { get; set; }
     public DbSet<Observatory> Observatories { get; set; }
@@ -77,4 +78,5 @@ public class DataContext : IdentityDbContext<User>
     public DbSet<StarCatalog> StarVariability { get; set; }
     public DbSet<StarPublish> StarPublish { get; set; }
     public DbSet<Image> Images { get; set; }
+    public DbSet<UserStarIdentification> UserStarIdentifications { get; set; }
 }

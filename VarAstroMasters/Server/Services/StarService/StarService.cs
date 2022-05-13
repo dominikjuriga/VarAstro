@@ -57,13 +57,26 @@ public class StarService : IStarService
             .Where(s =>
                 s.Name.ToLower().Contains(searchQuery.ToLower()) ||
                 s.StarCatalogs.Any(sc => sc.CrossId.ToLower() == searchQuery.ToLower()))
+            .Include(s =>
+                s.StarCatalogs.Where(sc => sc.CrossId.ToLower().Contains(searchQuery)))
             .ToListAsync();
 
         var msg = stars.Count == 0
             ? Keywords.SearchFailed
             : $"{Keywords.SearchSucceeded} {stars.Count}.";
         List<StarDTO> dtos = new();
-        foreach (var star in stars) dtos.Add(_mapper.Map<StarDTO>(star));
+        foreach (var star in stars)
+        {
+            // Searching by cross ID returns also the cross id of the first catalog
+            // However searching for name would not result with any catalog
+            if (star is { StarCatalogs.Count: 0 })
+            {
+                var sc = await _context.StarCatalog.FirstAsync(sc => sc.StarId == star.Id);
+                star.StarCatalogs = new List<StarCatalog> { sc };
+            }
+
+            dtos.Add(_mapper.Map<StarDTO>(star));
+        }
 
         return new ServiceResponse<StarSearchDTO>
         {

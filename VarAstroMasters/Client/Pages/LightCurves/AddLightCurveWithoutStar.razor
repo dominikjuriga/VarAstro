@@ -4,6 +4,7 @@
 @using VarAstroMasters.Shared
 @inject IUserService UserService
 @inject IStarService StarService 
+@inject ILightCurveService LightCurveService 
 @inject IObservatoryService ObservatoryService 
 
 @* Warning - This component is HUGE and will need refactoring 
@@ -30,26 +31,26 @@
         </div>
         <div>
             <MudTooltip Text="Zruší hodnoty a prípadné overenie koordinátov">
-                <MudButton OnClick="ResetCoords" Variant="Variant.Filled" Color="Color.Primary">Resetovať hodnoty</MudButton>
+                <MudButton OnClick="ResetCoords" Variant="Variant.Outlined" Color="Color.Primary">Resetovať hodnoty</MudButton>
             </MudTooltip>
         </div>
     </div>
 
-    <EditForm Model="NewLightCurve.NewStar.StarCoord" OnValidSubmit="HandleCoordInput" class="text-center">
+    <EditForm Model="NewLightCurve.NewStarObj.StarCoord" OnValidSubmit="HandleCoordInput" class="text-center">
         <DataAnnotationsValidator/>
         <MudCardContent>
             <MudText Typo="Typo.h6">RA</MudText>
             <MudPaper Class="d-flex gap-2 mb-5">
-                <MudNumericField @bind-Value="NewLightCurve.NewStar.StarCoord.RaH" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStar.StarCoord.RaH" Label="Hodiny"/>
-                <MudNumericField @bind-Value="NewLightCurve.NewStar.StarCoord.RaM" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStar.StarCoord.RaM" Label="Minúty"/>
-                <MudNumericField @bind-Value="NewLightCurve.NewStar.StarCoord.RaS" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStar.StarCoord.RaS" Label="Sekundy"/>
+                <MudNumericField @bind-Value="NewLightCurve.NewStarObj.StarCoord.RaH" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStarObj.StarCoord.RaH" Label="Hodiny"/>
+                <MudNumericField @bind-Value="NewLightCurve.NewStarObj.StarCoord.RaM" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStarObj.StarCoord.RaM" Label="Minúty"/>
+                <MudNumericField @bind-Value="NewLightCurve.NewStarObj.StarCoord.RaS" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStarObj.StarCoord.RaS" Label="Sekundy"/>
             </MudPaper>
             <MudDivider/>
             <MudText Typo="Typo.h6">DEC</MudText>
             <MudPaper Class="d-flex gap-2 mb-5">
-                <MudTextField @bind-Value="NewLightCurve.NewStar.StarCoord.DecD" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStar.StarCoord.DecD" Label="Stupne"/>
-                <MudTextField @bind-Value="NewLightCurve.NewStar.StarCoord.DecM" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStar.StarCoord.DecM" Label="Arcmin"/>
-                <MudTextField @bind-Value="NewLightCurve.NewStar.StarCoord.DecS" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStar.StarCoord.DecS" Label="Arcsec"/>
+                <MudTextField @bind-Value="NewLightCurve.NewStarObj.StarCoord.DecD" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStarObj.StarCoord.DecD" Label="Stupne"/>
+                <MudTextField @bind-Value="NewLightCurve.NewStarObj.StarCoord.DecM" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStarObj.StarCoord.DecM" Label="Arcmin"/>
+                <MudTextField @bind-Value="NewLightCurve.NewStarObj.StarCoord.DecS" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStarObj.StarCoord.DecS" Label="Arcsec"/>
             </MudPaper>
         </MudCardContent>
         <MudDivider Class="my-5"/>
@@ -106,10 +107,13 @@
     </EditForm>
 }
 
-<EditForm Model="NewLightCurve" OnValidSubmit="HandleLightCurveSubmit">
-    @if (Step == 2)
-    {
-        <InputFile id="images" OnChange="OnImageChange" hidden accept="@Keywords.AcceptedImageFormats" class="form-control"></InputFile>
+@if (Step == 2)
+{
+@* <EditForm Model="NewLightCurve" OnValidSubmit="HandleLightCurveSubmit"> *@
+    <EditForm Model="@NewLightCurve" OnValidSubmit="@HandleLightCurveSubmit" OnInvalidSubmit="(e) => InvalidSubmitHandler(e)">
+        <ObjectGraphDataAnnotationsValidator/>
+        <InputFile id="images" OnChange="OnImageChange" hidden accept="@Keywords.AcceptedImageFormats"></InputFile>
+        <InputFile id="data_file" hidden class="form-control" OnChange="HandleFileChange"></InputFile>
         @if (NewLightCurve.ExistingStar is null)
         {
             <MudCard Class="mb-5">
@@ -118,33 +122,33 @@
                 </MudCardHeader>
                 <MudCardContent>
                     <MudText>Objekt sa zatiaľ v systéme nenachádza. Vyberte jeho názov.</MudText>
-                    <MudTextField @bind-Value="NewLightCurve.NewStar.Name" For="() => NewLightCurve.NewStar.Name" Variant="Variant.Filled" Label="Názov objektu"/>
-                    <MudTextField @bind-Value="NewLightCurve.NewStar.UserIdentification" For="() => NewLightCurve.NewStar.UserIdentification" Variant="Variant.Filled" Label="Používateľská identifikácia (nepovinná)"/>
+                    <MudTextField @bind-Value="@NewLightCurve.NewStarObj.Name" For="@(() => NewLightCurve.NewStarObj.Name)" Variant="Variant.Filled" Label="Názov objektu"/>
+                    <MudTextField @bind-Value="NewLightCurve.NewStarObj.UserIdentification" For="() => NewLightCurve.NewStarObj.UserIdentification" Variant="Variant.Filled" Label="Používateľská identifikácia (nepovinná)"/>
                     <MudDivider Class="my-5"/>
                     <MudPaper Class="d-flex gap-2 mb-5">
-                        <MudNumericField @bind-Value="NewLightCurve.NewStar.StarCoord.RaH" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStar.StarCoord.RaH" Label="Hodiny"/>
-                        <MudNumericField @bind-Value="NewLightCurve.NewStar.StarCoord.RaM" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStar.StarCoord.RaM" Label="Minúty"/>
-                        <MudNumericField @bind-Value="NewLightCurve.NewStar.StarCoord.RaS" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStar.StarCoord.RaS" Label="Sekundy"/>
+                        <MudNumericField @bind-Value="NewLightCurve.NewStarObj.StarCoord.RaH" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStarObj.StarCoord.RaH" Label="Hodiny"/>
+                        <MudNumericField @bind-Value="NewLightCurve.NewStarObj.StarCoord.RaM" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStarObj.StarCoord.RaM" Label="Minúty"/>
+                        <MudNumericField @bind-Value="NewLightCurve.NewStarObj.StarCoord.RaS" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStarObj.StarCoord.RaS" Label="Sekundy"/>
                     </MudPaper>
                     <MudDivider/>
                     <MudText Typo="Typo.h6">DEC</MudText>
                     <MudPaper Class="d-flex gap-2 mb-5">
-                        <MudTextField @bind-Value="NewLightCurve.NewStar.StarCoord.DecD" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStar.StarCoord.DecD" Label="Stupne"/>
-                        <MudTextField @bind-Value="NewLightCurve.NewStar.StarCoord.DecM" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStar.StarCoord.DecM" Label="Arcmin"/>
-                        <MudTextField @bind-Value="NewLightCurve.NewStar.StarCoord.DecS" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStar.StarCoord.DecS" Label="Arcsec"/>
+                        <MudTextField @bind-Value="NewLightCurve.NewStarObj.StarCoord.DecD" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStarObj.StarCoord.DecD" Label="Stupne"/>
+                        <MudTextField @bind-Value="NewLightCurve.NewStarObj.StarCoord.DecM" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStarObj.StarCoord.DecM" Label="Arcmin"/>
+                        <MudTextField @bind-Value="NewLightCurve.NewStarObj.StarCoord.DecS" Disabled="@(VerifiedCoords)" For="() => NewLightCurve.NewStarObj.StarCoord.DecS" Label="Arcsec"/>
                     </MudPaper>
                     <MudDivider Class="my-5"/>
                     <MudText>Cross identifikácia v katalógu.</MudText>
-                    <MudSelect Class="mb-5" T="string" Label="ID katalógu" id="catalog" @bind-Value="NewLightCurve.NewStar.StarCatalog.CatalogId" For="@(() => NewLightCurve.NewStar.StarCatalog.CatalogId)">
+                    <MudSelect Class="mb-5" T="string" Label="ID katalógu" id="catalog" @bind-Value="NewLightCurve.NewStarObj.StarCatalog.CatalogId" For="@(() => NewLightCurve.NewStarObj.StarCatalog.CatalogId)">
                         @foreach (var catalog in Catalogs)
                         {
                             <MudSelectItem T="string" value="@catalog.Name">@catalog.Name</MudSelectItem>
                         }
                     </MudSelect>
-                    <MudTextField Label="CrossId" Variant="Variant.Filled" Class="mb-5" @bind-Value="NewLightCurve.NewStar.StarCatalog.CrossId" For="@(() => NewLightCurve.NewStar.StarCatalog.CrossId)"/>
-                    <MudNumericField T="double" Label="Ra" Variant="Variant.Filled" Class="mb-5" @bind-Value="NewLightCurve.NewStar.StarCatalog.Ra" For="@(() => NewLightCurve.NewStar.StarCatalog.Ra)"/>
-                    <MudNumericField T="double" Label="Dec" Variant="Variant.Filled" Class="mb-5" @bind-Value="NewLightCurve.NewStar.StarCatalog.Dec" For="@(() => NewLightCurve.NewStar.StarCatalog.Dec)"/>
-                    <MudNumericField T="double" Label="Mag" Variant="Variant.Filled" Class="mb-5" @bind-Value="NewLightCurve.NewStar.StarCatalog.Mag" For="@(() => NewLightCurve.NewStar.StarCatalog.Mag)"/>
+                    <MudTextField Label="CrossId" Variant="Variant.Filled" Class="mb-5" @bind-Value="NewLightCurve.NewStarObj.StarCatalog.CrossId" For="@(() => NewLightCurve.NewStarObj.StarCatalog.CrossId)"/>
+                    <MudNumericField T="double" Label="Ra" Variant="Variant.Filled" Class="mb-5" @bind-Value="NewLightCurve.NewStarObj.StarCatalog.Ra" For="@(() => NewLightCurve.NewStarObj.StarCatalog.Ra)"/>
+                    <MudNumericField T="double" Label="Dec" Variant="Variant.Filled" Class="mb-5" @bind-Value="NewLightCurve.NewStarObj.StarCatalog.Dec" For="@(() => NewLightCurve.NewStarObj.StarCatalog.Dec)"/>
+                    <MudNumericField T="double" Label="Mag" Variant="Variant.Filled" Class="mb-5" @bind-Value="NewLightCurve.NewStarObj.StarCatalog.Mag" For="@(() => NewLightCurve.NewStarObj.StarCatalog.Mag)"/>
                 </MudCardContent>
             </MudCard>
             <MudDivider/>
@@ -155,34 +159,50 @@
                 <MudText Typo="Typo.h5">Údaje z pozorovania</MudText>
             </MudCardHeader>
             <MudCardContent>
-                <MudFab HtmlTag="label"
-                        Color="Color.Primary"
-                        Icon="@Icons.Filled.Image"
-                        Label="Mapka"
-                        for="images"/>
+                <MudPaper Class="text-center mb-5">
+                    <MudFab HtmlTag="label"
+                            Color="Color.Primary"
+                            Icon="@Icons.Filled.Image"
+                            Label="Mapka"
+                            for="images"/>
+                    <ValidationMessage For="@(() => NewLightCurve.LightCurve.Images)"/>
 
-                <div class="my-3 d-flex justify-content-center flex-wrap">
-                    @if (NewLightCurve is {Images: not null})
-                    {
-                        @foreach (var image in NewLightCurve.Images)
+                    <div class="my-3 d-flex justify-content-center flex-wrap">
+                        @if (NewLightCurve.LightCurve is {Images: not null})
                         {
-                            <img src="@image.Data" alt="Mapka hviezdy"/>
+                            @foreach (var image in NewLightCurve.LightCurve.Images)
+                            {
+                                <img src="@image.Data" alt="Mapka hviezdy"/>
+                            }
                         }
+                    </div>
+                    @if (NewLightCurve.LightCurve.DataFileContent.IsNullOrEmpty())
+                    {
+                        <MudButton HtmlTag="label"
+                                   Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Filled.CloudUpload"
+                                   for="data_file">
+                            Zvoľte dátový súbor
+                        </MudButton>
+                        <MudText>@Filename</MudText>
                     }
-                </div>
+                </MudPaper>
 
-                <MudSelect Class="mb-3" T="string" Variant="Variant.Filled" Label="Formát Juliánskeho dáta" @bind-Value="NewLightCurve.JD" For="@(() => NewLightCurve.JD)">
+
+                <MudSelect Class="mb-3" T="string" Variant="Variant.Filled" Label="Formát Juliánskeho dáta" @bind-Value="NewLightCurve.LightCurve.JD" For="@(() => NewLightCurve.LightCurve.JD)">
                     <MudSelectItem T="string" Value="@(Keywords.LcJdFormatHeliocentric)">Heliocentrický</MudSelectItem>
                     <MudSelectItem T="string" Value="@(Keywords.LcJdFormatGeocentric)">Geocentrický</MudSelectItem>
                 </MudSelect>
 
-                <MudSelect Class="mb-3" T="string" Variant="Variant.Filled" Label="Fotometrický systém" @bind-Value="NewLightCurve.PhotometricSystem" For="@(() => NewLightCurve.PhotometricSystem)">
+                <MudSelect Class="mb-3" T="string" Variant="Variant.Filled" Label="Fotometrický systém" @bind-Value="NewLightCurve.LightCurve.PhotometricSystem" For="@(() => NewLightCurve.LightCurve.PhotometricSystem)">
                     <MudSelectItem T="string" Value="@(Keywords.LcPhotometricInstrumental)">Inštrumentálny</MudSelectItem>
                     <MudSelectItem T="string" Value="@(Keywords.LcPhotometricStandard)">Štandardný</MudSelectItem>
                 </MudSelect>
 
-                <MudTextField Class="mb-3" list="filter-types" @bind-Value="NewLightCurve.VarAperture" Label="Hodnota clonky" Variant="Variant.Filled" For="@(() => NewLightCurve.VarAperture)"/>
-                <MudTextField Class="mb-3" list="filter-types" @bind-Value="NewLightCurve.Filter" Label="Typ filtra" Variant="Variant.Filled" For="@(() => NewLightCurve.Filter)"/>
+                <MudTextField Class="mb-3" @bind-Value="NewLightCurve.LightCurve.VarAperture" Label="Hodnota clonky" Variant="Variant.Filled" For="@(() => NewLightCurve.LightCurve.VarAperture)"/>
+
+                <MudTextField Class="mb-3" list="filter-types" @bind-Value="NewLightCurve.LightCurve.Filter" Label="Typ filtra" Variant="Variant.Filled" For="@(() => NewLightCurve.LightCurve.Filter)"/>
                 <datalist id="filter-types">
                     <option value="None (Clear)"/>
                     <option value="U"/>
@@ -197,40 +217,44 @@
                     <option value="z"/>
                 </datalist>
 
-                <MudSelect Class="mb-3" T="PublishVariant" Variant="Variant.Filled" Label="Zverejniť pozorovanie" @bind-Value="NewLightCurve.PublishVariant">
+                <MudSelect Class="mb-3" T="PublishVariant" Variant="Variant.Filled" Label="Zverejniť pozorovanie" @bind-Value="NewLightCurve.LightCurve.PublishVariant">
                     <MudSelectItem T="PublishVariant" Value="@PublishVariant.All">Zverejniť mapku, krivku a dátový súbor</MudSelectItem>
                     <MudSelectItem T="PublishVariant" Value="@PublishVariant.None">Nezverejňovať</MudSelectItem>
                     <MudSelectItem T="PublishVariant" Value="@PublishVariant.OnlyMap">Zverejniť mapku</MudSelectItem>
                     <MudSelectItem T="PublishVariant" Value="@PublishVariant.OnlyMapAndCurve">Zverejniť mapku a krivku</MudSelectItem>
                 </MudSelect>
-                <MudSelect Class="mb-3" T="int" Variant="Variant.Filled" Label="Zariadenie" @bind-Value="NewLightCurve.DeviceId">
+                <MudSelect Class="mb-3" T="int" Variant="Variant.Filled" Label="Zariadenie" @bind-Value="NewLightCurve.LightCurve.DeviceId">
                     <MudSelectItem T="int" Value="0">Neuvedené</MudSelectItem>
                     @foreach (var device in Devices)
                     {
                         <MudSelectItem T="int" Value="@device.Id">@device.Name</MudSelectItem>
                     }
                 </MudSelect>
-                <MudSelect Class="mb-3" T="int" Variant="Variant.Filled" Label="Hvezdáreň" @bind-Value="NewLightCurve.ObservatoryId">
+                <MudSelect Class="mb-3" T="int" Variant="Variant.Filled" Label="Hvezdáreň" @bind-Value="NewLightCurve.LightCurve.ObservatoryId">
                     <MudSelectItem T="int" Value="0">Neuvedená</MudSelectItem>
                     @foreach (var observatory in Observatories)
                     {
                         <MudSelectItem T="int" Value="@observatory.Id">@observatory.Address</MudSelectItem>
                     }
                 </MudSelect>
-                <MudTextField Class="mb-3" T="string" Label="Poznámky" Variant="Variant.Filled" @bind-Value="NewLightCurve.Description" Lines="3"/>
+                <MudTextField Class="mb-3" T="string" Label="Poznámky" Variant="Variant.Filled" @bind-Value="NewLightCurve.LightCurve.Comment" Lines="3"/>
             </MudCardContent>
         </MudCard>
-    }
-    else if (Step == 3)
-    {
-        @foreach (var item in SubmitMessages)
-        {
-            <MudAlert Severity="Severity.Info">@item</MudAlert>
-        }
+        <MudDivider/>
+        <ValidationSummary/>
+        <MudDivider/>
         <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Publikovať</MudButton>
+    </EditForm>
+}
+else if (Step == 3)
+{
+    @foreach (var item in SubmitMessages)
+    {
+        <MudAlert Severity="Severity.Info">@item</MudAlert>
     }
+    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Publikovať</MudButton>
+}
 
-</EditForm>
 </MudCardContent>
 </MudCard>
 
@@ -238,7 +262,7 @@
     <div>
         @if (Step != 1)
         {
-            <MudButton OnClick="PreviousStep" Variant="Variant.Filled" Color="Color.Primary">Predchádzajúci krok</MudButton>
+            <MudButton OnClick="PreviousStep" Variant="Variant.Filled" Color="Color.Primary"><MudIcon Icon="@Icons.Filled.ChevronLeft"/> Predchádzajúci krok</MudButton>
         }
     </div>
     <div>
@@ -249,7 +273,7 @@
     <div>
         @if ((Step == 1 && VerifiedCoords) || (Step != 1 && Step != MaxStep))
         {
-            <MudButton OnClick="NextStep" Variant="Variant.Filled" Color="Color.Primary">Ďalší krok</MudButton>
+            <MudButton OnClick="NextStep" Variant="Variant.Filled" Color="Color.Primary">Ďalší krok <MudIcon Icon="@Icons.Filled.ChevronRight"/></MudButton>
         }
     </div>
 </div>
@@ -257,14 +281,12 @@
 
 @code {
     private string Filename { get; set; } = string.Empty;
-    private StarCoordDTO StarCoord { get; set; } = new();
     private int Step { get; set; } = 1;
-    private int MaxStep { get; set; } = 3;
+    private int MaxStep { get; set; } = 2;
     private int MinStep { get; set; } = 1;
     private bool VerifiedCoords { get; set; }
     private string? Message { get; set; } = string.Empty;
     private Severity MessageSeverity { get; set; }
-    private StarDTO? Star { get; set; }
     private List<DeviceDTO> Devices { get; set; } = new();
     private List<Observatory> Observatories { get; set; } = new();
     private List<Catalog> Catalogs { get; set; } = new();
@@ -293,11 +315,12 @@
 
     private async Task HandleCoordInput()
     {
-        var response = await StarService.GetStarByCoords(NewLightCurve.NewStar.StarCoord);
+        var response = await StarService.GetStarByCoords(NewLightCurve.NewStarObj.StarCoord);
         if (response is {Success: true, Data: not null})
         {
     // Star = response.Data;
             NewLightCurve.ExistingStar = response.Data;
+            NewLightCurve.NewStarObj.Name = NewLightCurve.ExistingStar.Name;
         }
         else
         {
@@ -331,6 +354,7 @@
             Filename = file.Name;
             var fileStream = new StreamContent(file.OpenReadStream());
             var fileContent = await fileStream.ReadAsStringAsync();
+            NewLightCurve.LightCurve.DataFileContent = fileContent;
             ParseMetaContent(fileContent);
         }
         catch (Exception ex)
@@ -354,10 +378,10 @@
         }
 
         var metaString = string.Join(" ", metaLines);
-        GetKeyValuePairsFromString(metaString);
+        SetKeyValuePairsFromString(metaString, Step != 1 || VerifiedCoords);
     }
 
-    private void GetKeyValuePairsFromString(string line)
+    private void SetKeyValuePairsFromString(string line, bool withoutCoords = false)
     {
         var pattern = @"(\S+):\s*(\S+)";
         var matches = Regex.Matches(line, pattern, RegexOptions.IgnoreCase);
@@ -366,39 +390,42 @@
             var currentKey = match.Groups[1].Value.ToLower();
             var currentValue = match.Groups[2].Value.ToLower();
             Console.WriteLine($"{currentKey}: {currentValue}");
-            if (currentKey == "ra")
+            if (!withoutCoords)
             {
-                var values = ParseRaFromString(currentValue);
-                NewLightCurve.NewStar.StarCoord.RaH = values.RaH;
-                NewLightCurve.NewStar.StarCoord.RaM = values.RaM;
-                NewLightCurve.NewStar.StarCoord.RaS = values.RaS;
+                if (currentKey == "ra")
+                {
+                    var values = ParseRaFromString(currentValue);
+                    NewLightCurve.NewStarObj.StarCoord.RaH = values.RaH;
+                    NewLightCurve.NewStarObj.StarCoord.RaM = values.RaM;
+                    NewLightCurve.NewStarObj.StarCoord.RaS = values.RaS;
+                }
+                else if (currentKey == "dec")
+                {
+                    var values = ParseDecFromString(currentValue);
+                    NewLightCurve.NewStarObj.StarCoord.DecD = values.DecD;
+                    NewLightCurve.NewStarObj.StarCoord.DecM = values.DecM;
+                    NewLightCurve.NewStarObj.StarCoord.DecS = values.DecS;
+                }
             }
-            else if (currentKey == "dec")
+            if (currentKey == "jd")
             {
-                var values = ParseDecFromString(currentValue);
-                NewLightCurve.NewStar.StarCoord.DecD = values.DecD;
-                NewLightCurve.NewStar.StarCoord.DecM = values.DecM;
-                NewLightCurve.NewStar.StarCoord.DecS = values.DecS;
-            }
-            else if (currentKey == "jd")
-            {
-                NewLightCurve.JD = currentValue;
+                NewLightCurve.LightCurve.JD = currentValue;
             }
             else if (currentKey == "filter")
             {
-                NewLightCurve.Filter = currentValue;
+                NewLightCurve.LightCurve.Filter = currentValue;
             }
             else if (currentKey == "varaperture")
             {
-                NewLightCurve.VarAperture = double.Parse(currentValue);
+                NewLightCurve.LightCurve.VarAperture = double.Parse(currentValue);
             }
             else if (currentKey == "catalog")
             {
-                NewLightCurve.NewStar.StarCatalog.CatalogId = currentValue.ToUpper();
+                NewLightCurve.NewStarObj.StarCatalog.CatalogId = currentValue.ToUpper();
             }
             else if (currentKey == "catalogid")
             {
-                NewLightCurve.NewStar.StarCatalog.CrossId = currentValue;
+                NewLightCurve.NewStarObj.StarCatalog.CrossId = currentValue;
             }
             else if (currentKey == "catalogra")
             {
@@ -406,7 +433,7 @@
                 var radians = StarCoordsHelper.RaToRadians(values);
                 if (radians is not null)
                 {
-                    NewLightCurve.NewStar.StarCatalog.Ra = (double)radians;
+                    NewLightCurve.NewStarObj.StarCatalog.Ra = (double)radians;
                 }
             }
             else if (currentKey == "catalogdec")
@@ -415,12 +442,12 @@
                 var radians = StarCoordsHelper.DecToRadians(values);
                 if (radians is not null)
                 {
-                    NewLightCurve.NewStar.StarCatalog.Dec = (double)radians;
+                    NewLightCurve.NewStarObj.StarCatalog.Dec = (double)radians;
                 }
             }
             else if (currentKey == "catalogmag")
             {
-                NewLightCurve.NewStar.StarCatalog.Mag = double.Parse(currentValue);
+                NewLightCurve.NewStarObj.StarCatalog.Mag = double.Parse(currentValue);
             }
         }
     }
@@ -459,7 +486,7 @@
         VerifiedCoords = false;
         Message = null;
         Filename = string.Empty;
-        NewLightCurve.NewStar.StarCoord = new StarCoordDTO();
+        NewLightCurve = new NewLightCurve();
     }
 
 
@@ -468,8 +495,8 @@
         var maxImageCount = 1;
         foreach (var image in e.GetMultipleFiles(maxImageCount))
         {
-            NewLightCurve.Images = new List<Image>();
-            NewLightCurve.Images.Add(new Image
+            NewLightCurve.LightCurve.Images = new List<Image>();
+            NewLightCurve.LightCurve.Images.Add(new Image
             {
                 Data = await Base64Helper.ImageToB64(image)
             });
@@ -479,19 +506,40 @@
 
     private async Task HandleLightCurveSubmit()
     {
-        Console.WriteLine("Submitting everythin");
     // attempt to create a star (if doesnt exist)
         if (NewLightCurve.CreateStarOnSubmit)
         {
-            var starResponse = await StarService.StarPost(NewLightCurve.NewStar);
+            var starResponse = await StarService.StarPost(NewLightCurve.NewStarObj);
             SubmitMessages.Add(starResponse.Message);
             if (starResponse.Success is false) return;
-            NewLightCurve.NewStar.StarCatalog.StarId = starResponse.Data;
-            var starCatalogResponse = await StarService.StarCatalogPost(NewLightCurve.NewStar.StarCatalog);
+
+            NewLightCurve.NewStarObj.StarCatalog.StarId = starResponse.Data;
+            var starCatalogResponse = await StarService.StarCatalogPost(NewLightCurve.NewStarObj.StarCatalog);
             SubmitMessages.Add(starCatalogResponse.Message);
+            if (starCatalogResponse is {Success: true})
+            {
+                NewLightCurve.LightCurve.StarId = starResponse.Data;
+                var lightCurveResponse = await LightCurveService.LightCurvePost(NewLightCurve.LightCurve);
+                SubmitMessages.Add(lightCurveResponse.Message);
+            }
+        }
+        else
+        {
+            NewLightCurve.LightCurve.StarId = NewLightCurve.ExistingStar.Id;
+            NewLightCurve.NewStarObj.Name = NewLightCurve.ExistingStar.Name;
+            var lightCurveResponse = await LightCurveService.LightCurvePost(NewLightCurve.LightCurve);
+            SubmitMessages.Add(lightCurveResponse.Message);
         }
 
     // if success, create a light curve
+    }
+
+    private void InvalidSubmitHandler(EditContext e)
+    {
+        foreach (var validationMessage in e.GetValidationMessages())
+        {
+            Console.WriteLine(validationMessage);
+        }
     }
 
 }

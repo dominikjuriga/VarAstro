@@ -97,15 +97,20 @@ else
 
     private async Task GetCurveValues()
     {
-        foreach (var lc in Star.LightCurves)
+        foreach (var curve in Star.LightCurves)
         {
-            var result = await LightCurveService.LightCurveSingleValuesGet(lc.Id);
-            if (result is {Success: true, Data: not null})
+            if (!PublishHelper.CanShareCurve(curve.PublishVariant))
             {
-                lc.Values = result.Data;
+                curve.ValuesFinishedLoading = true;
+                continue;
             }
-            lc.ValuesFinishedLoading = true;
-            StateHasChanged();
+            var response = await LightCurveService.LightCurveSingleValuesGet(curve.Id);
+            curve.ValuesFinishedLoading = true;
+            if (response.Success)
+            {
+                curve.Values = response.Data;
+                StateHasChanged();
+            }
         }
     }
 

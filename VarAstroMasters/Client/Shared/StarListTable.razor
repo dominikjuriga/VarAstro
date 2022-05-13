@@ -5,6 +5,7 @@
         <MudTh>Názov</MudTh>
         <MudTh>RA</MudTh>
         <MudTh>DEC</MudTh>
+        <MudTh>Cross ID</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Názov">
@@ -14,6 +15,10 @@
         </MudTd>
         <MudTd DataLabel="RA">@context.RA</MudTd>
         <MudTd DataLabel="DEC">@context.DEC</MudTd>
+
+        <MudTd DataLabel="Cross ID">
+            @context.StarCatalogs?.First().CrossId (@context.StarCatalogs?.First().CatalogId)
+        </MudTd>
     </RowTemplate>
 </MudTable>
 

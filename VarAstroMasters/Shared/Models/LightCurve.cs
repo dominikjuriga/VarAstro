@@ -16,13 +16,19 @@ public class LightCurve
     [Required(ErrorMessage = Keywords.FormFieldRequired)]
     public int StarId { get; set; }
 
+    public string JD { get; set; } = string.Empty;
+    public string PhotometricSystem { get; set; } = string.Empty;
+    public string Filter { get; set; } = string.Empty;
+    public double VarAperture { get; set; }
     public Star Star { get; set; }
     public DateTime DateCreated { get; set; } = DateTime.Now;
 
     [Required(ErrorMessage = Keywords.FormFieldRequired)]
     public string DataFileContent { get; set; } = string.Empty;
 
+    [Required(ErrorMessage = $"Mapka: {Keywords.FormFieldRequired}")]
     public List<Image> Images { get; set; } = new();
+
     public int? DeviceId { get; set; }
     public Device? Device { get; set; }
     public string? Comment { get; set; }
