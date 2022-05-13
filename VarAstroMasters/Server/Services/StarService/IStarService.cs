@@ -5,6 +5,7 @@ namespace VarAstroMasters.Server.Services.StarService;
 public interface IStarService
 {
     Task<ServiceResponse<StarDTO>> StarSingleGet(int starId);
+    Task<ServiceResponse<Star>> StarSingleWithoutMetaGet(int starId);
     Task<ServiceResponse<List<StarDTO>>> StarListGet();
     Task<ServiceResponse<StarSearchDTO>> Search(string searchQuery);
     Task<ServiceResponse<StarSearchDTO>> SearchByCoords(string searchQuery);
@@ -24,4 +25,5 @@ public interface IStarService
     //////////////////////////
     Task<ServiceResponse<Catalog>> CatalogPost(Catalog catalog);
     Task<ServiceResponse<int>> StarPost(NewStar newStar);
+    Task<ServiceResponse<bool>> StarPut(Star star);
 }

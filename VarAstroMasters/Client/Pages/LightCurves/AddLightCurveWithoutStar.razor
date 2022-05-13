@@ -110,7 +110,7 @@
 @if (Step == 2)
 {
 @* <EditForm Model="NewLightCurve" OnValidSubmit="HandleLightCurveSubmit"> *@
-    <EditForm Model="@NewLightCurve" OnValidSubmit="@HandleLightCurveSubmit" OnInvalidSubmit="(e) => InvalidSubmitHandler(e)">
+    <EditForm disabled="@true" Model="@NewLightCurve" OnValidSubmit="@HandleLightCurveSubmit" OnInvalidSubmit="(e) => InvalidSubmitHandler(e)">
         <ObjectGraphDataAnnotationsValidator/>
         <InputFile id="images" OnChange="OnImageChange" hidden accept="@Keywords.AcceptedImageFormats"></InputFile>
         <InputFile id="data_file" hidden class="form-control" OnChange="HandleFileChange"></InputFile>
@@ -165,8 +165,9 @@
                             Icon="@Icons.Filled.Image"
                             Label="Mapka"
                             for="images"/>
-                    <ValidationMessage For="@(() => NewLightCurve.LightCurve.Images)"/>
-
+                    <MudText Class="my-5">
+                        <ValidationMessage For="@(() => NewLightCurve.LightCurve.Images)"/>
+                    </MudText>
                     <div class="my-3 d-flex justify-content-center flex-wrap">
                         @if (NewLightCurve.LightCurve is {Images: not null})
                         {
@@ -240,19 +241,19 @@
                 <MudTextField Class="mb-3" T="string" Label="Poznámky" Variant="Variant.Filled" @bind-Value="NewLightCurve.LightCurve.Comment" Lines="3"/>
             </MudCardContent>
         </MudCard>
-        <MudDivider/>
+        <MudDivider class="my-5"/>
         <ValidationSummary/>
-        <MudDivider/>
+        <MudDivider class="my-5"/>
+        @if (SubmitMessages.Count > 0)
+        {
+            foreach (var message in SubmitMessages)
+            {
+                <MudText>@message</MudText>
+            }
+            <MudDivider class="my-5"/>
+        }
         <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Publikovať</MudButton>
     </EditForm>
-}
-else if (Step == 3)
-{
-    @foreach (var item in SubmitMessages)
-    {
-        <MudAlert Severity="Severity.Info">@item</MudAlert>
-    }
-    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Publikovať</MudButton>
 }
 
 </MudCardContent>
@@ -527,11 +528,15 @@ else if (Step == 3)
         {
             NewLightCurve.LightCurve.StarId = NewLightCurve.ExistingStar.Id;
             NewLightCurve.NewStarObj.Name = NewLightCurve.ExistingStar.Name;
+            
+            if (NewLightCurve is {UserIdentification.UserIdentification.Length: > 0 })
+            {
+                
+            }
+            
             var lightCurveResponse = await LightCurveService.LightCurvePost(NewLightCurve.LightCurve);
             SubmitMessages.Add(lightCurveResponse.Message);
         }
-
-    // if success, create a light curve
     }
 
     private void InvalidSubmitHandler(EditContext e)

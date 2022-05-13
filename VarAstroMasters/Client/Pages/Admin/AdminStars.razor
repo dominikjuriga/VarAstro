@@ -1,6 +1,69 @@
-﻿@page "/Admin/Stars"
-<h3>Správa hviezd</h3>
+﻿@page "/Admin/Stars/{StarId:int}"
+@inject IStarService StarService
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Administrator")]
+
+
+<MudCard>
+    <MudCardHeader>
+        <MudText Typo="Typo.h3">Správa hviezdy @(Star is not null ? Star.Name : "")</MudText>
+    </MudCardHeader>
+
+    @if (Message is not null)
+    {
+        <MudAlert Severity="MessageSeverity">
+            @Message
+        </MudAlert>
+    }
+
+    <MudCardContent>
+
+        @if (Star is not null)
+        {
+            <EditForm Model="Star" OnValidSubmit="HandleSubmit">
+                <MudTextField class="mb-5" @bind-Value="@Star.Name" For="@(() => Star.Name)" Variant="Variant.Filled" Label="Názov"/>
+                <MudNumericField class="mb-5" @bind-Value="@Star.RA" For="@(() => Star.RA)" Variant="Variant.Filled" Label="RA"/>
+                <MudNumericField class="mb-5" @bind-Value="@Star.DEC" For="@(() => Star.DEC)" Variant="Variant.Filled" Label="DEC"/>
+                <div class="d-flex gap-2 align-items-center">
+                    <MudButton class="mb-5" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Uložiť</MudButton>
+                    <MudButton class="mb-5" OnClick="CancelEdit" Variant="Variant.Filled" Color="Color.Secondary">Zrušiť</MudButton>
+                </div>
+            </EditForm>
+        }
+    </MudCardContent>
+</MudCard>
 
 @code {
+
+    [Parameter]
+    public int StarId { get; set; }
+
+    private Star? Star { get; set; }
+    private string? Message { get; set; }
+    private Severity MessageSeverity { get; set; } = Severity.Error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await StarService.StarSingleWithoutMetaGet(StarId);
+        if (response is {Success: true})
+        {
+            Star = response.Data;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        var response = await StarService.StarPut(Star);
+        if (response is {Success: true})
+        {
+            MessageSeverity = Severity.Success;
+        }
+        Message = response.Message;
+    }
+
+    private void CancelEdit()
+    {
+        NavigationManager.NavigateTo($"{Endpoints.ClientStarSingleGet}/{StarId}");
+    }
 
 }

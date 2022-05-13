@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using VarAstroMasters.Shared.CompositeKeys;
 
 namespace VarAstroMasters.Server.Controllers;
@@ -27,10 +28,25 @@ public class StarController : ControllerBase
         return Ok(response);
     }
 
+    [HttpPut]
+    [Authorize(Roles = "Administrator")]
+    public async Task<ActionResult<ServiceResponse<bool>>> StarPut(Star star)
+    {
+        var response = await _starService.StarPut(star);
+        return Ok(response);
+    }
+
     [HttpGet("{starId}")]
     public async Task<ActionResult<ServiceResponse<StarDTO>>> StarSingleGet(int starId)
     {
         var response = await _starService.StarSingleGet(starId);
+        return Ok(response);
+    }
+
+    [HttpGet("nometa/{starId}")]
+    public async Task<ActionResult<ServiceResponse<StarDTO>>> StarSingleWithoutMetaGet(int starId)
+    {
+        var response = await _starService.StarSingleWithoutMetaGet(starId);
         return Ok(response);
     }
 

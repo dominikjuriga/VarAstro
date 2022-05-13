@@ -123,4 +123,18 @@ public class StarService : IStarService
         var response = await _httpClient.PostAsJsonAsync(Endpoints.ApiStarPost, newStar);
         return await response.Content.ReadFromJsonAsync<ServiceResponse<int>>();
     }
+
+    public async Task<ServiceResponse<bool>> StarPut(Star star)
+    {
+        var response = await _httpClient.PutAsJsonAsync(Endpoints.ApiStarPut, star);
+        return await response.Content.ReadFromJsonAsync<ServiceResponse<bool>>();
+    }
+
+    public async Task<ServiceResponse<Star>> StarSingleWithoutMetaGet(int StarId)
+    {
+        var response =
+            await _httpClient.GetFromJsonAsync<ServiceResponse<Star>>(
+                $"{Endpoints.ApiStarSingleWithoutMetaGet}/{StarId}");
+        return response;
+    }
 }

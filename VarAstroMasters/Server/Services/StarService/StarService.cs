@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using VarAstroMasters.Shared.CompositeKeys;
 
 namespace VarAstroMasters.Server.Services.StarService;
@@ -15,6 +16,21 @@ public class StarService : IStarService
         _context = context;
         _mapper = mapper;
         _authService = authService;
+    }
+
+    public async Task<ServiceResponse<Star>> StarSingleWithoutMetaGet(int starId)
+    {
+        var star = await _context.Stars
+            .Where(s => s.Id == starId)
+            .Include(s => s.StarVariability)
+            .Include(s => s.StarCatalogs)
+            .Include(s => s.StarPublish)
+            .FirstOrDefaultAsync();
+        if (star is null) return ResponseHelper.FailResponse<Star>(Keywords.NotFoundMessage);
+        return new ServiceResponse<Star>
+        {
+            Data = star
+        };
     }
 
     public async Task<ServiceResponse<List<StarDTO>>> StarListGet()
@@ -410,6 +426,25 @@ public class StarService : IStarService
         {
             Data = star.Id,
             Message = "Objekt bol vytvorený."
+        };
+    }
+
+    public async Task<ServiceResponse<bool>> StarPut(Star star)
+    {
+        var dbStar = _context.Stars.FirstOrDefault(s => s.Id == star.Id);
+        if (dbStar is null) return ResponseHelper.FailResponse<bool>(Keywords.NotFoundMessage);
+
+        dbStar.Name = star.Name;
+        dbStar.RA = star.RA;
+        dbStar.DEC = star.DEC;
+
+        var result = await _context.SaveChangesAsync();
+        if (result == 0) return ResponseHelper.FailResponse<bool>(Keywords.PutFailed);
+
+        return new ServiceResponse<bool>
+        {
+            Data = true,
+            Message = Keywords.PutSucceeded
         };
     }
 }

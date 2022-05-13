@@ -39,6 +39,7 @@ else
                         <MudText Typo="Typo.h4">Administrácia hviezdy</MudText>
                     </MudCardHeader>
                     <MudCardContent>
+                        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="NavigateToEditStar">Upraviť hviezdu</MudButton>
                         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="NavigateToPublications">Spravovať publikáciu</MudButton>
                         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="NavigateToCatalogs">Spravovať hviezdu v katalógoch</MudButton>
                     </MudCardContent>
@@ -128,6 +129,12 @@ else
     {
         if (Star is null) return;
         NavigationManager.NavigateTo($"{Endpoints.ClientAdminStars}/{Star.Id}/Publication");
+    }
+
+    private void NavigateToEditStar()
+    {
+        if (Star is null) return;
+        NavigationManager.NavigateTo($"{Endpoints.ClientAdminStars}/{Star.Id}");
     }
 
     private void NavigateToCatalogs()

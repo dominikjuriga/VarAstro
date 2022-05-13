@@ -23,4 +23,6 @@ public interface IStarService
     //////////////////////////
     Task<ServiceResponse<Catalog>> CatalogPost(CatalogEdit catalog);
     Task<ServiceResponse<int>> StarPost(NewStar newStar);
+    Task<ServiceResponse<bool>> StarPut(Star star);
+    Task<ServiceResponse<Star>> StarSingleWithoutMetaGet(int StarId);
 }
