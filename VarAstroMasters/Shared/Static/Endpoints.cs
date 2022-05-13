@@ -44,12 +44,9 @@ public static class Endpoints
     public static readonly string ApiStarGetFirstByCoords = $"{ApiStarBasePath}/firstbycoords";
     public static readonly string ApiStarPublicationGet = $"{ApiStarBasePath}/publication";
 
-    // Star Drafts
-    public static readonly string ApiStarDraftBasePath = "api/stardraft";
-
-    public static readonly string ApiStarDraftSingleGet = $"{ApiStarDraftBasePath}/draft";
-    public static readonly string ApiStarDraftListGet = $"{ApiStarDraftBasePath}/draft";
-    public static readonly string ApiStarDraftPost = $"{ApiStarDraftBasePath}/draft";
+    // User Star Identification
+    public static readonly string ApiUserStarIdentificationBasePath = "api/userstaridentification";
+    public static readonly string ApiUserStarIdentificationsFromToken = $"{ApiUserStarIdentificationBasePath}";
 
     // Catalogs
     public static readonly string ApiCatalogsListGet = $"{ApiStarBasePath}/catalogs";
@@ -82,6 +79,10 @@ public static class Endpoints
     public static readonly string ClientStarDraftPost = $"{ClientStarBase}/Drafts/Create";
     public static readonly string ClientStarDraftSingle = $"{ClientStarBase}/Drafts";
     public static readonly string ClientStarSingleGet = $"{ClientStarBase}";
+
+
+    public static readonly string ClientUserStarIdentificationBase = "/usi";
+    public static readonly string ClientUserStarIdentification = $"{ClientUserStarIdentificationBase}";
 
     public static readonly string ClientObservationLogBase = "/ObservationLogs";
     public static readonly string ClientObservationLogListGet = $"{ClientObservationLogBase}";

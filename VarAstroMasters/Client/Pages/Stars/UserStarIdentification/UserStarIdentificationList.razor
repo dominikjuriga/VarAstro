@@ -1,0 +1,44 @@
+﻿@page "/usi"
+@inject IUserStarIdentificationService UserStarIdentificationService
+@inject NavigationManager NavigationManager
+
+<MudCard>
+    <MudCardHeader>
+        <MudText Typo="Typo.h3">Vaše identifikácie</MudText>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudTable Items="Data" Loading="Loading" T="@UserStarIdentification" OnRowClick="@RowClicked">
+            <HeaderContent>
+                <MudTh>Názov hviezdy</MudTh>
+                <MudTh>Vaša identifikácia</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Názov hviezdy" Class="">
+                    <div class="cursor-pointer">@context.Star.Name</div>
+                </MudTd>
+                <MudTd DataLabel="Vaša identifikácia">
+                    <div class="cursor-pointer">@context.Identification</div>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    private List<UserStarIdentification>? Data;
+    private bool Loading { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await UserStarIdentificationService.UserIdentificationsListGet();
+        if (response is {Success: true, Data: not null})
+            Data = response.Data;
+        Loading = false;
+    }
+
+    public void RowClicked(TableRowClickEventArgs<UserStarIdentification> c)
+    {
+        NavigationManager.NavigateTo($"{Endpoints.ClientStarSingleGet}/{c.Item.StarId}");
+    }
+
+}
