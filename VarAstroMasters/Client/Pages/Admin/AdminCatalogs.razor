@@ -1,5 +1,6 @@
 ﻿@page "/Admin/Catalogs"
 @inject IStarService StarService
+@attribute [Authorize(Roles = Keywords.Role_Admin)]
 
 @if (Catalogs is null)
 {

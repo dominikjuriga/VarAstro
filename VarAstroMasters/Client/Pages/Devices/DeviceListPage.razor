@@ -1,6 +1,7 @@
 ﻿@page "/Device/List"
-@using VarAstroMasters.Shared.Helpers
 @inject IDeviceService DeviceService
+
+@attribute [Authorize]
 
 @if (Devices is null)
 {

@@ -1,7 +1,7 @@
 ﻿@page "/Admin/Stars/{StarId:int}"
 @inject IStarService StarService
 @inject NavigationManager NavigationManager
-@attribute [Authorize(Roles = "Administrator")]
+@attribute [Authorize(Roles = Keywords.Role_Admin)]
 
 
 <MudCard>

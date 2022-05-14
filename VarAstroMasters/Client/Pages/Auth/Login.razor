@@ -7,27 +7,35 @@
 
 <PageTitle>Prihlásenie | @Keywords.DefaultPageTitle</PageTitle>
 
-@if (!Succeeded)
-{
-    <MudCard>
-        <EditForm Model="UserLogin" OnValidSubmit="HandleLogin">
-            <MudCardContent>
-                <MudText>Prihlásenie</MudText>
-                <DataAnnotationsValidator/>
-                <MudTextField @bind-Value="UserLogin.EmailAddress" Label="Email" For="@(() => UserLogin.EmailAddress)"/>
-                <MudTextField @bind-Value="UserLogin.Password" Label="Heslo" For="@(() => UserLogin.Password)" InputType="InputType.Password"/>
-            </MudCardContent>
-            <MudCardActions>
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Prihlásiť sa</MudButton>
-            </MudCardActions>
+<AuthorizeView Context="authContext">
+    <NotAuthorized>
+        @if (!Succeeded)
+        {
+            <MudCard>
+                <EditForm Model="UserLogin" OnValidSubmit="HandleLogin" Context="formContext">
+                    <MudCardContent>
+                        <MudText>Prihlásenie</MudText>
+                        <DataAnnotationsValidator/>
+                        <MudTextField @bind-Value="UserLogin.EmailAddress" Label="Email" For="@(() => UserLogin.EmailAddress)"/>
+                        <MudTextField @bind-Value="UserLogin.Password" Label="Heslo" For="@(() => UserLogin.Password)" InputType="InputType.Password"/>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Prihlásiť sa</MudButton>
+                    </MudCardActions>
 
-        </EditForm>
-    </MudCard>
-}
-else
-{
-    <MudAlert Severity="Severity.Success">Prihlásenie prebehlo úspešne.</MudAlert>
-}
+                </EditForm>
+            </MudCard>
+        }
+        else
+        {
+            <MudAlert Severity="Severity.Success">Prihlásenie prebehlo úspešne.</MudAlert>
+        }
+    </NotAuthorized>
+    <Authorized>
+        <MudAlert Severity="Severity.Info">Už ste prihlásený.</MudAlert>
+    </Authorized>
+</AuthorizeView>
+
 
 @code {
     private UserLogin UserLogin { get; set; } = new();

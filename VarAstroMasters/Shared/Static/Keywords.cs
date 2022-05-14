@@ -6,6 +6,9 @@ public static class Keywords
     public const string JWT_Issuer = "Jwt:Issuer";
     public const string JWT_Key = "Jwt:Key";
     public const string JWT_Bearer_Token = "bearerToken";
+    public const string DB_Version_Major = "Db:Version:Major";
+    public const string DB_Version_Minor = "Db:Version:Minor";
+    public const string DB_Version_Build = "Db:Version:Build";
     public const string DarkMode = "DarkMode";
     public const string AuthType = "jwt";
     public const string Role_User = "User";

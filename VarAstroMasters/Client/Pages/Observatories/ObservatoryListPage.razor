@@ -1,6 +1,6 @@
 ﻿@page "/Observatory/List"
-@using VarAstroMasters.Shared.Helpers
 @inject IObservatoryService ObservatoryService
+@attribute [Authorize]
 @if (Observatories is null)
 {
     <Loader/>

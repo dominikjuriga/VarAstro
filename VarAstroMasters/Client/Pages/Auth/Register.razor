@@ -3,29 +3,36 @@
 
 <PageTitle>Registrácia | @Keywords.DefaultPageTitle</PageTitle>
 
-@if (!Succeeded)
-{
-    <MudCard>
-        <EditForm Model="UserRegister" OnValidSubmit="HandleRegister">
-            <MudCardContent>
-                <MudText>Registrácia</MudText>
-                <DataAnnotationsValidator/>
-                <MudTextField @bind-Value="UserRegister.EmailAddress" Label="Email" For="@(() => UserRegister.EmailAddress)"/>
-                <MudTextField @bind-Value="UserRegister.FirstName" Label="Meno" For="@(() => UserRegister.FirstName)"/>
-                <MudTextField @bind-Value="UserRegister.LastName" Label="Priezvisko" For="@(() => UserRegister.LastName)"/>
-                <MudTextField @bind-Value="UserRegister.Password" Label="Heslo" For="@(() => UserRegister.Password)" InputType="InputType.Password"/>
-                <MudTextField @bind-Value="UserRegister.ConfirmPassword" Label="Potvrdenie hesla" For="@(() => UserRegister.ConfirmPassword)" InputType="InputType.Password"/>
-            </MudCardContent>
-            <MudCardActions>
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Zaregistrovať sa</MudButton>
-            </MudCardActions>
-        </EditForm>
-    </MudCard>
-}
-else
-{
-    <MudAlert Severity="Severity.Success">Registrácia prebehla úspešne. <MudLink Href="@Endpoints.ClientAuthLogIn">Prihláste sa.</MudLink></MudAlert>
-}
+<AuthorizeView Context="authContext">
+    <Authorized>
+        <MudAlert Severity="Severity.Info">Už ste prihlásený.</MudAlert>
+    </Authorized>
+    <NotAuthorized>
+        @if (!Succeeded)
+        {
+            <MudCard>
+                <EditForm Model="UserRegister" OnValidSubmit="HandleRegister" Context="formContext">
+                    <MudCardContent>
+                        <MudText>Registrácia</MudText>
+                        <DataAnnotationsValidator/>
+                        <MudTextField @bind-Value="UserRegister.EmailAddress" Label="Email" For="@(() => UserRegister.EmailAddress)"/>
+                        <MudTextField @bind-Value="UserRegister.FirstName" Label="Meno" For="@(() => UserRegister.FirstName)"/>
+                        <MudTextField @bind-Value="UserRegister.LastName" Label="Priezvisko" For="@(() => UserRegister.LastName)"/>
+                        <MudTextField @bind-Value="UserRegister.Password" Label="Heslo" For="@(() => UserRegister.Password)" InputType="InputType.Password"/>
+                        <MudTextField @bind-Value="UserRegister.ConfirmPassword" Label="Potvrdenie hesla" For="@(() => UserRegister.ConfirmPassword)" InputType="InputType.Password"/>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Zaregistrovať sa</MudButton>
+                    </MudCardActions>
+                </EditForm>
+            </MudCard>
+        }
+        else
+        {
+            <MudAlert Severity="Severity.Success">Registrácia prebehla úspešne. <MudLink Href="@Endpoints.ClientAuthLogIn">Prihláste sa.</MudLink></MudAlert>
+        }
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     private UserRegister UserRegister { get; set; } = new();

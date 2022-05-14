@@ -29,7 +29,12 @@ builder.Services.AddCors(options =>
 });
 
 // Connect the server application to the database and create Identity Context
-var dbVersion = new MySqlServerVersion(new Version(10, 6, 3));
+
+var dbVersion = new MySqlServerVersion(new Version(
+    int.Parse(builder.Configuration.GetSection(Keywords.DB_Version_Major).Value),
+    int.Parse(builder.Configuration.GetSection(Keywords.DB_Version_Minor).Value),
+    int.Parse(builder.Configuration.GetSection(Keywords.DB_Version_Build).Value)
+));
 
 builder.Services.AddDbContext<DataContext>(options =>
 {
@@ -83,6 +88,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+if (app.Environment.IsProduction())
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+        db.Database.Migrate();
+    }
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

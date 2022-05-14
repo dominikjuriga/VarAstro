@@ -1,6 +1,7 @@
 ﻿@page "/Admin/Stars/{StarId:int}/Catalogs"
 @inject NavigationManager NavigationManager
 @inject IStarService StarService
+@attribute [Authorize(Roles = Keywords.Role_Admin)]
 
 @if (StarCatalogs is null)
 {

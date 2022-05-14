@@ -6,16 +6,20 @@
 <MudNavMenu Class="my-3">
     <MudNavLink Icon="@Icons.Filled.Home" Match="NavLinkMatch.All" Href="/">Domov</MudNavLink>
     <MudNavLink Icon="@Icons.Filled.MenuBook" Href="@Endpoints.ClientObservationLogListGet">Pozorovacie denníky</MudNavLink>
-    <MudNavLink Icon="@Icons.Filled.AddChart" Href="@Endpoints.ClientLightCurvePost">Nové pozorovanie</MudNavLink>
+    <MudNavLink Icon="@Icons.Filled.Star" Href="@Endpoints.ClientStarListGet">Hviezdy</MudNavLink>
+    <AuthorizeView>
+        <Authorized>
+            <MudNavLink Icon="@Icons.Filled.AddChart" Href="@Endpoints.ClientLightCurvePost">Nové pozorovanie</MudNavLink>
+            <MudNavLink Icon="@Icons.Filled.Stars" Href="@Endpoints.ClientUserStarIdentification">Moje Identifikácie</MudNavLink>
+            <MudNavGroup Icon="@Icons.Filled.Person" Title="Používateľ" Expanded="false">
+                <MudNavLink Icon="@Icons.Filled.Camera" Href="@Endpoints.ClientDeviceListGet">Zariadenia</MudNavLink>
+                <MudNavLink Icon="@Icons.Filled.Place" Href="@Endpoints.ClientObservatoryListGet">Hvezdárne</MudNavLink>
+            </MudNavGroup>
+        </Authorized>
+    </AuthorizeView>
     <MudNavGroup Icon="@Icons.Filled.Search" Title="Vyhľadávanie" Expanded="false">
         <MudNavLink Icon="@Icons.Filled.Title" Href="@Endpoints.ClientSearch">Podľa mena alebo Cross ID</MudNavLink>
         <MudNavLink Icon="@Icons.Filled.LocationSearching" Href="@Endpoints.ClientSearchByCoords">Podľa koordinátov (RA, DEC)</MudNavLink>
-    </MudNavGroup>
-    <MudNavLink Icon="@Icons.Filled.Star" Href="@Endpoints.ClientStarListGet">Hviezdy</MudNavLink>
-    <MudNavLink Icon="@Icons.Filled.Stars" Href="@Endpoints.ClientUserStarIdentification">Moje Identifikácie</MudNavLink>
-    <MudNavGroup Icon="@Icons.Filled.Person" Title="Používateľ" Expanded="false">
-        <MudNavLink Icon="@Icons.Filled.Camera" Href="@Endpoints.ClientDeviceListGet">Zariadenia</MudNavLink>
-        <MudNavLink Icon="@Icons.Filled.Place" Href="@Endpoints.ClientObservatoryListGet">Hvezdárne</MudNavLink>
     </MudNavGroup>
     <AuthorizeView Roles="@Keywords.Role_Admin">
         <MudNavGroup Icon="@Icons.Filled.Lock" Title="Administrácia" Expanded="false">
@@ -33,7 +37,7 @@
         </Authorized>
         <NotAuthorized>
             <MudNavLink Icon="@Icons.Filled.Login" Href="@Endpoints.ClientAuthLogIn">Prihlásenie</MudNavLink>
-            <MudNavLink Icon="@Icons.Filled.PersonAdd" Href="@Endpoints.ClientDeviceListGet">Registrácia</MudNavLink>
+            <MudNavLink Icon="@Icons.Filled.PersonAdd" Href="@Endpoints.ClientAuthRegister">Registrácia</MudNavLink>
         </NotAuthorized>
     </AuthorizeView>
 

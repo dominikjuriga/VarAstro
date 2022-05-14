@@ -27,13 +27,15 @@ else
             </MudText>
         </MudCardHeader>
         <MudCardContent>
-            <MudCard Class="mb-5">
-                <MudCardContent>
-                    <MudText Typo="Typo.h4">Akcie</MudText>
-                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="NavigateToNew">Pridať pozorovanie</MudButton>
-                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="NavigateToAddIdentification">Pridať identifikáciu</MudButton>
-                </MudCardContent>
-            </MudCard>
+            <AuthorizeView>
+                <MudCard Class="mb-5">
+                    <MudCardContent>
+                        <MudText Typo="Typo.h4">Akcie</MudText>
+                        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="NavigateToNew">Pridať pozorovanie</MudButton>
+                        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="NavigateToAddIdentification">Pridať identifikáciu</MudButton>
+                    </MudCardContent>
+                </MudCard>
+            </AuthorizeView>
             <AuthorizeView Roles="Administrator">
                 <MudCard Class="mb-5">
                     <MudCardHeader>
