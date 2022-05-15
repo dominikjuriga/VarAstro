@@ -22,7 +22,13 @@
                     <MudSelectItem T="int" value="@Keywords.DefaultFilter">Všetky</MudSelectItem>
                     @foreach (var star in Log.DistinctStars)
                     {
-                        <MudSelectItem T="int" value="@star.Id">@star.Name</MudSelectItem>
+                        <MudSelectItem T="int" value="@star.Id">
+                            @star.Name
+                            @if (star is {StarCatalogs.Count: > 1})
+                            {
+                                <span> @star.StarCatalogs.First().CrossId, @star.StarCatalogs.First().CatalogId</span>
+                            }
+                        </MudSelectItem>
                     }
                 </MudSelect>
             }

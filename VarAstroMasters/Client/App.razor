@@ -9,9 +9,16 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    <h3>K tejto stránke nemáte prístup!</h3>
-                    <h5>Ak ste prihlásený, nemáte potrebné oprávenenia.</h5>
-                    <h5>Prosím, <a href="/login">prihláste sa</a> alebo si <a href="/register">vytvorte účet</a>. </h5>
+                    <MudCard>
+                        <MudCardHeader>
+                            <MudText Typo="Typo.h3">K tejto stránke nemáte prístup!</MudText>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <MudText Typo="Typo.h5">Ak ste prihlásený, nemáte potrebné oprávenenia.</MudText>
+                            <MudText>Prosím, <MudLink Href="/login">prihláste sa</MudLink> alebo si <MudLink Href="/register">vytvorte účet</MudLink>. </MudText>
+                        </MudCardContent>
+                    </MudCard>
+
                 </NotAuthorized>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1"/>

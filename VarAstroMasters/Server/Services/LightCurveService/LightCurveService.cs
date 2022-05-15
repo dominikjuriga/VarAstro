@@ -204,6 +204,7 @@ public class LightCurveService : ILightCurveService
             .Include(lc => lc.Device)
             .Include(lc => lc.Observatory)
             .Include(lc => lc.Star)
+            .ThenInclude(s => s.StarCatalogs)
             .ToListAsync();
 
         var user = await _context.Users.Where(u => u.Id == id).FirstOrDefaultAsync();

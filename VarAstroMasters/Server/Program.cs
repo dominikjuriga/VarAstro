@@ -29,19 +29,22 @@ builder.Services.AddCors(options =>
 });
 
 // Connect the server application to the database and create Identity Context
-
 var dbVersion = new MySqlServerVersion(new Version(
     int.Parse(builder.Configuration.GetSection(Keywords.DB_Version_Major).Value),
     int.Parse(builder.Configuration.GetSection(Keywords.DB_Version_Minor).Value),
     int.Parse(builder.Configuration.GetSection(Keywords.DB_Version_Build).Value)
 ));
 
+// Register database context (db access layer)
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options
         .UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), dbVersion);
 });
 
+// Register custom services
+// This is where you would add NEW services for extension of existing
+// system
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IStarService, StarService>();
@@ -51,6 +54,8 @@ builder.Services.AddScoped<IDeviceService, DeviceService>();
 builder.Services.AddScoped<IObservatoryService, ObservatoryService>();
 builder.Services.AddScoped<ILightCurveService, LightCurveService>();
 
+// Registering identity service that provides 
+// providers for tokens, UI, roles, etc.
 builder.Services.AddDefaultIdentity<User>(options =>
     {
         options.Password.RequireDigit = false;
@@ -60,6 +65,7 @@ builder.Services.AddDefaultIdentity<User>(options =>
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<DataContext>();
 
+// Registering the JWT token bearing scheme
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -74,21 +80,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
+// HttpContextAccesor is used to verify the bearer tokens
+// contained within the HTTP requests
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
-
-
 builder.Services.AddHttpContextAccessor();
 
 // Add services to the container.
-
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Migrate if app has been ran in production
 if (app.Environment.IsProduction())
     using (var scope = app.Services.CreateScope())
     {
@@ -104,11 +109,6 @@ if (app.Environment.IsDevelopment())
     // Use Swagger when app is in development mode
     app.UseSwagger();
     app.UseSwaggerUI();
-
-    // Seed DB in development mode
-    var roleManager = builder.Services.BuildServiceProvider().GetService<RoleManager<IdentityRole>>();
-    var userManager = builder.Services.BuildServiceProvider().GetService<UserManager<User>>();
-    Seed(userManager, roleManager);
 }
 else
 {
@@ -117,19 +117,18 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// Seed DB with admin user (credentials: admin@example.com, Kappa123!)
+var roleManager = builder.Services.BuildServiceProvider().GetService<RoleManager<IdentityRole>>();
+var userManager = builder.Services.BuildServiceProvider().GetService<UserManager<User>>();
+Seed(userManager, roleManager);
 
+app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseCors("CORS_Policy");
-
 app.UseAuthentication();
-
 app.UseAuthorization();
-
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");

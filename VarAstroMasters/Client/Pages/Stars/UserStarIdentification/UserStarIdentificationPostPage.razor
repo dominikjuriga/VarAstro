@@ -25,13 +25,16 @@
         }
 
         <MudCard>
-            <MudCardContent>
-                <EditForm Model="USI" OnValidSubmit="HandleSubmit">
+            <EditForm Model="USI" OnValidSubmit="HandleSubmit">
+                <MudCardContent>
                     <MudTextField @bind-Value="USI.UserIdentification" Variant="Variant.Filled" Label="Identifikácia"></MudTextField>
+
+                </MudCardContent>
+                <MudCardActions>
                     <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Uložiť</MudButton>
                     <MudButton OnClick="NavigateBack" Variant="Variant.Filled" Color="Color.Secondary">Späť na hviezdu</MudButton>
-                </EditForm>
-            </MudCardContent>
+                </MudCardActions>
+            </EditForm>
         </MudCard>
     </MudCardContent>
 </MudCard>

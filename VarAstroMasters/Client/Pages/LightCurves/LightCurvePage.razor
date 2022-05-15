@@ -1,18 +1,6 @@
 ﻿@page "/LightCurves/{LightCurveId:int}"
 @inject ILightCurveService LightCurveService
 
-<h3>
-    Detail krivky
-    @if (Curve is {Star: not null})
-    {
-        <span>
-            (hviezda
-            <strong>
-                <a href="@Endpoints.ClientStarSingleGet/@Curve.Star.Id">@Curve.Star.Name</a>
-            </strong>)
-        </span>
-    }
-</h3>
 @if (Curve is null && _message is null)
 {
     <Loader/>
@@ -24,6 +12,14 @@ else if (Curve is null && _message is not null)
 else
 {
     <MudCard Class="mb-3">
+        <MudCardHeader>
+            <MudText Typo="Typo.h3">
+                Detail krivky (hviezda
+                <strong>
+                    <a href="@Endpoints.ClientStarSingleGet/@Curve.Star.Id">@Curve.Star.Name</a>
+                </strong>)
+            </MudText>
+        </MudCardHeader>
         <MudCardContent>
             <MudSimpleTable>
                 <tbody>
@@ -33,11 +29,11 @@ else
                 </tr>
                 <tr>
                     <th scope="row">RA</th>
-                    <td>@Curve.Star.RA</td>
+                    <td>@(string.Format("{0:N5}", Curve.Star.RA))</td>
                 </tr>
                 <tr>
                     <th scope="row">DEC</th>
-                    <td>@Curve.Star.DEC</td>
+                    <td>@(string.Format("{0:N5}", Curve.Star.DEC))</td>
                 </tr>
                 <tr>
                     <th scope="row">Hvezdáreň</th>
@@ -63,7 +59,7 @@ else
                     <tr>
                         <th scope="row">Odkaz na súbor</th>
                         <td>
-                            <a href="@Curve.DataFileLink" target="_blank" rel="noopener noreferrer">Stiahnuť dátový súbor</a>
+                            <MudLink Href="@Curve.DataFileLink" target="_blank" rel="noopener noreferrer">Stiahnuť dátový súbor</MudLink>
                         </td>
                     </tr>
                 }

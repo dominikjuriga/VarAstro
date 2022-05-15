@@ -5,6 +5,10 @@
                 Objekt
                 <MudLink Href="@($"{Endpoints.ClientStarSingleGet}/{Curve.Star.Id}")">
                     @Curve.Star.Name
+                    @if (Curve.Star.StarCatalogs is {Count: > 0})
+                    {
+                        <span> (@Curve.Star.StarCatalogs.First().CrossId, @Curve.Star.StarCatalogs.First().CatalogId)</span>
+                    }
                 </MudLink>
             </span>
             <br/>

@@ -45,7 +45,7 @@
         <tr>
             <th scope="row">Odkaz na publikáciu</th>
             <td>
-                <a href="/@Data.StarPublish.PublicationLink" target="_blank" rel="noopener noreferrer">@Data.StarPublish.PublicationLink</a>
+                <MudLink Href=@($"/{Data.StarPublish.PublicationLink}") target="_blank" rel="noopener noreferrer">@Data.StarPublish.PublicationLink</MudLink>
             </td>
         </tr>
     }
@@ -53,12 +53,12 @@
         <th scope="row">RA</th>
         <td>
             <MudChip Color="Color.Info">
-                @Data.RA (astrometria)
+                @(string.Format("{0:N5}", Data.RA))deg (fotometria)
             </MudChip>
             @if (PrimaryStarCatalog is not null)
             {
                 <MudChip>
-                    @PrimaryStarCatalog.Ra (@PrimaryStarCatalog.CatalogId)
+                    @(string.Format("{0:N5}", PrimaryStarCatalog.Ra))deg (@PrimaryStarCatalog.CatalogId)
                 </MudChip>
             }
         </td>
@@ -67,12 +67,12 @@
         <th scope="row">DEC</th>
         <td>
             <MudChip Color="Color.Info">
-                @Data.DEC (astrometria)
+                @(string.Format("{0:N5}", Data.DEC))deg (fotometria)
             </MudChip>
             @if (PrimaryStarCatalog is not null)
             {
                 <MudChip>
-                    @PrimaryStarCatalog.Dec (@PrimaryStarCatalog.CatalogId)
+                    @(string.Format("{0:N5}", PrimaryStarCatalog.Dec))deg (@PrimaryStarCatalog.CatalogId)
                 </MudChip>
             }
         </td>
