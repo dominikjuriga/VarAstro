@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
+
 namespace VarAstroMasters.Server.Controllers;
 
 [Route("api/[controller]")]
@@ -11,6 +13,7 @@ public class UserStarIdentificationController : ControllerBase
         _userStarIdentificationService = userStarIdentificationService;
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<ServiceResponse<List<UserStarIdentificationDTO>>>> UserIdentificationsListGet()
     {
@@ -18,6 +21,7 @@ public class UserStarIdentificationController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<ServiceResponse<bool>>> UserIdentificationsPost(UserStarIdentificationCreateDTO usi)
     {

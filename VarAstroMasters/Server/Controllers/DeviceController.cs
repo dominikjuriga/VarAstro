@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
+
 namespace VarAstroMasters.Server.Controllers;
 
 [Route("api/[controller]")]
@@ -11,6 +13,7 @@ public class DeviceController : ControllerBase
         _deviceService = deviceService;
     }
 
+    [Authorize]
     [HttpPost("Add")]
     public async Task<ActionResult<ServiceResponse<Device>>> DevicePost(Device device)
     {
@@ -25,6 +28,7 @@ public class DeviceController : ControllerBase
         return Ok(sr);
     }
 
+    [Authorize]
     [HttpDelete("{deviceId}")]
     public async Task<ActionResult<ServiceResponse<bool>>> DeviceDelete(int deviceId)
     {
@@ -32,6 +36,7 @@ public class DeviceController : ControllerBase
         return Ok(sr);
     }
 
+    [Authorize]
     [HttpPut]
     public async Task<ActionResult<ServiceResponse<Device>>> DevicePut(Device device)
     {

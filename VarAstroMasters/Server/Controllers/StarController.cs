@@ -21,6 +21,7 @@ public class StarController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<ServiceResponse<int>>> StarPost(NewStar newStar)
     {
@@ -78,6 +79,7 @@ public class StarController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize(Roles = Keywords.Role_Admin)]
     [HttpPost("publication")]
     public async Task<ActionResult<ServiceResponse<StarPublish>>> PublicationPost(StarPublish starPublish)
     {
@@ -92,6 +94,7 @@ public class StarController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize(Roles = Keywords.Role_Admin)]
     [HttpDelete("starcatalog/{starId:int}/{catalogId}")]
     public async Task<ActionResult<ServiceResponse<bool>>> StarCatalogDelete(int starId, string catalogId)
     {
@@ -99,6 +102,7 @@ public class StarController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize]
     [HttpPost("starcatalog")]
     public async Task<ActionResult<ServiceResponse<StarCatalog>>> StarCatalogPost(StarCatalog starCatalog)
     {
@@ -106,6 +110,7 @@ public class StarController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize]
     [HttpPut("starcatalog")]
     public async Task<ActionResult<ServiceResponse<StarCatalog>>> StarCatalogPut(StarCatalog starCatalog)
     {
@@ -113,6 +118,7 @@ public class StarController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize]
     [HttpPost("starcatalog/primary")]
     public async Task<ActionResult<ServiceResponse<StarCatalog>>> StarCatalogSetAsPrimaryPost(
         StarCatalogCK identification)
@@ -128,6 +134,7 @@ public class StarController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize(Roles = Keywords.Role_Admin)]
     [HttpDelete("catalog/{catalogName}")]
     public async Task<ActionResult<ServiceResponse<bool>>> CatalogDelete(string catalogName)
     {
@@ -135,6 +142,7 @@ public class StarController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize(Roles = Keywords.Role_Admin)]
     [HttpPost("catalog")]
     public async Task<ActionResult<ServiceResponse<Catalog>>> CatalogPost(Catalog catalog)
     {

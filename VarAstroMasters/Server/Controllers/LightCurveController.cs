@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
+
 namespace VarAstroMasters.Server.Controllers;
 
 [Route("api/[controller]")]
@@ -39,13 +41,13 @@ public class LightCurveController : ControllerBase
         return sr is null ? BadRequest(Keywords.NotPublished) : sr;
     }
 
+    [Authorize]
     [HttpPost("Add")]
     public async Task<ActionResult<ServiceResponse<int>>> LightCurvePost(LightCurveAdd lightCurveAdd)
     {
         var sr = await _lightCurveService.LightCurvePost(lightCurveAdd);
         return Ok(sr);
     }
-
 
     [HttpGet("logs")]
     public async Task<ActionResult<ServiceResponse<List<ObservationLogDTO>>>> ObservationLogListGet()

@@ -53,6 +53,8 @@
 
     private async Task HandleSubmit()
     {
+        if (Star is null) return;
+        if (Star is {StarVariability: null}) Star.StarVariability = new StarVariability();
         var response = await StarService.StarPut(Star);
         if (response is {Success: true})
         {

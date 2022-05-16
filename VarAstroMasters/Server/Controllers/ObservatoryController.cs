@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
+
 namespace VarAstroMasters.Server.Controllers;
 
 [Route("api/[controller]")]
@@ -18,6 +20,7 @@ public class ObservatoryController : ControllerBase
         return Ok(sr);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<ServiceResponse<Observatory>>> ObservatoryPost(Observatory observatory)
     {
@@ -25,6 +28,7 @@ public class ObservatoryController : ControllerBase
         return Ok(sr);
     }
 
+    [Authorize]
     [HttpDelete("{observatoryId}")]
     public async Task<ActionResult<ServiceResponse<bool>>> ObservatoryDelete(int observatoryId)
     {
@@ -32,8 +36,9 @@ public class ObservatoryController : ControllerBase
         return Ok(sr);
     }
 
+    [Authorize]
     [HttpPut]
-    public async Task<ActionResult<ServiceResponse<Observatory>>> ObservatoryEdit(Observatory observatory)
+    public async Task<ActionResult<ServiceResponse<Observatory>>> ObservatoryPut(Observatory observatory)
     {
         var sr = await _observatoryService.ObservatoryPut(observatory);
         return Ok(sr);
