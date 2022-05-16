@@ -18,7 +18,5 @@ public class DefaultMapping : Profile
             opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
 
         CreateMap<LightCurve, LightCurveDTO>();
-        // .ForMember(dest => dest.DataFileLink,
-        //     opt => opt.MapFrom(src => $"{Endpoints.ApiLightCurveBasePath}/{src.Id}/file"));
     }
 }

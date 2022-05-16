@@ -32,12 +32,15 @@ public class AuthService : IAuthService
             FirstName = userRegister.FirstName,
             LastName = userRegister.LastName
         };
-
+        // Attempt to create user from the request data
         var userIdentityResult = await _userManager.CreateAsync(identityUser, userRegister.Password);
+
+        // User exists or other error..
         if (!userIdentityResult.Succeeded)
             return ResponseHelper.FailResponse<string>(
                 $"{Keywords.RegisterFailed}:\n{ErrorsToString(userIdentityResult.Errors)}");
 
+        // Add user to role
         var roleIdentityResult = await _userManager.AddToRoleAsync(identityUser, Keywords.Role_User);
 
         if (userIdentityResult.Succeeded && roleIdentityResult.Succeeded)
@@ -55,6 +58,7 @@ public class AuthService : IAuthService
 
     public async Task<ServiceResponse<string>> LogIn([FromBody] UserLogin userLogin)
     {
+        // Check whether the credentials are valid
         var signInResult =
             await _signInManager.PasswordSignInAsync(userLogin.EmailAddress, userLogin.Password, false, false);
         if (signInResult.Succeeded)
@@ -72,14 +76,18 @@ public class AuthService : IAuthService
 
     public string? GetUserId()
     {
+        // Find user id that is sent within the HttpContext of the request
         return _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 
     private async Task<string> GenerateJsonWebToken(User identityUser)
     {
+        // Grab private key from configuration
         SymmetricSecurityKey symmetricSecurityKey = new(Encoding.UTF8.GetBytes(_configuration[Keywords.JWT_Key]));
+        // Create signing credentials
         SigningCredentials signingCredentials = new(symmetricSecurityKey, SecurityAlgorithms.HmacSha512);
 
+        // Specify claims of the token
         List<Claim> claims = new()
         {
             new Claim(JwtRegisteredClaimNames.Sub, identityUser.Id),
@@ -87,9 +95,11 @@ public class AuthService : IAuthService
             new Claim(ClaimTypes.NameIdentifier, identityUser.Id)
         };
 
+        // Get user roles
         IList<string> roleNames = await _userManager.GetRolesAsync(identityUser);
         claims.AddRange(roleNames.Select(r => new Claim(ClaimsIdentity.DefaultRoleClaimType, r)));
 
+        // Generate token object
         var token = new JwtSecurityToken(
             _configuration[Keywords.JWT_Issuer],
             _configuration[Keywords.JWT_Issuer],
@@ -99,11 +109,13 @@ public class AuthService : IAuthService
             signingCredentials
         );
 
+        // Write the token into the handler to send to client
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
     private string ErrorsToString(IEnumerable<IdentityError> errors)
     {
+        // Loop through errors and add them as lines.
         var result = string.Empty;
         foreach (var error in errors) result += $"[{error.Code}]: {error.Description}\n";
 

@@ -33,12 +33,15 @@ public class UserService : IUserService
 
     public async Task<ServiceResponse<UserDTO>> UserSingleFromTokenGet()
     {
+        // Get user token
         var userId = _authService.GetUserId();
         if (userId is null)
             return new ServiceResponse<UserDTO>
             {
                 Success = false
             };
+
+        // Find user in DB
         var user = await _context.Users
             .Where(u => u.Id == userId)
             .Include(u => u.Devices)
@@ -54,6 +57,7 @@ public class UserService : IUserService
             }
         };
 
+        // Map devices to DTOs
         List<DeviceDTO> devices = new();
         foreach (var device in user.Devices)
             devices.Add(new DeviceDTO
@@ -63,6 +67,7 @@ public class UserService : IUserService
             });
         response.Data.Devices = devices;
 
+        // Map observatories to DTOs
         List<ObservatoryDTO> observatories = new();
         foreach (var observatory in user.Observatories)
             observatories.Add(new ObservatoryDTO
@@ -78,17 +83,17 @@ public class UserService : IUserService
 
     public async Task<ServiceResponse<List<DeviceDTO>>> UserDeviceListGet()
     {
+        // Find user token
         var userId = _authService.GetUserId();
         if (userId is null)
-            return new ServiceResponse<List<DeviceDTO>>
-            {
-                Success = false
-            };
+            return ResponseHelper.FailResponse<List<DeviceDTO>>(Keywords.InvalidToken);
 
+        // Find their devices
         var devices = await _context.Devices
             .Where(d => d.UserId == userId)
             .ToListAsync();
 
+        // Map models to DTOs
         List<DeviceDTO> deviceDTOs = new();
 
         foreach (var device in devices)

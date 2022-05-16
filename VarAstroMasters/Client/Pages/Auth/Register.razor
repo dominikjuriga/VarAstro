@@ -36,8 +36,6 @@
 
 @code {
     private UserRegister UserRegister { get; } = new();
-    // private string? Message { get; set; }
-    // private string _messageType = string.Empty;
     private bool Succeeded { get; set; }
 
     private async Task HandleRegister()
@@ -45,9 +43,6 @@
         var response = await AuthService.Register(UserRegister);
         if (response is {Success:true})
             Succeeded = true;
-
-    // Message = response.Message;
-    // _messageType = response.Success ? Keywords.AlertSuccess : Keywords.AlertDanger;
     }
 
 }

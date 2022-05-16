@@ -36,8 +36,8 @@ public class DataContext : IdentityDbContext<User>
             {
                 Id = 1,
                 Name = "CzeV 343",
-                RA = 12,
-                DEC = 13
+                RA = 89.679166d,
+                DEC = 30.950833d
             }
         );
 
@@ -58,8 +58,8 @@ public class DataContext : IdentityDbContext<User>
                 StarId = 1,
                 CatalogId = "UCAC4",
                 CrossId = "605-025126",
-                Ra = 75.00d,
-                Dec = 30.00d,
+                Ra = 89.679166d,
+                Dec = 30.950833d,
                 Mag = 13.71d,
                 Primary = true
             }

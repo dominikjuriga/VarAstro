@@ -22,6 +22,7 @@ public class LightCurveService : ILightCurveService
 
     public async Task<ServiceResponse<List<LightCurveDTO>>> LightCurveListGet()
     {
+        // Get all light curves with their relations
         var data = await _context.LightCurves
             .Where(lc => lc.PublishVariant != PublishVariant.None)
             .Include(lc => lc.Star)
@@ -38,6 +39,7 @@ public class LightCurveService : ILightCurveService
 
     public async Task<ServiceResponse<LightCurveDTO>> LightCurveSingleGet(int curveId)
     {
+        // get a single light curve with relations
         var data = await _context.LightCurves
             .Where(lc => lc.Id == curveId)
             .Include(lc => lc.Star)
@@ -54,9 +56,12 @@ public class LightCurveService : ILightCurveService
         if (!PublishHelper.IsPublic(data.PublishVariant))
             return ResponseHelper.FailResponse<LightCurveDTO>(Keywords.NotPublished);
 
+        // Map the models to DTOs
         var item = _mapper.Map<LightCurveDTO>(data);
+
         if (PublishHelper.CanShareFile(item.PublishVariant))
             item.DataFileLink = $"{Endpoints.ApiLightCurveBasePath}/{item.Id}/file";
+
         return new ServiceResponse<LightCurveDTO>
         {
             Data = item
@@ -65,11 +70,13 @@ public class LightCurveService : ILightCurveService
 
     public async Task<FileContentResult?> LightCurveDataFileGet(int id)
     {
+        // Find the light curve
         var lc = await _context.LightCurves.Where(lc => lc.Id == id).Include(lc => lc.Star).FirstOrDefaultAsync();
         if (lc is null)
             return null;
         if (!PublishHelper.CanShareFile(lc.PublishVariant))
             return null;
+        // read the file data and set the filename
         var fileData = Encoding.ASCII.GetBytes(lc.DataFileContent);
         var fileResult = new FileContentResult(fileData, "text/plain");
         fileResult.FileDownloadName = $"{lc.Star.Name}_{lc.DateCreated}.txt";
@@ -78,9 +85,11 @@ public class LightCurveService : ILightCurveService
 
     public async Task<ServiceResponse<int>> LightCurvePost(LightCurveAdd lightCurveAdd)
     {
+        // Verify that the user has a token
         var userId = _authService.GetUserId();
         if (userId is null) return ResponseHelper.FailResponse<int>(Keywords.InvalidToken);
 
+        // Map the DTO to model
         var lightCurve = _mapper.Map<LightCurve>(lightCurveAdd);
         lightCurve.UserId = userId;
 
@@ -90,6 +99,7 @@ public class LightCurveService : ILightCurveService
         if (lightCurve.ObservatoryId == 0)
             lightCurve.ObservatoryId = null;
 
+        // Verify the changes have been saved
         var savedCurve = _context.LightCurves.Add(lightCurve);
         var result = await _context.SaveChangesAsync();
         if (result == 0) return ResponseHelper.FailResponse<int>(Keywords.PostFailed);
@@ -103,6 +113,7 @@ public class LightCurveService : ILightCurveService
 
     public async Task<ServiceResponse<string>> LightCurveSingleValuesGet(int curveId)
     {
+        // Find the curve
         var curve = await _context.LightCurves.Where(c => c.Id == curveId).FirstOrDefaultAsync();
         if (curve is null)
             return ResponseHelper.FailResponse<string>(Keywords.NotFoundMessage);
@@ -161,6 +172,7 @@ public class LightCurveService : ILightCurveService
 
     public async Task<ServiceResponse<List<ObservationLogDTO>>> ObservationLogListGet()
     {
+        // Gets the list of curves distint by users, with the count
         var q = from lc in _context.Set<LightCurve>()
             where lc.PublishVariant != PublishVariant.None
             orderby lc.DateCreated
@@ -191,6 +203,7 @@ public class LightCurveService : ILightCurveService
 
     public async Task<ServiceResponse<ObservationLogDetailDTO>> ObservationLogSingleGet(string id)
     {
+        // get LCs with relations
         var data = await _context.LightCurves
             .Where(lc => lc.UserId == id && lc.PublishVariant != PublishVariant.None)
             .Include(lc => lc.Device)
@@ -199,9 +212,11 @@ public class LightCurveService : ILightCurveService
             .ThenInclude(s => s.StarCatalogs)
             .ToListAsync();
 
+        // Find the associated user
         var user = await _context.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
         if (user is null) return ResponseHelper.FailResponse<ObservationLogDetailDTO>(Keywords.NotFoundMessage);
 
+        // Map the objects to DTOs
         List<LightCurveDTO> curveDtos = new();
 
         foreach (var curve in data)
