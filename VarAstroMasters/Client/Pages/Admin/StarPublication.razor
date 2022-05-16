@@ -19,6 +19,7 @@ else
                 <MudAlert Severity="@MessageSeverity">@Message</MudAlert>
             }
             <EditForm Model="StarPublish" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator/>
                 <MudTextField class="mb-5" @bind-Value="StarPublish.Discoverer" Label="Objaviteľ" Variant="Variant.Filled" For="@(() => StarPublish.Discoverer)"/>
                 <MudNumericField class="mb-5" @bind-Value="StarPublish.Year" Label="Rok objavenia" Variant="Variant.Filled" For="@(() => StarPublish.Year)"/>
                 <MudTextField class="mb-5" @bind-Value="StarPublish.PublicationLink" Label="Odkaz na publikáciu" Variant="Variant.Filled" For="@(() => StarPublish.PublicationLink)"/>
