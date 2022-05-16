@@ -56,8 +56,8 @@ public static class Endpoints
     public static readonly string ApiStarSingleCatalogsGet = $"{ApiStarBasePath}/catalogs";
     public static readonly string ApiCatalogPrimaryPost = $"{ApiStarBasePath}/starcatalog/primary";
     public static readonly string ApiCatalogPost = $"{ApiStarBasePath}/catalog";
-    public static readonly string ApiStarStarCatalogDelete = $"api/star/starcatalog";
-    public static readonly string ApiCatalogDelete = $"api/star/catalog";
+    public static readonly string ApiStarStarCatalogDelete = "api/star/starcatalog";
+    public static readonly string ApiCatalogDelete = "api/star/catalog";
     public static readonly string ApiStarStarCatalogPost = $"{ApiStarBasePath}/starcatalog";
 
     // Publications

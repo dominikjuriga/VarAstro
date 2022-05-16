@@ -21,7 +21,7 @@
 @code {
     private string Query { get; set; } = string.Empty;
     private string? Message { get; set; }
-    DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
+    DefaultFocus DefaultFocus { get; } = DefaultFocus.FirstChild;
 
     private void HandleSearch()
     {

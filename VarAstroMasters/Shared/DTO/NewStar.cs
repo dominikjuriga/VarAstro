@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using VarAstroMasters.Shared.Models;
 using VarAstroMasters.Shared.Static;
 

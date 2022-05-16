@@ -44,7 +44,7 @@
     [Parameter]
     public int StarId { get; set; }
 
-    private UserStarIdentificationCreateDTO USI { get; set; } = new();
+    private UserStarIdentificationCreateDTO USI { get; } = new();
     private string? Message { get; set; }
     private Severity MessageSeverity { get; set; } = Severity.Error;
 

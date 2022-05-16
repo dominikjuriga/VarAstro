@@ -1,8 +1,4 @@
-﻿using System.Net.Http.Json;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-
-namespace VarAstroMasters.Client.Services.AuthService;
+﻿namespace VarAstroMasters.Client.Services.AuthService;
 
 public class AuthService : IAuthService
 {

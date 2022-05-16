@@ -1,6 +1,4 @@
-﻿using VarAstroMasters.Client.Pages.Observatories;
-
-namespace VarAstroMasters.Client.Services.ObservatoryService;
+﻿namespace VarAstroMasters.Client.Services.ObservatoryService;
 
 public class ObservatoryService : IObservatoryService
 {

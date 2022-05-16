@@ -17,8 +17,7 @@ public static class StarCoordsHelper
         {
             if (coords.DecD >= 0)
                 return coords.DecD + coords.DecM / 60d + coords.DecS / 3600d;
-            else
-                return coords.DecD - coords.DecM / 60d - coords.DecS / 3600d;
+            return coords.DecD - coords.DecM / 60d - coords.DecS / 3600d;
         }
 
         return null;

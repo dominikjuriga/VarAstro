@@ -1,7 +1,6 @@
 ﻿@page "/LightCurves/Add/{StarId:int}"
 @using System.Text.RegularExpressions
 @using VarAstroMasters.Shared
-@using VarAstroMasters.Shared.Helpers
 @inject ILightCurveService LightCurveService
 @inject IStarService StarService
 @inject IUserService UserService
@@ -108,11 +107,7 @@ else
                     </MudAvatar>
                 </div>
                 <MudTextField Class="mb-3" T="string" Label="Poznámky" Variant="Variant.Filled" @bind-Value="_lightCurveAdd.Comment" Lines="3"/>
-
-                @* <ValidationSummary></ValidationSummary> *@
-
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Pridať pozorovanie</MudButton>
-
             </EditForm>
         </MudCardContent>
     </MudCard>
@@ -130,9 +125,9 @@ else
     [Parameter]
     public int StarId { get; set; }
 
-    private LightCurveAdd _lightCurveAdd { get; set; } = new();
-    private static int maxFileSizeKiB { get; set; } = 64;
-    private static long maxFileSize { get; set; } = 1024 * 1000 * maxFileSizeKiB;
+    private LightCurveAdd _lightCurveAdd { get; } = new();
+    private static int maxFileSizeKiB { get; } = 64;
+    private static long maxFileSize { get; } = 1024 * 1000 * maxFileSizeKiB;
     private StarDTO? _star { get; set; }
     private MatchCollection? _matches { get; set; }
     private bool succeeded { get; set; }
@@ -188,9 +183,9 @@ else
             ParseDataFile(fileContent);
             _lightCurveAdd.DataFileContent = fileContent;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Console.WriteLine(ex.Message);
+            throw;
         }
     }
 
@@ -209,8 +204,6 @@ else
                     break;
                 case "jd":
                     _lightCurveAdd.JD = match.Groups[2].Value;
-                    break;
-                default:
                     break;
             }
         }

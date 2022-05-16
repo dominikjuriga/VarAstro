@@ -4,8 +4,8 @@ namespace VarAstroMasters.Server.Services.UserService;
 
 public class UserService : IUserService
 {
-    private readonly DataContext _context;
     private readonly IAuthService _authService;
+    private readonly DataContext _context;
 
     public UserService(DataContext context, IAuthService authService)
     {

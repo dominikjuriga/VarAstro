@@ -1,6 +1,4 @@
-﻿using VarAstroMasters.Client.Pages.Admin;
-
-namespace VarAstroMasters.Client.Services.StarService;
+﻿namespace VarAstroMasters.Client.Services.StarService;
 
 public interface IStarService
 {

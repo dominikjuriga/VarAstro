@@ -14,11 +14,12 @@ global using VarAstroMasters.Shared.Responses;
 global using VarAstroMasters.Shared.Static;
 global using Blazored.LocalStorage;
 global using System.Net.Http.Json;
-using VarAstroMasters.Client;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
+using VarAstroMasters.Client;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

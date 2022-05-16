@@ -35,9 +35,9 @@
 </MudCard>
 
 @code {
-    private StarCoordDTO Query { get; set; } = new();
+    private StarCoordDTO Query { get; } = new();
     private string? Message { get; set; }
-    DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
+    DefaultFocus DefaultFocus { get; } = DefaultFocus.FirstChild;
 
     private async Task HandleSearch()
     {

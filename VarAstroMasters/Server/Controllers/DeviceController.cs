@@ -1,5 +1,3 @@
-using VarAstroMasters.Server.Services.DeviceService;
-
 namespace VarAstroMasters.Server.Controllers;
 
 [Route("api/[controller]")]

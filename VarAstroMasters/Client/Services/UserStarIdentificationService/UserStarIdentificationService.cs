@@ -1,6 +1,4 @@
-﻿using UserStarIdentificationDTO = VarAstroMasters.Shared.DTO.UserStarIdentificationDTO;
-
-namespace VarAstroMasters.Client.Services.UserStarIdentificationService;
+﻿namespace VarAstroMasters.Client.Services.UserStarIdentificationService;
 
 public class UserStarIdentificationService : IUserStarIdentificationService
 {

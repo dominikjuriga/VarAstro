@@ -1,13 +1,11 @@
-﻿using System.Data.Common;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace VarAstroMasters.Server.Services.DeviceService;
 
 public class DeviceService : IDeviceService
 {
-    private readonly DataContext _context;
     private readonly IAuthService _authService;
+    private readonly DataContext _context;
     private readonly IMapper _mapper;
 
     public DeviceService(DataContext context, IAuthService authService, IMapper mapper)

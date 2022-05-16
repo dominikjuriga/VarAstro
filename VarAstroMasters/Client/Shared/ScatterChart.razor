@@ -1,12 +1,6 @@
 ﻿@using ChartJs.Blazor.ScatterChart
-@using System.Text.Json
-@using System.Collections
-@using ChartJs.Blazor.Common.Axes.Ticks
 @using ChartJs.Blazor.LineChart
-@using ChartJs.Blazor.Util
-@using ChartJs.Blazor.PolarAreaChart
-@using Microsoft.Extensions.Options
-
+@using System.Text.Json
 @if (Message is null)
 {
     <Chart Config="_config"></Chart>
@@ -34,7 +28,7 @@ else
     {
         _config = new ScatterConfig
         {
-            Options = new LineOptions()
+            Options = new LineOptions
             {
                 Responsive = true,
                 Title = new OptionsTitle
@@ -48,7 +42,7 @@ else
                     {
                         new LinearCartesianAxis
                         {
-                            Ticks = new LinearCartesianTicks()
+                            Ticks = new LinearCartesianTicks
                             {
                                 Reverse = true
                             }
@@ -63,7 +57,7 @@ else
     // Holds all the values except min and max
         var dataset = new LineDataset<Point>
         {
-            Label = $"Mag",
+            Label = "Mag",
             ShowLine = false,
             BackgroundColor = "rgba(255,255,255,.05)",
             PointBackgroundColor = "rgba(0,0,0,.8)",
@@ -73,7 +67,7 @@ else
     // Holds the minimum value
         var minDataset = new LineDataset<Point>
         {
-            Label = $"Min",
+            Label = "Min",
             PointBackgroundColor = "rgba(255, 0, 0, 1)",
             BackgroundColor = "rgba(255, 0, 0, .05)",
             PointHoverRadius = pointOfInterestHoverRadius,
@@ -84,7 +78,7 @@ else
     // Holds the maximum value
         var maxDataset = new LineDataset<Point>
         {
-            Label = $"Max",
+            Label = "Max",
             PointBackgroundColor = "rgba(0, 255, 0, 1)",
             BackgroundColor = "rgba(0, 255, 0, .05)",
             PointHoverRadius = pointOfInterestHoverRadius,

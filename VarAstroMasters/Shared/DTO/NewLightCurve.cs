@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using VarAstroMasters.Shared.Models;
-using VarAstroMasters.Shared.Static;
 
 namespace VarAstroMasters.Shared.DTO;
 

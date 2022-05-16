@@ -14,10 +14,10 @@ global using VarAstroMasters.Shared.DTO;
 global using VarAstroMasters.Server.Data;
 global using VarAstroMasters.Shared.Helpers;
 global using AutoMapper;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using static VarAstroMasters.Server.Data.SeedRolesAndAdmin;
 
 var builder = WebApplication.CreateBuilder(args);

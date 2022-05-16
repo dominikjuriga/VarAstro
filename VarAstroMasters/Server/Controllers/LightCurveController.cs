@@ -1,7 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using VarAstroMasters.Server.Data;
-using VarAstroMasters.Server.Services.LightCurveService;
-
 namespace VarAstroMasters.Server.Controllers;
 
 [Route("api/[controller]")]

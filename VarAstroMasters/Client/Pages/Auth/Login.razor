@@ -37,7 +37,7 @@
 
 
 @code {
-    private UserLogin UserLogin { get; set; } = new();
+    private UserLogin UserLogin { get; } = new();
     private bool Succeeded { get; set; }
 
     private async Task HandleLogin()

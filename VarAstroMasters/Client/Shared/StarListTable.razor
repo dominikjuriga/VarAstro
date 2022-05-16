@@ -15,10 +15,20 @@
         <MudTd DataLabel="RA">@(string.Format("{0:N5}", context.RA))</MudTd>
         <MudTd DataLabel="DEC">@(string.Format("{0:N5}", context.DEC))</MudTd>
         <MudTd DataLabel="Cross ID">
-            @context.StarCatalogs?.First().CrossId (@context.StarCatalogs?.First().CatalogId)
+            @if (context.StarCatalogs is {Count: > 0})
+            {
+                <span>
+                    @context.StarCatalogs?.First().CrossId
+                    (@context.StarCatalogs?.First().CatalogId)
+                </span>
+            }
+            else
+            {
+                <span>-</span>
+            }
         </MudTd>
         <MudTd>
-            @if (@context is {Identification.Count: 1})
+            @if (context is {Identification.Count: 1})
             {
                 @context.Identification.First().UserIdentification
             }

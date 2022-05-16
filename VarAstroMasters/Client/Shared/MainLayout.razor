@@ -1,24 +1,5 @@
 ﻿@inherits LayoutComponentBase
 @inject ILocalStorageService LocalStorageService
-@* <div class="page"> *@
-@*     <div class="sidebar"> *@
-@*         <CustomNavMenu/> *@
-@*     </div> *@
-@* *@
-@*     <main> *@
-@*         <div class="top-row px-4"> *@
-@*             <a href="/swagger/index.html">API Ref</a> *@
-@*         </div> *@
-@* *@
-@*         <article class="content px-4"> *@
-@*             @Body *@
-@*         </article> *@
-@*     </main> *@
-@* </div> *@
-@* *@
-@* <MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme"/> *@
-@* <MudDialogProvider/> *@
-@* <MudSnackbarProvider/> *@
 
 
 <MudThemeProvider Theme="Theme" @bind-IsDarkMode="IsDarkMode"/>
@@ -27,7 +8,7 @@
 
 <MudLayout>
     <MudAppBar>
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(e => DrawerToggle())"/>
         Var Astro
     </MudAppBar>
     <MudDrawer @bind-Open="@DrawerOpen" Class="text-center">
@@ -48,7 +29,7 @@
 
 @code {
 
-    private MudTheme Theme { get; set; } = new();
+    private MudTheme Theme { get; } = new();
 
     private bool IsDarkMode { get; set; } = true;
 

@@ -35,7 +35,7 @@
 </AuthorizeView>
 
 @code {
-    private UserRegister UserRegister { get; set; } = new();
+    private UserRegister UserRegister { get; } = new();
     // private string? Message { get; set; }
     // private string _messageType = string.Empty;
     private bool Succeeded { get; set; }

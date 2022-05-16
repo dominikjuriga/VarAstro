@@ -1,5 +1,3 @@
-using VarAstroMasters.Server.Services.AuthService;
-
 namespace VarAstroMasters.Server.Controllers;
 
 [Route("api/[controller]")]
@@ -19,7 +17,7 @@ public class AuthController : ControllerBase
         var response = await _authService.Register(userRegister);
         return Ok(response);
     }
-    
+
     [HttpPost("login")]
     public async Task<ActionResult<ServiceResponse<string>>> LogIn(UserLogin userLogin)
     {

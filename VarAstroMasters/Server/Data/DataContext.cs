@@ -9,6 +9,17 @@ public class DataContext : IdentityDbContext<User>
     {
     }
 
+    public DbSet<Star> Stars { get; set; }
+    public DbSet<LightCurve> LightCurves { get; set; }
+    public DbSet<Device> Devices { get; set; }
+    public DbSet<Observatory> Observatories { get; set; }
+    public DbSet<Catalog> Catalogs { get; set; }
+    public DbSet<StarCatalog> StarCatalog { get; set; }
+    public DbSet<StarCatalog> StarVariability { get; set; }
+    public DbSet<StarPublish> StarPublish { get; set; }
+    public DbSet<Image> Images { get; set; }
+    public DbSet<UserStarIdentification> UserStarIdentifications { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<StarCatalog>()
@@ -68,15 +79,4 @@ public class DataContext : IdentityDbContext<User>
 
         base.OnModelCreating(builder);
     }
-
-    public DbSet<Star> Stars { get; set; }
-    public DbSet<LightCurve> LightCurves { get; set; }
-    public DbSet<Device> Devices { get; set; }
-    public DbSet<Observatory> Observatories { get; set; }
-    public DbSet<Catalog> Catalogs { get; set; }
-    public DbSet<StarCatalog> StarCatalog { get; set; }
-    public DbSet<StarCatalog> StarVariability { get; set; }
-    public DbSet<StarPublish> StarPublish { get; set; }
-    public DbSet<Image> Images { get; set; }
-    public DbSet<UserStarIdentification> UserStarIdentifications { get; set; }
 }

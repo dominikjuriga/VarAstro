@@ -1,7 +1,5 @@
 ﻿namespace VarAstroMasters.Server.Mappings;
 
-using Shared.Static;
-
 public class DefaultMapping : Profile
 {
     public DefaultMapping()

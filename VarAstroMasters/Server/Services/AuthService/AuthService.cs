@@ -1,21 +1,17 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
-using VarAstroMasters.Server.Data;
-using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace VarAstroMasters.Server.Services.AuthService;
 
 public class AuthService : IAuthService
 {
-    private readonly SignInManager<User> _signInManager;
-    private readonly UserManager<User> _userManager;
     private readonly IConfiguration _configuration;
     private readonly DataContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly SignInManager<User> _signInManager;
+    private readonly UserManager<User> _userManager;
 
     public AuthService(SignInManager<User> signInManager, UserManager<User> userManager,
         IConfiguration configuration, DataContext context, IHttpContextAccessor httpContextAccessor)
@@ -74,6 +70,11 @@ public class AuthService : IAuthService
         return ResponseHelper.FailResponse<string>(Keywords.InvalidCredentials);
     }
 
+    public string? GetUserId()
+    {
+        return _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+    }
+
     private async Task<string> GenerateJsonWebToken(User identityUser)
     {
         SymmetricSecurityKey symmetricSecurityKey = new(Encoding.UTF8.GetBytes(_configuration[Keywords.JWT_Key]));
@@ -99,11 +100,6 @@ public class AuthService : IAuthService
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-
-    public string? GetUserId()
-    {
-        return _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 
     private string ErrorsToString(IEnumerable<IdentityError> errors)

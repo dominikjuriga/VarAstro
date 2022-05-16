@@ -1,13 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using VarAstroMasters.Client.Pages.Observatories;
 
 namespace VarAstroMasters.Server.Services.ObservatoryService;
 
 public class ObservatoryService : IObservatoryService
 {
-    private readonly DataContext _context;
     private readonly IAuthService _authService;
+    private readonly DataContext _context;
 
     public ObservatoryService(DataContext context, IAuthService authService)
     {

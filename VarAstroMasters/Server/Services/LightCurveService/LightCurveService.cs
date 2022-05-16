@@ -9,8 +9,8 @@ namespace VarAstroMasters.Server.Services.LightCurveService;
 
 public class LightCurveService : ILightCurveService
 {
-    private readonly DataContext _context;
     private readonly IAuthService _authService;
+    private readonly DataContext _context;
     private readonly IMapper _mapper;
 
     public LightCurveService(DataContext context, IAuthService authService, IMapper mapper)
@@ -34,14 +34,6 @@ public class LightCurveService : ILightCurveService
         {
             Data = MapCurvesToList(data)
         };
-    }
-
-    private List<LightCurveDTO> MapCurvesToList(List<LightCurve> curves)
-    {
-        List<LightCurveDTO> response = new();
-        foreach (var curve in curves) response.Add(_mapper.Map<LightCurveDTO>(curve));
-
-        return response;
     }
 
     public async Task<ServiceResponse<LightCurveDTO>> LightCurveSingleGet(int curveId)
@@ -178,7 +170,7 @@ public class LightCurveService : ILightCurveService
             orderby g.Key
             select new
             {
-                User = g.SingleOrDefault().User,
+                g.SingleOrDefault().User,
                 Contributions = g.Count()
             };
         var result = await q.ToListAsync();
@@ -227,5 +219,13 @@ public class LightCurveService : ILightCurveService
                 DistinctStars = starDtos
             }
         };
+    }
+
+    private List<LightCurveDTO> MapCurvesToList(List<LightCurve> curves)
+    {
+        List<LightCurveDTO> response = new();
+        foreach (var curve in curves) response.Add(_mapper.Map<LightCurveDTO>(curve));
+
+        return response;
     }
 }

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace VarAstroMasters.Server.Data;
+﻿namespace VarAstroMasters.Server.Data;
 
 public static class SeedRolesAndAdmin
 {

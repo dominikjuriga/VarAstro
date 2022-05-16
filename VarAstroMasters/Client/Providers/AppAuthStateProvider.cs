@@ -1,15 +1,13 @@
-﻿using Blazored.LocalStorage;
-using Microsoft.AspNetCore.Components.Authorization;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using VarAstroMasters.Shared.Static;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace VarAstroMasters.Client.Providers;
 
 public class AppAuthStateProvider : AuthenticationStateProvider
 {
-    private readonly ILocalStorageService _localStorageService;
     private readonly JwtSecurityTokenHandler _jwtSecurityTokenHandler = new();
+    private readonly ILocalStorageService _localStorageService;
 
     public AppAuthStateProvider(ILocalStorageService localStorageService)
     {
@@ -21,16 +19,14 @@ public class AppAuthStateProvider : AuthenticationStateProvider
         try
         {
             // Attempt to load JWT token from local storage
-            string savedToken = await _localStorageService.GetItemAsync<string>(Keywords.JWT_Bearer_Token);
+            var savedToken = await _localStorageService.GetItemAsync<string>(Keywords.JWT_Bearer_Token);
             if (string.IsNullOrWhiteSpace(savedToken))
-            {
                 // No token is present, therefore user is not logged in
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
-            }
 
             // User has a token in local storage
-            JwtSecurityToken jwtSecurityToken = _jwtSecurityTokenHandler.ReadJwtToken(savedToken);
-            DateTime expiration = jwtSecurityToken.ValidTo;
+            var jwtSecurityToken = _jwtSecurityTokenHandler.ReadJwtToken(savedToken);
+            var expiration = jwtSecurityToken.ValidTo;
 
             if (expiration < DateTime.UtcNow)
             {
@@ -65,20 +61,20 @@ public class AppAuthStateProvider : AuthenticationStateProvider
     internal async Task LogIn()
     {
         // Retrieve token from local storage
-        string savedToken = await _localStorageService.GetItemAsync<string>(Keywords.JWT_Bearer_Token);
-        JwtSecurityToken jwtSecurityToken = _jwtSecurityTokenHandler.ReadJwtToken(savedToken);
+        var savedToken = await _localStorageService.GetItemAsync<string>(Keywords.JWT_Bearer_Token);
+        var jwtSecurityToken = _jwtSecurityTokenHandler.ReadJwtToken(savedToken);
         var claims = ParseClaims(jwtSecurityToken);
         var user = new ClaimsPrincipal(new ClaimsIdentity(claims, Keywords.AuthType));
 
-        Task<AuthenticationState> authenticationState = Task.FromResult(new AuthenticationState(user));
+        var authenticationState = Task.FromResult(new AuthenticationState(user));
 
         NotifyAuthenticationStateChanged(authenticationState);
     }
 
     internal void LogOut()
     {
-        ClaimsPrincipal nobody = new ClaimsPrincipal(new ClaimsIdentity());
-        Task<AuthenticationState> authenticationState = Task.FromResult(new AuthenticationState(nobody));
+        var nobody = new ClaimsPrincipal(new ClaimsIdentity());
+        var authenticationState = Task.FromResult(new AuthenticationState(nobody));
 
         NotifyAuthenticationStateChanged(authenticationState);
     }

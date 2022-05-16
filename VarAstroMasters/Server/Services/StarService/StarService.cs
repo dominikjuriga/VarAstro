@@ -1,15 +1,14 @@
 ﻿using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using VarAstroMasters.Shared.CompositeKeys;
 
 namespace VarAstroMasters.Server.Services.StarService;
 
 public class StarService : IStarService
 {
+    private readonly IAuthService _authService;
     private readonly DataContext _context;
     private readonly IMapper _mapper;
-    private readonly IAuthService _authService;
 
     public StarService(DataContext context, IMapper mapper, IAuthService authService)
     {
@@ -157,26 +156,6 @@ public class StarService : IStarService
             },
             Message = msg
         };
-    }
-
-    private double? RaToRadians(StarCoordDTO coords)
-    {
-        if (coords is { RaH: not null, RaM: not null, RaS: not null })
-            return coords.RaH * 15 + coords.RaM / 4d + coords.RaS / 240d;
-        return null;
-    }
-
-    private double? DecToRadians(StarCoordDTO coords)
-    {
-        if (coords is { DecD: not null, DecM: not null, DecS: not null })
-        {
-            if (coords.DecD >= 0)
-                return coords.DecD + coords.DecM / 60d + coords.DecS / 3600d;
-            else
-                return coords.DecD - coords.DecM / 60d - coords.DecS / 3600d;
-        }
-
-        return null;
     }
 
 
@@ -446,5 +425,24 @@ public class StarService : IStarService
             Data = true,
             Message = Keywords.PutSucceeded
         };
+    }
+
+    private double? RaToRadians(StarCoordDTO coords)
+    {
+        if (coords is { RaH: not null, RaM: not null, RaS: not null })
+            return coords.RaH * 15 + coords.RaM / 4d + coords.RaS / 240d;
+        return null;
+    }
+
+    private double? DecToRadians(StarCoordDTO coords)
+    {
+        if (coords is { DecD: not null, DecM: not null, DecS: not null })
+        {
+            if (coords.DecD >= 0)
+                return coords.DecD + coords.DecM / 60d + coords.DecS / 3600d;
+            return coords.DecD - coords.DecM / 60d - coords.DecS / 3600d;
+        }
+
+        return null;
     }
 }

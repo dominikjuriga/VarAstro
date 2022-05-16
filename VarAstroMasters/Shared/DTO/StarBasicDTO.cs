@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using VarAstroMasters.Shared.Models;
+﻿using VarAstroMasters.Shared.Models;
 
 namespace VarAstroMasters.Shared.DTO;
 

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Identity;
 
 namespace VarAstroMasters.Shared.Models;

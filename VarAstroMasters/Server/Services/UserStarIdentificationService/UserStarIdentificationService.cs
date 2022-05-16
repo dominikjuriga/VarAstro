@@ -4,8 +4,8 @@ namespace VarAstroMasters.Server.Services.UserStarIdentificationService;
 
 public class UserStarIdentificationService : IUserStarIdentificationService
 {
-    private readonly DataContext _context;
     private readonly IAuthService _authService;
+    private readonly DataContext _context;
     private readonly IMapper _mapper;
 
     public UserStarIdentificationService(DataContext context, IAuthService authService, IMapper mapper)
