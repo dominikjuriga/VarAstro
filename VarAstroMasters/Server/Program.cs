@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using static VarAstroMasters.Server.Data.SeedRolesAndAdmin;
+using Microsoft.AspNetCore.HttpOverrides;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -91,6 +93,11 @@ builder.Services.AddRazorPages();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.KnownProxies.Add(IPAddress.Parse("192.168.100.22"));
+});
+
 var app = builder.Build();
 
 // Migrate if app has been ran in production
@@ -122,11 +129,18 @@ var roleManager = builder.Services.BuildServiceProvider().GetService<RoleManager
 var userManager = builder.Services.BuildServiceProvider().GetService<UserManager<User>>();
 Seed(userManager, roleManager);
 
-app.UseHttpsRedirection();
+if (app.Environment.IsDevelopment()) app.UseHttpsRedirection();
+
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 app.UseRouting();
+app.Urls.Add("http://192.168.100.22:5000");
 app.UseCors("CORS_Policy");
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();

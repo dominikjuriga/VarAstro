@@ -16,7 +16,7 @@ namespace VarAstroMasters.Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.4")
+                .HasAnnotation("ProductVersion", "6.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -324,9 +324,9 @@ namespace VarAstroMasters.Server.Migrations
                         new
                         {
                             Id = 1,
-                            DEC = 13.0,
+                            DEC = 30.950832999999999,
                             Name = "CzeV 343",
-                            RA = 12.0
+                            RA = 89.679165999999995
                         });
                 });
 
@@ -367,10 +367,10 @@ namespace VarAstroMasters.Server.Migrations
                             CatalogId = "UCAC4",
                             StarId = 1,
                             CrossId = "605-025126",
-                            Dec = 30.0,
+                            Dec = 30.950832999999999,
                             Mag = 13.710000000000001,
                             Primary = true,
-                            Ra = 75.0
+                            Ra = 89.679165999999995
                         });
                 });
 
